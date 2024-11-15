@@ -1,0 +1,29 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "45TS85YK89.smpath.dance.cloud",
+                "components": [
+                    {
+                        "/": "/dancecloud/*",
+                        "comment": "Matches any URL whose path starts with /buy/"
+                    }
+                ],
+                "paths": [
+                    "/dancecloud/*"
+                ]
+            }
+        ]
+    },
+    "activitycontinuation": {
+        "apps": [
+            "45TS85YK89.smpath.dance.cloud"
+        ]
+    },
+    "webcredentials": {
+        "apps": [
+            "45TS85YK89.smpath.dance.cloud"
+        ]
+    }
+}
