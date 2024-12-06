@@ -36,6 +36,9 @@
       "stylelint --fix",
       "prettier --write"
     ],
+    "*.scss": [
+      "stylelint --syntax=scss"
+    ],
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
