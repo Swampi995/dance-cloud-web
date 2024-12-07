@@ -1,68 +1,259 @@
+/* stylelint-disable scss/at-rule-no-unknown */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable scss/at-rule-no-unknown */
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  font-family: InterDisplay, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color-scheme: dark only;
   font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
 }
 
 body {
   margin: 0;
   display: flex;
   place-items: center;
+  justify-content: center;
   min-width: 320px;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+@font-face {
+  font-family: InterDisplay;
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url("InterDisplay-Thin.woff2") format("woff2");
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+@font-face {
+  font-family: InterDisplay;
+  font-style: italic;
+  font-weight: 100;
+  font-display: swap;
+  src: url("InterDisplay-ThinItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url("InterDisplay-ExtraLight.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: italic;
+  font-weight: 200;
+  font-display: swap;
+  src: url("InterDisplay-ExtraLightItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("InterDisplay-Light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("InterDisplay-LightItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("InterDisplay-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("InterDisplay-Italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: normal;
   font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  font-display: swap;
+  src: url("InterDisplay-Medium.woff2") format("woff2");
 }
 
-@media (prefers-color-scheme: light) {
+@font-face {
+  font-family: InterDisplay;
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url("InterDisplay-MediumItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("InterDisplay-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url("InterDisplay-SemiBoldItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("InterDisplay-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("InterDisplay-BoldItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("InterDisplay-ExtraBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url("InterDisplay-ExtraBoldItalic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("InterDisplay-Black.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: InterDisplay;
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+  src: url("InterDisplay-BlackItalic.woff2") format("woff2");
+}
+
+/* stylelint-disable property-no-unknown */
+@font-feature-values InterDisplay {
+  @character-variant {
+    cv01: 1;
+    cv02: 2;
+    cv03: 3;
+    cv04: 4;
+    cv05: 5;
+    cv06: 6;
+    cv07: 7;
+    cv08: 8;
+    cv09: 9;
+    cv10: 10;
+    cv11: 11;
+    cv12: 12;
+    cv13: 13;
+    alt-1: 1; /* Alternate one */
+    alt-3: 9; /* Flat-top three */
+    open-4: 2; /* Open four */
+    open-6: 3; /* Open six */
+    open-9: 4; /* Open nine */
+    lc-l-with-tail: 5; /* Lower-case L with tail */
+    simplified-u: 6; /* Simplified u */
+    alt-double-s: 7; /* Alternate German double s */
+    uc-i-with-serif: 8; /* Upper-case i with serif */
+    uc-g-with-spur: 10; /* Capital G with spur */
+    single-story-a: 11; /* Single-story a */
+    compact-lc-f: 12; /* Compact f */
+    compact-lc-t: 13; /* Compact t */
+  }
+
+  @styleset {
+    ss01: 1;
+    ss02: 2;
+    ss03: 3;
+    ss04: 4;
+    ss05: 5;
+    ss06: 6;
+    ss07: 7;
+    ss08: 8;
+    open-digits: 1; /* Open digits */
+    disambiguation: 2; /* Disambiguation (with zero) */
+    disambiguation-except-zero: 4; /* Disambiguation (no zero) */
+    round-quotes-and-commas: 3; /* Round quotes &amp; commas */
+    square-punctuation: 7; /* Square punctuation */
+    square-quotes: 8; /* Square quotes */
+    circled-characters: 5; /* Circled characters */
+    squared-characters: 6; /* Squared characters */
+  }
+}
+/* stylelint-enable property-no-unknown */
+
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.5rem;
   }
-  a:hover {
-    color: #747bff;
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
-  button {
-    background-color: #f9f9f9;
+
+  body {
+    @apply bg-background text-foreground text-base font-normal;
   }
 }
