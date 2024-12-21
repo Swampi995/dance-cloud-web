@@ -29,3 +29,7 @@
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
 }
+
+/* I'd say we can declare what values whe need in varibles and expose them as native css variables here.
+https://tailwindcss.com/blog/tailwindcss-v4-alpha#css-first-configuration
+*/
