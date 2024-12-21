@@ -1,0 +1,15 @@
+/* Breakpoints using Tailwind-inspired naming */
+
+/* Media Query Mixins */
+@custom-media --sm-and-up (min-width: 640px);
+@custom-media --md-and-up (min-width: 768px);
+@custom-media --lg-and-up (min-width: 1024px);
+@custom-media --xl-and-up (min-width: 1280px);
+@custom-media --xxl-and-up (min-width: 1536px);
+
+/* Example usage:
+@media (--md-and-up) {
+    .your-class {
+        property: value;
+    }
+} */

@@ -1,13 +1,11 @@
-import { Separator } from "@/components/ui/separator";
-import AppStoreWhite from "@/components/ui/AppStoreWhite.svg?react";
+import { RootLayout } from "@/components/layout/RootLayout";
+import { HomeHero } from "@/components/features/home/HomeHero";
 
 function App() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-9xl tracking-tighter">Dance Cloud</h1>
-      <Separator />
-      <AppStoreWhite />
-    </div>
+    <RootLayout>
+      <HomeHero />
+    </RootLayout>
   );
 }
 
