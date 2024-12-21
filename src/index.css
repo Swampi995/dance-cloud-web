@@ -254,6 +254,6 @@ body {
   }
 
   body {
-    @apply bg-background text-foreground text-base font-normal;
+    @apply bg-background text-base font-normal text-foreground;
   }
 }
