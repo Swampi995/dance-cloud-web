@@ -1,222 +1,273 @@
 /* stylelint-disable scss/at-rule-no-unknown */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-/* stylelint-enable scss/at-rule-no-unknown */
+@import "tailwindcss";
+@plugin 'tailwindcss-animate';
+@variant dark (&:is(.dark * ));
 
-:root {
-  font-family: InterDisplay, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  color-scheme: dark only;
-  font-synthesis: none;
-  text-rendering: optimizelegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@theme {
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  justify-content: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
 
-@font-face {
-  font-family: InterDisplay;
-  font-style: normal;
-  font-weight: 100;
-  font-display: swap;
-  src: url("/InterDisplay-Thin.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: italic;
-  font-weight: 100;
-  font-display: swap;
-  src: url("/InterDisplay-ThinItalic.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: normal;
-  font-weight: 200;
-  font-display: swap;
-  src: url("/InterDisplay-ExtraLight.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: italic;
-  font-weight: 200;
-  font-display: swap;
-  src: url("/InterDisplay-ExtraLightItalic.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url("/InterDisplay-Light.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: italic;
-  font-weight: 300;
-  font-display: swap;
-  src: url("/InterDisplay-LightItalic.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/InterDisplay-Regular.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/InterDisplay-Italic.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/InterDisplay-Medium.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: italic;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/InterDisplay-MediumItalic.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/InterDisplay-SemiBold.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: italic;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/InterDisplay-SemiBoldItalic.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/InterDisplay-Bold.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/InterDisplay-BoldItalic.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url("/InterDisplay-ExtraBold.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: italic;
-  font-weight: 800;
-  font-display: swap;
-  src: url("/InterDisplay-ExtraBoldItalic.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: normal;
-  font-weight: 900;
-  font-display: swap;
-  src: url("/InterDisplay-Black.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: InterDisplay;
-  font-style: italic;
-  font-weight: 900;
-  font-display: swap;
-  src: url("/InterDisplay-BlackItalic.woff2") format("woff2");
-}
-
-/* stylelint-disable property-no-unknown */
-@font-feature-values InterDisplay {
-  @character-variant {
-    cv01: 1;
-    cv02: 2;
-    cv03: 3;
-    cv04: 4;
-    cv05: 5;
-    cv06: 6;
-    cv07: 7;
-    cv08: 8;
-    cv09: 9;
-    cv10: 10;
-    cv11: 11;
-    cv12: 12;
-    cv13: 13;
-    alt-1: 1; /* Alternate one */
-    alt-3: 9; /* Flat-top three */
-    open-4: 2; /* Open four */
-    open-6: 3; /* Open six */
-    open-9: 4; /* Open nine */
-    lc-l-with-tail: 5; /* Lower-case L with tail */
-    simplified-u: 6; /* Simplified u */
-    alt-double-s: 7; /* Alternate German double s */
-    uc-i-with-serif: 8; /* Upper-case i with serif */
-    uc-g-with-spur: 10; /* Capital G with spur */
-    single-story-a: 11; /* Single-story a */
-    compact-lc-f: 12; /* Compact f */
-    compact-lc-t: 13; /* Compact t */
-  }
-
-  @styleset {
-    ss01: 1;
-    ss02: 2;
-    ss03: 3;
-    ss04: 4;
-    ss05: 5;
-    ss06: 6;
-    ss07: 7;
-    ss08: 8;
-    open-digits: 1; /* Open digits */
-    disambiguation: 2; /* Disambiguation (with zero) */
-    disambiguation-except-zero: 4; /* Disambiguation (no zero) */
-    round-quotes-and-commas: 3; /* Round quotes &amp; commas */
-    square-punctuation: 7; /* Square punctuation */
-    square-quotes: 8; /* Square quotes */
-    circled-characters: 5; /* Circled characters */
-    squared-characters: 6; /* Squared characters */
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
   }
 }
-/* stylelint-enable property-no-unknown */
+
+@layer utilities {
+  /* stylelint-enable scss/at-rule-no-unknown */
+
+  :root {
+    font-family: InterDisplay, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    color-scheme: dark only;
+    font-synthesis: none;
+    text-rendering: optimizelegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    display: flex;
+    place-items: center;
+    justify-content: center;
+    min-width: 320px;
+    min-height: 100vh;
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: normal;
+    font-weight: 100;
+    font-display: swap;
+    src: url("/InterDisplay-Thin.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: italic;
+    font-weight: 100;
+    font-display: swap;
+    src: url("/InterDisplay-ThinItalic.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: normal;
+    font-weight: 200;
+    font-display: swap;
+    src: url("/InterDisplay-ExtraLight.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: italic;
+    font-weight: 200;
+    font-display: swap;
+    src: url("/InterDisplay-ExtraLightItalic.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url("/InterDisplay-Light.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: italic;
+    font-weight: 300;
+    font-display: swap;
+    src: url("/InterDisplay-LightItalic.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/InterDisplay-Regular.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/InterDisplay-Italic.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/InterDisplay-Medium.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: italic;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/InterDisplay-MediumItalic.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/InterDisplay-SemiBold.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: italic;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/InterDisplay-SemiBoldItalic.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/InterDisplay-Bold.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: italic;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/InterDisplay-BoldItalic.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: normal;
+    font-weight: 800;
+    font-display: swap;
+    src: url("/InterDisplay-ExtraBold.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: italic;
+    font-weight: 800;
+    font-display: swap;
+    src: url("/InterDisplay-ExtraBoldItalic.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url("/InterDisplay-Black.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: InterDisplay;
+    font-style: italic;
+    font-weight: 900;
+    font-display: swap;
+    src: url("/InterDisplay-BlackItalic.woff2") format("woff2");
+  }
+
+  /* stylelint-disable property-no-unknown */
+  @font-feature-values InterDisplay {
+    @character-variant {
+      cv01: 1;
+      cv02: 2;
+      cv03: 3;
+      cv04: 4;
+      cv05: 5;
+      cv06: 6;
+      cv07: 7;
+      cv08: 8;
+      cv09: 9;
+      cv10: 10;
+      cv11: 11;
+      cv12: 12;
+      cv13: 13;
+      alt-1: 1; /* Alternate one */
+      alt-3: 9; /* Flat-top three */
+      open-4: 2; /* Open four */
+      open-6: 3; /* Open six */
+      open-9: 4; /* Open nine */
+      lc-l-with-tail: 5; /* Lower-case L with tail */
+      simplified-u: 6; /* Simplified u */
+      alt-double-s: 7; /* Alternate German double s */
+      uc-i-with-serif: 8; /* Upper-case i with serif */
+      uc-g-with-spur: 10; /* Capital G with spur */
+      single-story-a: 11; /* Single-story a */
+      compact-lc-f: 12; /* Compact f */
+      compact-lc-t: 13; /* Compact t */
+    }
+
+    @styleset {
+      ss01: 1;
+      ss02: 2;
+      ss03: 3;
+      ss04: 4;
+      ss05: 5;
+      ss06: 6;
+      ss07: 7;
+      ss08: 8;
+      open-digits: 1; /* Open digits */
+      disambiguation: 2; /* Disambiguation (with zero) */
+      disambiguation-except-zero: 4; /* Disambiguation (no zero) */
+      round-quotes-and-commas: 3; /* Round quotes &amp; commas */
+      square-punctuation: 7; /* Square punctuation */
+      square-quotes: 8; /* Square quotes */
+      circled-characters: 5; /* Circled characters */
+      squared-characters: 6; /* Squared characters */
+    }
+  }
+  /* stylelint-enable property-no-unknown */
+}
 
 @layer base {
   :root {
@@ -254,6 +305,6 @@ body {
   }
 
   body {
-    @apply bg-background text-base font-normal text-foreground;
+    @apply bg-background text-foreground text-base font-normal;
   }
 }
