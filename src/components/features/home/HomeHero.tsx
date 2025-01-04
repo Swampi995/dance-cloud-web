@@ -8,7 +8,7 @@ const buttonLink = `smpath.dance.cloud://dancecloud`;
 
 const HomeHero = () => {
   return (
-    <div className="relative flex min-h-screen w-full justify-center">
+    <div className="fixed flex min-h-full w-full justify-center">
       <div className="z-10 my-[25vh] flex flex-col items-center gap-6 px-4">
         <h1 className="inline-block bg-[linear-gradient(to_right,#FF3BFF,#ECBFBF,#5C24FF,#D94FD5)] bg-clip-text text-5xl font-semibold tracking-tighter text-transparent sm:text-6xl md:text-8xl lg:text-9xl">
           {homeTitle}
@@ -28,7 +28,7 @@ const HomeHero = () => {
           <a href={buttonLink}>Open App</a>
         </Button>
       </div>
-      <div className="absolute bottom-0 h-[70vh] w-full bg-gradient-to-b bg-[url('@/assets/images/hero_image.avif')] from-transparent to-black bg-cover bg-bottom bg-no-repeat opacity-20 [mask-image:linear-gradient(to_bottom,transparent,black)]" />
+      <div className="absolute bottom-0 h-[70vh] w-full bg-gradient-to-b bg-[url('@/assets/images/hero_image.avif')] from-transparent to-black bg-cover bg-bottom bg-no-repeat opacity-60 [mask-image:linear-gradient(to_bottom,transparent,black)]" />
     </div>
   );
 };
