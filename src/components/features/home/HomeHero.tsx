@@ -9,14 +9,14 @@ const buttonLink = `smpath.dance.cloud://dancecloud`;
 const HomeHero = () => {
   return (
     <div className="fixed flex min-h-full w-full justify-center">
-      <div className="z-10 my-[25vh] flex flex-col items-center gap-6 px-4">
-        <h1 className="inline-block bg-[linear-gradient(to_right,#FF3BFF,#ECBFBF,#5C24FF,#D94FD5)] bg-clip-text text-5xl font-semibold tracking-tighter text-transparent sm:text-6xl md:text-8xl lg:text-9xl">
+      <div className="z-10 mt-[15vh] flex flex-col items-center gap-6 px-4 md:mt-[20vh]">
+        <h1 className="inline-block bg-[linear-gradient(to_right,#FF3BFF,#ECBFBF,#5C24FF,#D94FD5)] bg-clip-text text-5xl font-semibold tracking-tighter text-transparent drop-shadow-[0_0_25px_rgba(255,59,255,0.2)] sm:text-6xl md:text-8xl lg:text-9xl">
           {homeTitle}
         </h1>
-        <h2 className="animate-[float_2s_linear_infinite] text-xl font-medium tracking-wide sm:text-2xl md:text-4xl">
+        <h2 className="animate-[float_2s_linear_infinite] text-xl font-medium tracking-wide drop-shadow-[0_0_25px_rgba(255,59,255,0.5)] sm:text-2xl md:text-4xl">
           {homeSubtitle}
         </h2>
-        <h3 className="max-w-3xl text-center text-lg font-normal tracking-wider text-neutral-200 sm:text-xl md:text-2xl">
+        <h3 className="max-w-3xl text-center text-lg font-normal tracking-wider text-neutral-200 drop-shadow-[0_0_25px_rgba(255,59,255,0.8)] sm:text-xl md:text-2xl">
           {homeDescription}
         </h3>
         <Button
@@ -28,7 +28,7 @@ const HomeHero = () => {
           <a href={buttonLink}>Open App</a>
         </Button>
       </div>
-      <div className="absolute bottom-0 h-[70vh] w-full bg-gradient-to-b bg-[url('@/assets/images/hero_image.avif')] from-transparent to-black bg-cover bg-bottom bg-no-repeat opacity-60 [mask-image:linear-gradient(to_bottom,transparent,black)]" />
+      <div className="absolute bottom-0 h-full w-full bg-[url('@/assets/images/hero_image.avif')] bg-cover bg-bottom bg-no-repeat opacity-50 [mask-image:linear-gradient(to_bottom,transparent,black)]" />
     </div>
   );
 };
