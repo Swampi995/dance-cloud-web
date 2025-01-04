@@ -26,7 +26,7 @@ const HomeHero = () => {
           Open app
         </Button>
       </div>
-      <div className="absolute bottom-0 h-[40vh] w-full bg-gradient-to-b bg-[url('@/assets/images/hero_image.png')] from-transparent to-black bg-cover bg-bottom bg-no-repeat opacity-50 [mask-image:linear-gradient(to_bottom,transparent,black)]" />
+      <div className="absolute bottom-0 h-[40vh] w-full bg-gradient-to-b bg-[url('@/assets/images/hero_image.avif')] from-transparent to-black bg-cover bg-bottom bg-no-repeat opacity-50 [mask-image:linear-gradient(to_bottom,transparent,black)]" />
     </div>
   );
 };
