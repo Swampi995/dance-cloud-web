@@ -4,6 +4,7 @@ const homeTitle = "Dance Cloud",
   homeSubtitle = "Oops! Something went offbeat!",
   homeDescription =
     "You've arrived at the dance floor, but the app couldn't open directly from here. No worries, just tap the button below to hit the dance floor and join the fun!";
+const buttonLink = `smpath.dance.cloud://dancecloud`;
 
 const HomeHero = () => {
   return (
@@ -19,11 +20,12 @@ const HomeHero = () => {
           {homeDescription}
         </h3>
         <Button
+          asChild
           variant={"outline"}
           size={"xl"}
           className="after:bg-background relative cursor-pointer border-0 bg-transparent font-semibold tracking-tight shadow-[0_0_15px_rgba(255,59,255,0.5)] transition-all duration-300 before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-[linear-gradient(to_right,#FF3BFF,#ECBFBF,#5C24FF,#D94FD5)] before:p-[1px] after:absolute after:inset-[1px] after:-z-10 after:rounded-lg hover:scale-105 hover:shadow-[0_0_20px_rgba(255,59,255,0.7)] md:py-4 md:text-lg lg:py-5 lg:text-xl xl:py-7 xl:text-2xl"
         >
-          Open app
+          <a href={buttonLink}>Open App</a>
         </Button>
       </div>
       <div className="absolute bottom-0 h-[40vh] w-full bg-gradient-to-b bg-[url('@/assets/images/hero_image.avif')] from-transparent to-black bg-cover bg-bottom bg-no-repeat opacity-50 [mask-image:linear-gradient(to_bottom,transparent,black)]" />
