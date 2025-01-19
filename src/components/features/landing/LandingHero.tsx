@@ -61,10 +61,10 @@ const LandingHero = (): JSX.Element => {
   return (
     <div className="flex h-screen min-h-full w-full justify-center text-center">
       <div className="z-10 mt-[10vh] flex flex-col items-center gap-6">
-        <h1 className="inline-block px-4 text-xl font-semibold tracking-tighter drop-shadow-[0_0_25px_rgba(255,59,255,0.2)] md:text-2xl lg:text-3xl xl:text-4xl">
+        <h1 className="inline-block px-4 text-xl font-semibold tracking-tight drop-shadow-[0_0_25px_rgba(255,59,255,0.2)] md:text-2xl lg:text-3xl xl:text-4xl">
           {title}
         </h1>
-        <h2 className="w-2/3 text-sm font-light tracking-wide text-neutral-400 drop-shadow-[0_0_25px_rgba(255,59,255,0.5)] md:text-base lg:w-1/2 lg:text-lg xl:text-xl">
+        <h2 className="px-4 text-sm font-light tracking-wide text-neutral-300 drop-shadow-[0_0_25px_rgba(255,59,255,0.5)] md:w-2/3 md:text-base lg:text-lg xl:text-xl">
           {subtitle}
         </h2>
         <Button
