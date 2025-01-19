@@ -6,6 +6,9 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import appImage1 from "@/assets/images/app_image_1.avif";
+import appImage2 from "@/assets/images/app_image_2.avif";
+import appImage3 from "@/assets/images/app_image_3.avif";
 
 const title = "The ultimate platform for dance schools and dancers",
   subtitle =
@@ -13,9 +16,9 @@ const title = "The ultimate platform for dance schools and dancers",
   buttonLink = `smpath.dance.cloud://dancecloud`;
 
 const images = [
-  { src: "src/assets/images/app_image_1.avif", alt: "App Image 1" },
-  { src: "src/assets/images/app_image_2.avif", alt: "App Image 2" },
-  { src: "src/assets/images/app_image_3.avif", alt: "App Image 3" },
+  { src: appImage1, alt: "App Image 1" },
+  { src: appImage2, alt: "App Image 2" },
+  { src: appImage3, alt: "App Image 3" },
 ];
 
 const LandingHero = (): JSX.Element => {
@@ -36,14 +39,17 @@ const LandingHero = (): JSX.Element => {
   );
 
   const MobileCarousel = () => (
-    <Carousel className="w-full max-w-xs px-12">
-      <CarouselContent>
+    <Carousel className="relative w-full flex-grow">
+      <CarouselContent className="h-full">
         {images.map((image, index) => (
-          <CarouselItem key={index}>
+          <CarouselItem
+            key={index}
+            className="flex h-full items-center justify-center"
+          >
             <img
               src={image.src}
               alt={image.alt}
-              className="h-auto w-full"
+              className="max-h-[calc(100vh-400px)] w-auto object-contain"
               loading="lazy"
             />
           </CarouselItem>
@@ -55,7 +61,7 @@ const LandingHero = (): JSX.Element => {
   return (
     <div className="flex h-screen min-h-full w-full justify-center text-center">
       <div className="z-10 mt-[10vh] flex flex-col items-center gap-6">
-        <h1 className="inline-block text-xl font-semibold tracking-tighter drop-shadow-[0_0_25px_rgba(255,59,255,0.2)] md:text-2xl lg:text-3xl xl:text-4xl">
+        <h1 className="inline-block px-4 text-xl font-semibold tracking-tighter drop-shadow-[0_0_25px_rgba(255,59,255,0.2)] md:text-2xl lg:text-3xl xl:text-4xl">
           {title}
         </h1>
         <h2 className="w-2/3 text-sm font-light tracking-wide text-neutral-400 drop-shadow-[0_0_25px_rgba(255,59,255,0.5)] md:text-base lg:w-1/2 lg:text-lg xl:text-xl">
