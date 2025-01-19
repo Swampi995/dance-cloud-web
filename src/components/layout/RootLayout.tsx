@@ -1,12 +1,15 @@
-interface RootLayoutProps {
-  children: React.ReactNode;
-}
+import { JSX } from "react";
+import { Outlet } from "react-router";
+import { Header } from "../common/Header";
+import { Footer } from "../common/Footer";
 
-const RootLayout = ({ children }: RootLayoutProps) => {
+const RootLayout = (): JSX.Element => {
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background">
       <main className="flex min-h-screen flex-col items-center justify-center">
-        {children}
+        <Header />
+        <Outlet />
+        <Footer />
       </main>
     </div>
   );

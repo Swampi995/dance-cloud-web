@@ -9,14 +9,14 @@ const buttonLink = `smpath.dance.cloud://dancecloud`;
 const LaunchApp = () => {
   return (
     <div className="fixed flex min-h-full w-full justify-center">
-      <div className="z-10 mt-[15vh] flex flex-col items-center gap-6 px-4 md:mt-[20vh]">
-        <h1 className="inline-block bg-[linear-gradient(to_right,#FF3BFF,#ECBFBF,#5C24FF,#D94FD5)] bg-clip-text text-5xl font-semibold tracking-tighter text-transparent drop-shadow-[0_0_25px_rgba(255,59,255,0.2)] sm:text-6xl md:text-8xl lg:text-9xl">
+      <div className="z-10 mt-[15vh] flex flex-col items-center gap-6 md:mt-[20vh]">
+        <h1 className="inline-block bg-[linear-gradient(to_right,#FF3BFF,#ECBFBF,#5C24FF,#D94FD5)] bg-clip-text px-4 text-5xl font-semibold tracking-tighter text-transparent drop-shadow-[0_0_25px_rgba(255,59,255,0.2)] sm:text-6xl md:text-8xl lg:text-9xl">
           {title}
         </h1>
-        <h2 className="animate-[float_2s_linear_infinite] text-xl font-medium tracking-wide drop-shadow-[0_0_25px_rgba(255,59,255,0.5)] sm:text-2xl md:text-4xl">
+        <h2 className="animate-[float_2s_linear_infinite] px-4 text-xl font-medium tracking-wide drop-shadow-[0_0_25px_rgba(255,59,255,0.5)] sm:text-2xl md:text-4xl">
           {subtitle}
         </h2>
-        <h3 className="max-w-3xl text-center text-lg font-normal tracking-wider text-neutral-200 drop-shadow-[0_0_25px_rgba(255,59,255,0.8)] sm:text-xl md:text-2xl">
+        <h3 className="max-w-3xl px-4 text-center text-lg font-normal tracking-wider text-neutral-200 drop-shadow-[0_0_25px_rgba(255,59,255,0.8)] sm:text-xl md:text-2xl">
           {description}
         </h3>
         <Button
