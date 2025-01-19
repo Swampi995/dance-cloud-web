@@ -8,6 +8,8 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import logoUrl from "@/assets/images/logo.avif";
 
 const Header = (): JSX.Element => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -29,7 +31,14 @@ const Header = (): JSX.Element => {
           : "bg-transparent"
       }`}
     >
-      <NavLink to="/" className="self-center text-xl font-bold">
+      <NavLink
+        to="/"
+        className="flex items-center gap-2 self-center text-xl font-bold"
+      >
+        <Avatar>
+          <AvatarImage src={logoUrl} />
+          <AvatarFallback>DC</AvatarFallback>
+        </Avatar>
         DanceCloud
       </NavLink>
       <NavigationMenu>
