@@ -77,7 +77,12 @@ const LandingHero = (): JSX.Element => {
         </Button>
         {isDesktop ? <DesktopImages /> : <MobileCarousel />}
       </div>
-      <div className="absolute bottom-0 h-full w-full bg-[url('@/assets/images/home_image.avif')] bg-cover bg-bottom bg-no-repeat" />
+      <div
+        className="absolute bottom-0 h-full w-full bg-[url('@/assets/images/home_image.png')] bg-cover bg-bottom bg-no-repeat"
+        style={{
+          backgroundAttachment: "fixed", // Makes the background image fixed
+        }}
+      />
     </div>
   );
 };
