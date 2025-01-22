@@ -3,6 +3,7 @@ import { LaunchApp } from "@/components/features/launch/LaunchAppHero";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { LandingHero } from "./components/features/landing/LandingHero";
 import { PrivacyPolicy } from "./components/features/privacy";
+import { Login } from "./components/features/login/Login";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route element={<RootLayout />}>
           <Route index element={<LandingHero />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
         <Route path="/launch" element={<LaunchApp />} />

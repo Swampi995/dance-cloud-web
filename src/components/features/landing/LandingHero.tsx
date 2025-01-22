@@ -47,6 +47,7 @@ const LandingHero = (): JSX.Element => {
       plugins={[
         Autoplay({
           delay: 2000,
+          stopOnFocusIn: false,
         }),
       ]}
     >
