@@ -1,8 +1,8 @@
 import { RootLayout } from "@/components/layout/RootLayout";
 import { LaunchApp } from "@/components/features/launch/LaunchAppHero";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { LandingHero } from "./components/features/landing/LandingHero";
-import { NotFound } from "./components/features/not_found/NotFound";
+import { PrivacyPolicy } from "./components/features/privacy";
 
 function App() {
   return (
@@ -10,7 +10,8 @@ function App() {
       <Routes>
         <Route element={<RootLayout />}>
           <Route index element={<LandingHero />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
         <Route path="/launch" element={<LaunchApp />} />
       </Routes>
