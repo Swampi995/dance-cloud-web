@@ -57,7 +57,7 @@ const Header = (): JSX.Element => {
               className={navigationMenuTriggerStyle()}
             >
               {/* TODO: Create a drop-down form */}
-              <NavLink to="/sign_in">Sign In</NavLink>
+              <NavLink to="/login">Log In</NavLink>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
