@@ -1,12 +1,12 @@
 const PrivacyPolicy = () => {
   const effectiveDate = "January 21, 2025";
   const appName = "DanceCloud";
-  const contactEmail = "contact@dancecloud.com";
+  const contactEmail = "contact@smpath.com";
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-black via-[#0e080e] to-[#0d0612]">
       <div className="container mx-auto py-16">
-        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-[32px] bg-[#1a121f]/40 p-12 backdrop-blur-sm before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-b before:from-white/10 before:via-white/5 before:to-transparent before:p-[1px]">
+        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-[32px] bg-[#b248f433] p-12 backdrop-blur-sm before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-b before:from-white/10 before:via-white/5 before:to-transparent before:p-[1px]">
           {/* Content wrapper */}
           <div className="relative z-10">
             <h1 className="mb-2 text-[56px] font-semibold leading-tight tracking-[-0.02em] text-white">
