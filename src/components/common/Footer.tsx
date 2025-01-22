@@ -5,8 +5,8 @@ import { NavLink } from "react-router";
 const Footer = (): JSX.Element => {
   return (
     <footer className="w-full bg-background">
-      <div className="px-4 py-8">
-        <Separator className="my-4" />
+      <div className="px-4 pb-8">
+        <Separator className="mb-4" />
 
         {/* Copyright */}
         <div className="container mx-auto flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
