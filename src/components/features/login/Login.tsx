@@ -5,7 +5,6 @@ import {
   FormDescription,
   FormField,
   FormItem,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
@@ -18,13 +17,15 @@ import FacebookLogo from "@/assets/svg/facebook_logo.svg?react";
 import GoogleLogo from "@/assets/svg/google_logo.svg?react";
 import AppleLogo from "@/assets/svg/apple_logo.svg?react";
 import { Separator } from "@/components/ui/separator";
+import User from "@/assets/svg/user.svg?react";
+import LockClosed from "@/assets/svg/lock_closed.svg?react";
 
 const title = "Step Up to Dance Cloud!",
   subtitle = "Where every beat uplifts your spirit";
 
 const formSchema = z.object({
-  email: z.string(),
-  password: z.string(),
+  email: z.string().nonempty().email(),
+  password: z.string().nonempty(),
 });
 
 const Login = (): JSX.Element => {
@@ -55,15 +56,24 @@ const Login = (): JSX.Element => {
             <FormField
               control={form.control}
               name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormMessage />
+              render={({ field, fieldState: { error } }) => (
+                <FormItem
+                  className={`relative focus-within:z-20 ${error && "z-10"}`}
+                >
                   <FormControl>
-                    <Input
-                      className="rounded-b-none border-b-[0.25px] ring-inset"
-                      placeholder="user@dancecloud.com"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-2">
+                        <User width={16} className="text-muted-foreground" />
+                      </div>
+                      <Input
+                        className={`mb-[-1px] rounded-b-none border-0 pl-8 ring-1 ring-inset ${
+                          error ? "ring-red-500" : "ring-muted"
+                        }`}
+                        autoCapitalize="off"
+                        placeholder="user@dancecloud.com"
+                        {...field}
+                      />
+                    </div>
                   </FormControl>
                 </FormItem>
               )}
@@ -71,12 +81,22 @@ const Login = (): JSX.Element => {
             <FormField
               control={form.control}
               name="password"
-              render={({ field }) => (
-                <FormItem>
+              render={({ field, fieldState: { error } }) => (
+                <FormItem
+                  className={`relative focus-within:z-20 ${error && "z-10"}`}
+                >
                   <FormControl>
                     <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-2">
+                        <LockClosed
+                          width={16}
+                          className="text-muted-foreground"
+                        />
+                      </div>
                       <Input
-                        className="rounded-t-none border-t-[0.25px] ring-inset"
+                        className={`rounded-t-none border-0 pl-8 ring-1 ring-inset ${
+                          error ? "ring-red-500" : "ring-muted"
+                        }`}
                         placeholder="••••••••••••"
                         {...field}
                         type={showPassword ? "text" : "password"}
@@ -100,7 +120,6 @@ const Login = (): JSX.Element => {
                       </button>
                     </div>
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
