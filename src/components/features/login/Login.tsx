@@ -19,6 +19,9 @@ import AppleLogo from "@/assets/svg/apple_logo.svg?react";
 import { Separator } from "@/components/ui/separator";
 import User from "@/assets/svg/user.svg?react";
 import LockClosed from "@/assets/svg/lock_closed.svg?react";
+import { useAuth } from "@/lib/auth-context";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 const title = "Step Up to Dance Cloud!",
   subtitle = "Where every beat uplifts your spirit";
@@ -29,6 +32,16 @@ const formSchema = z.object({
 });
 
 const Login = (): JSX.Element => {
+  const { user } = useAuth();
+  console.log(user);
+  const login = async (email: string, password: string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,7 +53,11 @@ const Login = (): JSX.Element => {
   const [showPassword, setShowPassword] = useState(false);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    try {
+      login(values.email, values.password);
+    } catch (error) {
+      console.error(error);
+    }
   }
   return (
     <div className="flex h-screen min-h-full w-full justify-center text-center">
