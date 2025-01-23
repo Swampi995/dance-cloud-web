@@ -25,6 +25,7 @@ import { auth } from "@/lib/firebase";
 import { useNavigate } from "react-router";
 import Progress from "@/assets/svg/progress.svg?react";
 import { useToast } from "@/hooks/use-toast";
+import { FirebaseError } from "firebase/app";
 
 const title = "Step Up to Dance Cloud!",
   subtitle = "Where every beat uplifts your spirit";
@@ -34,7 +35,7 @@ const formSchema = z.object({
   password: z.string().nonempty(),
 });
 
-const firebaseErrorToMessage = (error: unknown) => {
+const firebaseErrorToMessage = (error: FirebaseError) => {
   switch (error.code) {
     case "auth/invalid-credential":
       return "Invalid email or password";
@@ -64,11 +65,15 @@ const Login = (): JSX.Element => {
     try {
       setIsLoggingIn(true); // Add this line
       await signInWithEmailAndPassword(auth, email, password);
-    } catch (error: unknown) {
-      toast({
-        description: firebaseErrorToMessage(error),
-        variant: "destructive",
-      });
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast({
+          description: firebaseErrorToMessage(error),
+          variant: "destructive",
+        });
+      } else {
+        console.error(error);
+      }
     } finally {
       setIsLoggingIn(false); // Add this line
     }
