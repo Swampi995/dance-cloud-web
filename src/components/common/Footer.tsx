@@ -13,24 +13,18 @@ const Footer = (): JSX.Element => {
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} DanceCloud. All rights reserved.
           </p>
-          <div className="flex space-x-4">
+          <div className="flex space-x-9">
             <NavLink
               to="/terms"
               className="text-sm text-muted-foreground hover:text-primary"
             >
-              Terms
-            </NavLink>
-            <NavLink
-              to="/cookies"
-              className="text-sm text-muted-foreground hover:text-primary"
-            >
-              Cookies
+              Terms of Use
             </NavLink>
             <NavLink
               to="/privacy"
               className="text-sm text-muted-foreground hover:text-primary"
             >
-              Privacy
+              Privacy Policy
             </NavLink>
           </div>
         </div>
