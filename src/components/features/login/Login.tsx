@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { JSX, useState } from "react";
+import { JSX, useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import EyeOpen from "@/assets/svg/eye_open.svg?react";
@@ -22,6 +22,9 @@ import LockClosed from "@/assets/svg/lock_closed.svg?react";
 import { useAuth } from "@/lib/auth-context";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useNavigate } from "react-router";
+import Progress from "@/assets/svg/progress.svg?react";
+import { useToast } from "@/hooks/use-toast";
 
 const title = "Step Up to Dance Cloud!",
   subtitle = "Where every beat uplifts your spirit";
@@ -31,14 +34,43 @@ const formSchema = z.object({
   password: z.string().nonempty(),
 });
 
+const firebaseErrorToMessage = (error: unknown) => {
+  switch (error.code) {
+    case "auth/invalid-credential":
+      return "Invalid email or password";
+    case "auth/too-many-requests":
+      return "Too many attempts. Please try again later.";
+    default:
+      return "An error occurred. Please try again later.";
+  }
+};
+
 const Login = (): JSX.Element => {
   const { user } = useAuth();
-  console.log(user);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false); // Add this line
+
+  // Move navigation logic into useEffect
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
   const login = async (email: string, password: string) => {
     try {
+      setIsLoggingIn(true); // Add this line
       await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      console.error(error);
+    } catch (error: unknown) {
+      toast({
+        description: firebaseErrorToMessage(error),
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoggingIn(false); // Add this line
     }
   };
 
@@ -50,8 +82,6 @@ const Login = (): JSX.Element => {
     },
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       login(values.email, values.password);
@@ -59,6 +89,7 @@ const Login = (): JSX.Element => {
       console.error(error);
     }
   }
+
   return (
     <div className="flex h-screen min-h-full w-full justify-center text-center">
       <div className="z-10 mt-[20vh] flex flex-col items-center gap-6">
@@ -147,8 +178,8 @@ const Login = (): JSX.Element => {
               </Button>
               <FormDescription>here</FormDescription>
             </div>
-            <Button type="submit" className="w-full">
-              Log In
+            <Button type="submit" className="w-full" disabled={isLoggingIn}>
+              {isLoggingIn ? <Progress className="animate-spin" /> : "Log In"}
             </Button>
             <div className="relative my-4 w-full">
               <div className="absolute inset-0 flex items-center">

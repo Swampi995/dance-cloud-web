@@ -9,9 +9,11 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/lib/auth-context";
 import logoUrl from "@/assets/images/logo.avif";
 
 const Header = (): JSX.Element => {
+  const { user } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -56,8 +58,11 @@ const Header = (): JSX.Element => {
               asChild
               className={navigationMenuTriggerStyle()}
             >
-              {/* TODO: Create a drop-down form */}
-              <NavLink to="/login">Log In</NavLink>
+              {user ? (
+                <NavLink to="/profile">Profile</NavLink>
+              ) : (
+                <NavLink to="/login">Log In</NavLink>
+              )}
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
