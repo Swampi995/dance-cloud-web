@@ -361,4 +361,4 @@ const TermsOfService = () => {
   );
 };
 
-export { TermsOfService };
+export default TermsOfService;

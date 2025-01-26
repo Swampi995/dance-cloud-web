@@ -17,4 +17,4 @@ const RootLayout = (): JSX.Element => {
   );
 };
 
-export { RootLayout };
+export default RootLayout;
