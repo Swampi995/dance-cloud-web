@@ -20,8 +20,13 @@ import { Separator } from "@/components/ui/separator";
 import User from "@/assets/svg/user.svg?react";
 import LockClosed from "@/assets/svg/lock_closed.svg?react";
 import { useAuth } from "@/lib/auth-context";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import {
+  auth,
+  googleAuthProvider,
+  facebookAuthProvider,
+  appleAuthProvider,
+} from "@/lib/firebase";
 import { useNavigate } from "react-router";
 import Progress from "@/assets/svg/progress.svg?react";
 import { useToast } from "@/hooks/use-toast";
@@ -42,7 +47,7 @@ const firebaseErrorToMessage = (error: FirebaseError) => {
     case "auth/too-many-requests":
       return "Too many attempts. Please try again later.";
     default:
-      return "An error occurred. Please try again later.";
+      return error.message;
   }
 };
 
@@ -52,18 +57,18 @@ const Login = (): JSX.Element => {
   const { toast } = useToast();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false); // Add this line
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  // Move navigation logic into useEffect
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
 
-  const login = async (email: string, password: string) => {
+  const loginWithEmailPassword = async (values: z.infer<typeof formSchema>) => {
+    const { email, password } = values;
     try {
-      setIsLoggingIn(true); // Add this line
+      setIsLoggingIn(true);
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -75,7 +80,64 @@ const Login = (): JSX.Element => {
         console.error(error);
       }
     } finally {
-      setIsLoggingIn(false); // Add this line
+      setIsLoggingIn(false);
+    }
+  };
+
+  const loginWithGoogle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoggingIn(true);
+      await signInWithPopup(auth, googleAuthProvider);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast({
+          description: firebaseErrorToMessage(error),
+          variant: "destructive",
+        });
+      } else {
+        console.error(error);
+      }
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const loginWithFacebook = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoggingIn(true);
+      await signInWithPopup(auth, facebookAuthProvider);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast({
+          description: firebaseErrorToMessage(error),
+          variant: "destructive",
+        });
+      } else {
+        console.error(error);
+      }
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const loginWithApple = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoggingIn(true);
+      await signInWithPopup(auth, appleAuthProvider);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast({
+          description: firebaseErrorToMessage(error),
+          variant: "destructive",
+        });
+      } else {
+        console.error(error);
+      }
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -87,14 +149,6 @@ const Login = (): JSX.Element => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      login(values.email, values.password);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   return (
     <div className="flex h-screen min-h-full w-full justify-center text-center">
       <div className="z-10 mt-[20vh] flex flex-col items-center gap-6">
@@ -105,7 +159,7 @@ const Login = (): JSX.Element => {
           {subtitle}
         </h2>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(loginWithEmailPassword)}>
             <FormField
               control={form.control}
               name="email"
@@ -123,6 +177,11 @@ const Login = (): JSX.Element => {
                           error ? "ring-red-500" : "ring-muted"
                         }`}
                         autoCapitalize="off"
+                        autoComplete="email"
+                        autoCorrect="on"
+                        spellCheck="false"
+                        type="email"
+                        id="email" // Fix for Safari autofill
                         placeholder="user@dancecloud.com"
                         {...field}
                       />
@@ -152,6 +211,11 @@ const Login = (): JSX.Element => {
                         }`}
                         placeholder="••••••••••••"
                         {...field}
+                        autoCapitalize="off"
+                        autoComplete="current-password"
+                        autoCorrect="off"
+                        spellCheck="false"
+                        id="password" // Fix for Safari autofill
                         type={showPassword ? "text" : "password"}
                       />
                       <button
@@ -197,15 +261,24 @@ const Login = (): JSX.Element => {
               </div>
             </div>
             <div className="flex w-full justify-around">
-              <a href="/" className="rounded-sm bg-white p-2">
+              <button
+                onClick={loginWithApple}
+                className="rounded-sm bg-white p-2"
+              >
                 <AppleLogo />
-              </a>
-              <a href="/" className="rounded-sm bg-white p-2">
+              </button>
+              <button
+                onClick={loginWithGoogle}
+                className="rounded-sm bg-white p-2"
+              >
                 <GoogleLogo />
-              </a>
-              <a href="/" className="rounded-sm bg-white p-2">
+              </button>
+              <button
+                onClick={loginWithFacebook}
+                className="rounded-sm bg-white p-2"
+              >
                 <FacebookLogo />
-              </a>
+              </button>
             </div>
           </form>
         </Form>

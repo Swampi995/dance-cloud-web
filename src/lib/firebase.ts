@@ -1,5 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  OAuthProvider,
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -9,7 +14,12 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// Initialize services and providers
 const app = initializeApp(firebaseConfig);
 
-// Initialize services
-export const auth = getAuth(app);
+const auth = getAuth(app),
+  googleAuthProvider = new GoogleAuthProvider(),
+  facebookAuthProvider = new FacebookAuthProvider(),
+  appleAuthProvider = new OAuthProvider("apple.com");
+
+export { auth, googleAuthProvider, facebookAuthProvider, appleAuthProvider };
