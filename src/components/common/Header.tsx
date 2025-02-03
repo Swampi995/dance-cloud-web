@@ -9,10 +9,33 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/lib/auth-context";
 import logoUrl from "@/assets/images/logo.avif";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
+import { FirebaseError } from "firebase/app";
 
 const Header = (): JSX.Element => {
+  const { user } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
+  const { toast } = useToast();
+
+  const handleSignOut = () => {
+    try {
+      signOut(auth);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast({
+          description: "An error occurred. Please try again.",
+          variant: "destructive",
+        });
+        console.error(error.code);
+      } else {
+        console.error(error);
+      }
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,8 +79,11 @@ const Header = (): JSX.Element => {
               asChild
               className={navigationMenuTriggerStyle()}
             >
-              {/* TODO: Create a drop-down form */}
-              <NavLink to="/login">Log In</NavLink>
+              {user ? (
+                <button onClick={handleSignOut}>Log Out</button>
+              ) : (
+                <NavLink to="/login">Log In</NavLink>
+              )}
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>

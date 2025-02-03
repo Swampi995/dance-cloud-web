@@ -5,11 +5,10 @@ import {
   FormDescription,
   FormField,
   FormItem,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { JSX, useState } from "react";
+import { JSX, useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import EyeOpen from "@/assets/svg/eye_open.svg?react";
@@ -18,16 +17,130 @@ import FacebookLogo from "@/assets/svg/facebook_logo.svg?react";
 import GoogleLogo from "@/assets/svg/google_logo.svg?react";
 import AppleLogo from "@/assets/svg/apple_logo.svg?react";
 import { Separator } from "@/components/ui/separator";
+import User from "@/assets/svg/user.svg?react";
+import LockClosed from "@/assets/svg/lock_closed.svg?react";
+import { useAuth } from "@/lib/auth-context";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import {
+  auth,
+  googleAuthProvider,
+  facebookAuthProvider,
+  appleAuthProvider,
+} from "@/lib/firebase";
+import { useNavigate } from "react-router";
+import Progress from "@/assets/svg/progress.svg?react";
+import { useToast } from "@/hooks/use-toast";
+import { FirebaseError } from "firebase/app";
 
 const title = "Step Up to Dance Cloud!",
   subtitle = "Where every beat uplifts your spirit";
 
 const formSchema = z.object({
-  email: z.string(),
-  password: z.string(),
+  email: z.string().nonempty().email(),
+  password: z.string().nonempty(),
 });
 
+const firebaseErrorToMessage = (error: FirebaseError) => {
+  switch (error.code) {
+    case "auth/invalid-credential":
+      return "Invalid email or password";
+    case "auth/too-many-requests":
+      return "Too many attempts. Please try again later.";
+    default:
+      return error.message;
+  }
+};
+
 const Login = (): JSX.Element => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const loginWithEmailPassword = async (values: z.infer<typeof formSchema>) => {
+    const { email, password } = values;
+    try {
+      setIsLoggingIn(true);
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast({
+          description: firebaseErrorToMessage(error),
+          variant: "destructive",
+        });
+      } else {
+        console.error(error);
+      }
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const loginWithGoogle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoggingIn(true);
+      await signInWithPopup(auth, googleAuthProvider);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast({
+          description: firebaseErrorToMessage(error),
+          variant: "destructive",
+        });
+      } else {
+        console.error(error);
+      }
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const loginWithFacebook = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoggingIn(true);
+      await signInWithPopup(auth, facebookAuthProvider);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast({
+          description: firebaseErrorToMessage(error),
+          variant: "destructive",
+        });
+      } else {
+        console.error(error);
+      }
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const loginWithApple = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoggingIn(true);
+      await signInWithPopup(auth, appleAuthProvider);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast({
+          description: firebaseErrorToMessage(error),
+          variant: "destructive",
+        });
+      } else {
+        console.error(error);
+      }
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,11 +149,6 @@ const Login = (): JSX.Element => {
     },
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
   return (
     <div className="flex h-screen min-h-full w-full justify-center text-center">
       <div className="z-10 mt-[20vh] flex flex-col items-center gap-6">
@@ -51,19 +159,33 @@ const Login = (): JSX.Element => {
           {subtitle}
         </h2>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(loginWithEmailPassword)}>
             <FormField
               control={form.control}
               name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormMessage />
+              render={({ field, fieldState: { error } }) => (
+                <FormItem
+                  className={`relative focus-within:z-20 ${error && "z-10"}`}
+                >
                   <FormControl>
-                    <Input
-                      className="rounded-b-none border-b-[0.25px] ring-inset"
-                      placeholder="user@dancecloud.com"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-2">
+                        <User width={16} className="text-muted-foreground" />
+                      </div>
+                      <Input
+                        className={`mb-[-1px] rounded-b-none border-0 pl-8 ring-1 ring-inset ${
+                          error ? "ring-red-500" : "ring-muted"
+                        }`}
+                        autoCapitalize="off"
+                        autoComplete="email"
+                        autoCorrect="on"
+                        spellCheck="false"
+                        type="email"
+                        id="email" // Fix for Safari autofill
+                        placeholder="user@dancecloud.com"
+                        {...field}
+                      />
+                    </div>
                   </FormControl>
                 </FormItem>
               )}
@@ -71,14 +193,29 @@ const Login = (): JSX.Element => {
             <FormField
               control={form.control}
               name="password"
-              render={({ field }) => (
-                <FormItem>
+              render={({ field, fieldState: { error } }) => (
+                <FormItem
+                  className={`relative focus-within:z-20 ${error && "z-10"}`}
+                >
                   <FormControl>
                     <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-2">
+                        <LockClosed
+                          width={16}
+                          className="text-muted-foreground"
+                        />
+                      </div>
                       <Input
-                        className="rounded-t-none border-t-[0.25px] ring-inset"
+                        className={`rounded-t-none border-0 pl-8 ring-1 ring-inset ${
+                          error ? "ring-red-500" : "ring-muted"
+                        }`}
                         placeholder="••••••••••••"
                         {...field}
+                        autoCapitalize="off"
+                        autoComplete="current-password"
+                        autoCorrect="off"
+                        spellCheck="false"
+                        id="password" // Fix for Safari autofill
                         type={showPassword ? "text" : "password"}
                       />
                       <button
@@ -100,7 +237,6 @@ const Login = (): JSX.Element => {
                       </button>
                     </div>
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -111,8 +247,8 @@ const Login = (): JSX.Element => {
               </Button>
               <FormDescription>here</FormDescription>
             </div>
-            <Button type="submit" className="w-full">
-              Log In
+            <Button type="submit" className="w-full" disabled={isLoggingIn}>
+              {isLoggingIn ? <Progress className="animate-spin" /> : "Log In"}
             </Button>
             <div className="relative my-4 w-full">
               <div className="absolute inset-0 flex items-center">
@@ -125,15 +261,24 @@ const Login = (): JSX.Element => {
               </div>
             </div>
             <div className="flex w-full justify-around">
-              <a href="/" className="rounded-sm bg-white p-2">
+              <button
+                onClick={loginWithApple}
+                className="rounded-sm bg-white p-2"
+              >
                 <AppleLogo />
-              </a>
-              <a href="/" className="rounded-sm bg-white p-2">
+              </button>
+              <button
+                onClick={loginWithGoogle}
+                className="rounded-sm bg-white p-2"
+              >
                 <GoogleLogo />
-              </a>
-              <a href="/" className="rounded-sm bg-white p-2">
+              </button>
+              <button
+                onClick={loginWithFacebook}
+                className="rounded-sm bg-white p-2"
+              >
                 <FacebookLogo />
-              </a>
+              </button>
             </div>
           </form>
         </Form>
@@ -142,4 +287,4 @@ const Login = (): JSX.Element => {
   );
 };
 
-export { Login };
+export default Login;

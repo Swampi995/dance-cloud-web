@@ -93,4 +93,4 @@ const LandingHero = (): JSX.Element => {
   );
 };
 
-export { LandingHero };
+export default LandingHero;

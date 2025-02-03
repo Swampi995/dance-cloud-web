@@ -33,4 +33,4 @@ const LaunchApp = () => {
   );
 };
 
-export { LaunchApp };
+export default LaunchApp;
