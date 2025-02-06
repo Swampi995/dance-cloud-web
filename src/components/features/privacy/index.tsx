@@ -247,4 +247,6 @@ const PrivacyPolicy = () => {
   );
 };
 
+PrivacyPolicy.displayName = "PrivacyPolicy";
+
 export default PrivacyPolicy;

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { JSX, useState, useEffect } from "react";
+import { JSX, useState, useEffect, useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import EyeOpen from "@/assets/svg/eye_open.svg?react";
@@ -32,8 +32,8 @@ import Progress from "@/assets/svg/progress.svg?react";
 import { useToast } from "@/hooks/use-toast";
 import { FirebaseError } from "firebase/app";
 
-const title = "Step Up to Dance Cloud!",
-  subtitle = "Where every beat uplifts your spirit";
+const title = "Step Up to Dance Cloud!";
+const subtitle = "Where every beat uplifts your spirit";
 
 const formSchema = z.object({
   email: z.string().nonempty().email(),
@@ -65,12 +65,8 @@ const Login = (): JSX.Element => {
     }
   }, [user, navigate]);
 
-  const loginWithEmailPassword = async (values: z.infer<typeof formSchema>) => {
-    const { email, password } = values;
-    try {
-      setIsLoggingIn(true);
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
+  const handleLoginError = useCallback(
+    (error: unknown) => {
       if (error instanceof FirebaseError) {
         toast({
           description: firebaseErrorToMessage(error),
@@ -79,67 +75,61 @@ const Login = (): JSX.Element => {
       } else {
         console.error(error);
       }
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
+    },
+    [toast],
+  );
 
-  const loginWithGoogle = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    try {
+  const performLogin = useCallback(
+    async (action: () => Promise<unknown>) => {
       setIsLoggingIn(true);
-      await signInWithPopup(auth, googleAuthProvider);
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        toast({
-          description: firebaseErrorToMessage(error),
-          variant: "destructive",
-        });
-      } else {
-        console.error(error);
+      try {
+        await action();
+      } catch (error) {
+        handleLoginError(error);
+      } finally {
+        setIsLoggingIn(false);
       }
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
+    },
+    [handleLoginError],
+  );
 
-  const loginWithFacebook = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    try {
-      setIsLoggingIn(true);
-      await signInWithPopup(auth, facebookAuthProvider);
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        toast({
-          description: firebaseErrorToMessage(error),
-          variant: "destructive",
-        });
-      } else {
-        console.error(error);
-      }
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
+  const loginWithEmailPassword = useCallback(
+    async (values: z.infer<typeof formSchema>) => {
+      await performLogin(() =>
+        signInWithEmailAndPassword(auth, values.email, values.password),
+      );
+    },
+    [performLogin],
+  );
 
-  const loginWithApple = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    try {
-      setIsLoggingIn(true);
-      await signInWithPopup(auth, appleAuthProvider);
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        toast({
-          description: firebaseErrorToMessage(error),
-          variant: "destructive",
-        });
-      } else {
-        console.error(error);
-      }
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
+  // Generalized provider login handler memoized with useCallback
+  const loginWithProvider = useCallback(
+    async (
+      e: React.MouseEvent,
+      provider:
+        | typeof googleAuthProvider
+        | typeof appleAuthProvider
+        | typeof facebookAuthProvider,
+    ) => {
+      e.preventDefault();
+      await performLogin(() => signInWithPopup(auth, provider));
+    },
+    [performLogin],
+  );
+
+  // Pre-bind provider-specific handlers to avoid inline arrow functions in JSX
+  const handleAppleLogin = useCallback(
+    (e: React.MouseEvent) => loginWithProvider(e, appleAuthProvider),
+    [loginWithProvider],
+  );
+  const handleGoogleLogin = useCallback(
+    (e: React.MouseEvent) => loginWithProvider(e, googleAuthProvider),
+    [loginWithProvider],
+  );
+  const handleFacebookLogin = useCallback(
+    (e: React.MouseEvent) => loginWithProvider(e, facebookAuthProvider),
+    [loginWithProvider],
+  );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -165,7 +155,7 @@ const Login = (): JSX.Element => {
               name="email"
               render={({ field, fieldState: { error } }) => (
                 <FormItem
-                  className={`relative focus-within:z-20 ${error && "z-10"}`}
+                  className={`relative focus-within:z-20 ${error ? "z-10" : ""}`}
                 >
                   <FormControl>
                     <div className="relative">
@@ -195,7 +185,7 @@ const Login = (): JSX.Element => {
               name="password"
               render={({ field, fieldState: { error } }) => (
                 <FormItem
-                  className={`relative focus-within:z-20 ${error && "z-10"}`}
+                  className={`relative focus-within:z-20 ${error ? "z-10" : ""}`}
                 >
                   <FormControl>
                     <div className="relative">
@@ -221,7 +211,7 @@ const Login = (): JSX.Element => {
                       <button
                         type="button"
                         className="absolute inset-y-0 right-0 flex items-center px-2"
-                        onClick={() => setShowPassword(!showPassword)}
+                        onClick={() => setShowPassword((prev) => !prev)}
                       >
                         {showPassword ? (
                           <EyeClosed
@@ -262,19 +252,19 @@ const Login = (): JSX.Element => {
             </div>
             <div className="flex w-full justify-around">
               <button
-                onClick={loginWithApple}
+                onClick={handleAppleLogin}
                 className="rounded-sm bg-white p-2"
               >
                 <AppleLogo />
               </button>
               <button
-                onClick={loginWithGoogle}
+                onClick={handleGoogleLogin}
                 className="rounded-sm bg-white p-2"
               >
                 <GoogleLogo />
               </button>
               <button
-                onClick={loginWithFacebook}
+                onClick={handleFacebookLogin}
                 className="rounded-sm bg-white p-2"
               >
                 <FacebookLogo />
@@ -286,5 +276,7 @@ const Login = (): JSX.Element => {
     </div>
   );
 };
+
+Login.displayName = "Login";
 
 export default Login;

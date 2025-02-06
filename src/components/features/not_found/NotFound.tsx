@@ -16,4 +16,6 @@ const NotFound = (): JSX.Element => {
   );
 };
 
+NotFound.displayName = "NotFound";
+
 export { NotFound };

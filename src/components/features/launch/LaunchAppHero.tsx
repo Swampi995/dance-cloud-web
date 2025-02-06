@@ -33,4 +33,6 @@ const LaunchApp = () => {
   );
 };
 
+LaunchApp.displayName = "LaunchApp";
+
 export default LaunchApp;

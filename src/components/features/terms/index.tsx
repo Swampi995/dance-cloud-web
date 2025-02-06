@@ -361,4 +361,6 @@ const TermsOfService = () => {
   );
 };
 
+TermsOfService.displayName = "TermsOfService";
+
 export default TermsOfService;

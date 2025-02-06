@@ -1,5 +1,5 @@
 "use client";
-import { JSX, useEffect, useState } from "react";
+import { useEffect, useState, useCallback, JSX } from "react";
 import { NavLink } from "react-router";
 import {
   NavigationMenu,
@@ -21,9 +21,9 @@ const Header = (): JSX.Element => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { toast } = useToast();
 
-  const handleSignOut = () => {
+  const handleSignOut = useCallback(async () => {
     try {
-      signOut(auth);
+      await signOut(auth);
     } catch (error) {
       if (error instanceof FirebaseError) {
         toast({
@@ -35,7 +35,7 @@ const Header = (): JSX.Element => {
         console.error(error);
       }
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,5 +91,7 @@ const Header = (): JSX.Element => {
     </div>
   );
 };
+
+Header.displayName = "Header";
 
 export { Header };

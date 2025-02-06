@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { JSX } from "react";
 import {
   Carousel,
@@ -12,11 +13,13 @@ import AppStoreBlack from "@/assets/svg/app_store_black.svg?react";
 import GooglePlay from "@/assets/svg/google_play.svg?react";
 import Autoplay from "embla-carousel-autoplay";
 
-const title = "The ultimate platform for dance schools and dancers",
-  subtitle =
-    "Empower dancers to stay connected, track progress, grow their skills and streamline dance school operations with powerful management tools, all in one place.",
-  appStoreLink = `https://apps.apple.com/app/dance-cloud-all-in-one-app/id6474421119`,
-  googlePlayLink = `https://play.google.com/store/apps/details?id=smpath.dance.cloud`;
+const title = "The ultimate platform for dance schools and dancers";
+const subtitle =
+  "Empower dancers to stay connected, track progress, grow their skills and streamline dance school operations with powerful management tools, all in one place.";
+const appStoreLink =
+  "https://apps.apple.com/app/dance-cloud-all-in-one-app/id6474421119";
+const googlePlayLink =
+  "https://play.google.com/store/apps/details?id=smpath.dance.cloud";
 
 const images = [
   { src: appImage1, alt: "App Image 1" },
@@ -24,50 +27,48 @@ const images = [
   { src: appImage3, alt: "App Image 3" },
 ];
 
+const carouselPlugins = [Autoplay({ delay: 2000, stopOnFocusIn: false })];
+
+const DesktopImages = memo(() => (
+  <div className="flex items-center justify-center gap-4 overflow-hidden p-12">
+    {images.map((image, index) => (
+      <img
+        key={index}
+        src={image.src}
+        alt={image.alt}
+        className={`object-fit h-full ${index !== 1 ? "scale-90" : ""} drop-shadow-[0_0_25px_rgba(255,59,255,0.2)]`}
+        loading="lazy"
+      />
+    ))}
+  </div>
+));
+
+DesktopImages.displayName = "DesktopImages";
+
+const MobileCarousel = memo(() => (
+  <Carousel className="relative w-full flex-grow" plugins={carouselPlugins}>
+    <CarouselContent className="h-full">
+      {images.map((image, index) => (
+        <CarouselItem
+          key={index}
+          className="flex h-full items-center justify-center"
+        >
+          <img
+            src={image.src}
+            alt={image.alt}
+            className="max-h-[calc(100vh-400px)] w-auto object-contain"
+            loading="lazy"
+          />
+        </CarouselItem>
+      ))}
+    </CarouselContent>
+  </Carousel>
+));
+
+MobileCarousel.displayName = "MobileCarousel";
+
 const LandingHero = (): JSX.Element => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
-
-  const DesktopImages = () => (
-    <div className="flex items-center justify-center gap-4 overflow-hidden p-12">
-      {images.map((image, index) => (
-        <img
-          key={index}
-          src={image.src}
-          alt={image.alt}
-          className={`object-fit h-full ${index !== 1 ? "scale-90" : ""} drop-shadow-[0_0_25px_rgba(255,59,255,0.2)]`}
-          loading="lazy"
-        />
-      ))}
-    </div>
-  );
-
-  const MobileCarousel = () => (
-    <Carousel
-      className="relative w-full flex-grow"
-      plugins={[
-        Autoplay({
-          delay: 2000,
-          stopOnFocusIn: false,
-        }),
-      ]}
-    >
-      <CarouselContent className="h-full">
-        {images.map((image, index) => (
-          <CarouselItem
-            key={index}
-            className="flex h-full items-center justify-center"
-          >
-            <img
-              src={image.src}
-              alt={image.alt}
-              className="max-h-[calc(100vh-400px)] w-auto object-contain"
-              loading="lazy"
-            />
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-    </Carousel>
-  );
 
   return (
     <div className="flex h-screen min-h-full w-full justify-center text-center">
@@ -92,5 +93,7 @@ const LandingHero = (): JSX.Element => {
     </div>
   );
 };
+
+LandingHero.displayName = "LandingHero";
 
 export default LandingHero;

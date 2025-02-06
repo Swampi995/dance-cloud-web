@@ -1,36 +1,39 @@
 import { Separator } from "@/components/ui/separator";
-import { JSX } from "react";
+import { memo } from "react";
 import { NavLink } from "react-router";
 
-const Footer = (): JSX.Element => {
-  return (
-    <footer className="w-full bg-background">
-      <div className="px-4 pb-8">
-        <Separator className="mb-4" />
+const currentYear = new Date().getFullYear();
+const navLinks = [
+  { to: "/terms", label: "Terms of Use" },
+  { to: "/privacy", label: "Privacy Policy" },
+];
 
-        {/* Copyright */}
-        <div className="container mx-auto flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} DanceCloud. All rights reserved.
-          </p>
-          <div className="flex space-x-9">
+const Footer = memo(() => (
+  <footer className="w-full bg-background">
+    <div className="px-4 pb-8">
+      <Separator className="mb-4" />
+
+      {/* Copyright */}
+      <div className="container mx-auto flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
+        <p className="text-sm text-muted-foreground">
+          © {currentYear} DanceCloud. All rights reserved.
+        </p>
+        <div className="flex space-x-9">
+          {navLinks.map(({ to, label }) => (
             <NavLink
-              to="/terms"
+              key={to}
+              to={to}
               className="text-sm text-muted-foreground hover:text-primary"
             >
-              Terms of Use
+              {label}
             </NavLink>
-            <NavLink
-              to="/privacy"
-              className="text-sm text-muted-foreground hover:text-primary"
-            >
-              Privacy Policy
-            </NavLink>
-          </div>
+          ))}
         </div>
       </div>
-    </footer>
-  );
-};
+    </div>
+  </footer>
+));
+
+Footer.displayName = "Footer";
 
 export { Footer };

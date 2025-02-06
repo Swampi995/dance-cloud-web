@@ -17,4 +17,6 @@ const RootLayout = (): JSX.Element => {
   );
 };
 
+RootLayout.displayName = "RootLayout";
+
 export default RootLayout;
