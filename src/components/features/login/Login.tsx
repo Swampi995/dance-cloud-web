@@ -61,7 +61,7 @@ const Login = (): JSX.Element => {
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/sessions");
     }
   }, [user, navigate]);
 

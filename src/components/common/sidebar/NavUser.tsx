@@ -17,17 +17,33 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/lib/auth-context";
+import { useToast } from "@/hooks/use-toast";
+import { useCallback } from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { FirebaseError } from "firebase/app";
 
-const NavUser = ({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) => {
+const NavUser = () => {
   const { isMobile } = useSidebar();
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  const handleSignOut = useCallback(async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast({
+          description: "An error occurred. Please try again.",
+          variant: "destructive",
+        });
+        console.error(error.code);
+      } else {
+        console.error(error);
+      }
+    }
+  }, [toast]);
 
   return (
     <SidebarMenu>
@@ -39,12 +55,17 @@ const NavUser = ({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage
+                  src={user?.photoURL ?? ""}
+                  alt={user?.displayName ?? ""}
+                />
                 <AvatarFallback className="rounded-lg">DC</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-semibold">
+                  {user?.displayName}
+                </span>
+                <span className="truncate text-xs">{user?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -58,17 +79,22 @@ const NavUser = ({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage
+                    src={user?.photoURL ?? ""}
+                    alt={user?.displayName ?? ""}
+                  />
                   <AvatarFallback className="rounded-lg">DC</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-semibold">
+                    {user?.displayName}
+                  </span>
+                  <span className="truncate text-xs">{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />
               Log out
             </DropdownMenuItem>

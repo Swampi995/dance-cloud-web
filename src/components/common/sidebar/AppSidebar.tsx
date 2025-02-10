@@ -29,11 +29,6 @@ import { ComponentProps } from "react";
 import { NavSection } from "./NavSection";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       name: "Club details",
@@ -127,7 +122,7 @@ const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
         <NavSection items={data.events} name="Events" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
