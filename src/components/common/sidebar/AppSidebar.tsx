@@ -98,7 +98,7 @@ const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
   const navigate = useNavigate();
 
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
