@@ -26,7 +26,7 @@ const Sessions = () => {
       <div className="mt-6 flex justify-between">
         <div className="flex place-items-center">
           <SidebarTrigger />
-          <h1 className="pl-4 text-xl font-bold sm:text-4xl">
+          <h1 className="pl-4 text-lg font-bold sm:text-2xl lg:text-4xl">
             Session Check-ins
           </h1>
         </div>

@@ -5,6 +5,7 @@ import {
   FacebookAuthProvider,
   OAuthProvider,
 } from "firebase/auth";
+import { getFirestore } from "firebase/firestore/lite";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -22,4 +23,13 @@ const auth = getAuth(app),
   facebookAuthProvider = new FacebookAuthProvider(),
   appleAuthProvider = new OAuthProvider("apple.com");
 
-export { auth, googleAuthProvider, facebookAuthProvider, appleAuthProvider };
+// Initialize Firestore
+const db = getFirestore(app);
+
+export {
+  auth,
+  googleAuthProvider,
+  facebookAuthProvider,
+  appleAuthProvider,
+  db,
+};
