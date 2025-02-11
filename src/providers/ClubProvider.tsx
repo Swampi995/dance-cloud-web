@@ -1,11 +1,10 @@
 import {
   createContext,
-  useContext,
   useState,
   useEffect,
+  ReactNode,
   Dispatch,
   SetStateAction,
-  ReactNode,
 } from "react";
 import {
   collection,
@@ -16,8 +15,8 @@ import {
   where,
 } from "firebase/firestore/lite";
 import { db } from "@/lib/firebase";
-import { useAuth } from "@/lib/auth-context";
 import { Club, ClubSchema } from "@/schemas/club";
+import { useAuth } from "@/hooks/use-auth";
 
 type ClubContextValue = {
   clubs: Club[];
@@ -27,14 +26,14 @@ type ClubContextValue = {
   setSelectedClub: Dispatch<SetStateAction<Club | null>>;
 };
 
-export function mapDocToClub(doc: QueryDocumentSnapshot<DocumentData>): Club {
+const mapDocToClub = (doc: QueryDocumentSnapshot<DocumentData>): Club => {
   const rawData = {
     id: doc.id,
     ...doc.data(),
   };
   const parsed = ClubSchema.parse(rawData);
   return parsed;
-}
+};
 
 const ClubContext = createContext<ClubContextValue>({
   clubs: [],
@@ -44,7 +43,7 @@ const ClubContext = createContext<ClubContextValue>({
   setSelectedClub: () => {},
 });
 
-export function ClubProvider({ children }: { children: ReactNode }) {
+function ClubProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(false);
@@ -68,7 +67,6 @@ export function ClubProvider({ children }: { children: ReactNode }) {
           const storedClubId = localStorage.getItem(
             `selectedClubId:${user.uid}`,
           );
-
           const matchedClub = storedClubId
             ? clubsData.find((club) => club.id === storedClubId)
             : null;
@@ -90,7 +88,7 @@ export function ClubProvider({ children }: { children: ReactNode }) {
     if (selectedClub && user) {
       localStorage.setItem(`selectedClubId:${user.uid}`, selectedClub.id);
     }
-  }, [selectedClub]);
+  }, [selectedClub, user]);
 
   return (
     <ClubContext.Provider
@@ -107,7 +105,4 @@ export function ClubProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Custom hook for consuming context
-export function useClubs() {
-  return useContext(ClubContext);
-}
+export { ClubContext, ClubProvider };

@@ -1,11 +1,5 @@
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { auth } from "./firebase";
+import { createContext, ReactNode, useEffect, useState } from "react";
+import { auth } from "../lib/firebase";
 import type { User } from "firebase/auth";
 
 type AuthContextType = {
@@ -38,7 +32,4 @@ function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-const useAuth = () => useContext(AuthContext);
-
-// eslint-disable-next-line react-refresh/only-export-components
-export { AuthProvider, useAuth };
+export { AuthContext, AuthProvider };

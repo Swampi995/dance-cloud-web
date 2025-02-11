@@ -1,8 +1,9 @@
 import { JSX, Suspense, lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
-import { AuthProvider, useAuth } from "@/lib/auth-context";
+import { AuthProvider } from "@/providers/AuthProvider";
 import Progress from "@/assets/svg/progress.svg?react";
-import { ClubProvider } from "./lib/club-context";
+import { ClubProvider } from "./providers/ClubProvider";
+import { useAuth } from "./hooks/use-auth";
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-screen items-center justify-center">

@@ -35,8 +35,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { useClubs } from "@/lib/club-context";
 import { NavSection } from "./NavSection";
+import { useClubs } from "@/hooks/use-clubs";
 
 const data = {
   navMain: [
