@@ -1,5 +1,12 @@
-// club-context.tsx
-import React, { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  ReactNode,
+} from "react";
 import {
   collection,
   DocumentData,
@@ -16,6 +23,8 @@ type ClubContextValue = {
   clubs: Club[];
   loading: boolean;
   error: Error | null;
+  selectedClub: Club | null;
+  setSelectedClub: Dispatch<SetStateAction<Club | null>>;
 };
 
 export function mapDocToClub(doc: QueryDocumentSnapshot<DocumentData>): Club {
@@ -23,7 +32,6 @@ export function mapDocToClub(doc: QueryDocumentSnapshot<DocumentData>): Club {
     id: doc.id,
     ...doc.data(),
   };
-
   const parsed = ClubSchema.parse(rawData);
   return parsed;
 }
@@ -32,13 +40,16 @@ const ClubContext = createContext<ClubContextValue>({
   clubs: [],
   loading: false,
   error: null,
+  selectedClub: null,
+  setSelectedClub: () => {},
 });
 
-export function ClubProvider({ children }: { children: React.ReactNode }) {
+export function ClubProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [selectedClub, setSelectedClub] = useState<Club | null>(null);
 
   useEffect(() => {
     const fetchClubs = async () => {
@@ -52,6 +63,18 @@ export function ClubProvider({ children }: { children: React.ReactNode }) {
 
         const clubsData = snapshot.docs.map(mapDocToClub);
         setClubs(clubsData);
+
+        if (clubsData.length > 0) {
+          const storedClubId = localStorage.getItem(
+            `selectedClubId:${user.uid}`,
+          );
+
+          const matchedClub = storedClubId
+            ? clubsData.find((club) => club.id === storedClubId)
+            : null;
+
+          setSelectedClub(matchedClub ?? clubsData[0]);
+        }
       } catch (err) {
         console.error("Error fetching clubs:", err);
         setError(err as Error);
@@ -63,8 +86,22 @@ export function ClubProvider({ children }: { children: React.ReactNode }) {
     fetchClubs();
   }, [user]);
 
+  useEffect(() => {
+    if (selectedClub && user) {
+      localStorage.setItem(`selectedClubId:${user.uid}`, selectedClub.id);
+    }
+  }, [selectedClub]);
+
   return (
-    <ClubContext.Provider value={{ clubs, loading, error }}>
+    <ClubContext.Provider
+      value={{
+        clubs,
+        loading,
+        error,
+        selectedClub,
+        setSelectedClub,
+      }}
+    >
       {children}
     </ClubContext.Provider>
   );
