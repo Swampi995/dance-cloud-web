@@ -1,7 +1,9 @@
 import { JSX, Suspense, lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
-import { AuthProvider, useAuth } from "@/lib/auth-context";
+import { AuthProvider } from "@/providers/AuthProvider";
 import Progress from "@/assets/svg/progress.svg?react";
+import { ClubProvider } from "./providers/ClubProvider";
+import { useAuth } from "./hooks/use-auth";
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-screen items-center justify-center">
@@ -40,29 +42,31 @@ const Sessions = lazy(() => import("./components/features/sessions/Sessions"));
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route element={<RootLayout />}>
-              <Route index element={<LandingHero />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/terms" element={<TermsOfService />} />
-              <Route path="/login" element={<Login />} />
-            </Route>
-            <Route
-              element={
-                <PrivateRoute>
-                  <SidebarLayout />
-                </PrivateRoute>
-              }
-            >
-              <Route path="/sessions" element={<Sessions />} />
-            </Route>
-            <Route path="/launch" element={<LaunchApp />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
+      <ClubProvider>
+        <BrowserRouter>
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              <Route element={<RootLayout />}>
+                <Route index element={<LandingHero />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/login" element={<Login />} />
+              </Route>
+              <Route
+                element={
+                  <PrivateRoute>
+                    <SidebarLayout />
+                  </PrivateRoute>
+                }
+              >
+                <Route path="/sessions" element={<Sessions />} />
+              </Route>
+              <Route path="/launch" element={<LaunchApp />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </ClubProvider>
     </AuthProvider>
   );
 }

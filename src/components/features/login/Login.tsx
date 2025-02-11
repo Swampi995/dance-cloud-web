@@ -19,7 +19,6 @@ import AppleLogo from "@/assets/svg/apple_logo.svg?react";
 import { Separator } from "@/components/ui/separator";
 import User from "@/assets/svg/user.svg?react";
 import LockClosed from "@/assets/svg/lock_closed.svg?react";
-import { useAuth } from "@/lib/auth-context";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import {
   auth,
@@ -31,6 +30,7 @@ import { useNavigate } from "react-router";
 import Progress from "@/assets/svg/progress.svg?react";
 import { useToast } from "@/hooks/use-toast";
 import { FirebaseError } from "firebase/app";
+import { useAuth } from "@/hooks/use-auth";
 
 const title = "Step Up to Dance Cloud!";
 const subtitle = "Where every beat uplifts your spirit";

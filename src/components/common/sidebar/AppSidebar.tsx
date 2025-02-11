@@ -1,5 +1,8 @@
+import { ComponentProps } from "react";
+import { useNavigate } from "react-router";
 import {
   CalendarDays,
+  ChevronDown,
   GraduationCap,
   House,
   LayoutGrid,
@@ -10,6 +13,8 @@ import {
   TrendingUp,
   UsersRound,
 } from "lucide-react";
+
+import logoUrl from "@/assets/images/logo.avif";
 
 import { NavMain } from "@/components/common/sidebar/NavMain";
 import { NavUser } from "@/components/common/sidebar/NavUser";
@@ -22,11 +27,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import logoUrl from "@/assets/images/logo.avif";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-import { useNavigate } from "react-router";
-import { ComponentProps } from "react";
 import { NavSection } from "./NavSection";
+import { useClubs } from "@/hooks/use-clubs";
 
 const data = {
   navMain: [
@@ -96,23 +106,47 @@ const data = {
 
 const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
   const navigate = useNavigate();
+  const { clubs, selectedClub, setSelectedClub } = useClubs();
 
   return (
     <Sidebar {...props}>
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <button onClick={() => navigate("/")}>
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
-                  <img src={logoUrl} />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">DanceCloud</span>
-                  <span className="truncate text-xs">Admin</span>
-                </div>
-              </button>
-            </SidebarMenuButton>
+          <SidebarMenuItem className="flex space-x-2 pl-2">
+            <button onClick={() => navigate("/")}>
+              <div className="aspect-square size-10">
+                <img src={logoUrl} />
+              </div>
+            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton size="lg" asChild>
+                  <div>
+                    <div className="grid flex-1 text-left text-sm leading-tight text-sidebar-primary-foreground">
+                      <span className="truncate px-2 font-semibold">
+                        DanceCloud
+                      </span>
+                      <span className="truncate px-2 text-xs">
+                        {selectedClub?.name ?? "Admin"}
+                      </span>
+                    </div>
+                    <ChevronDown />
+                  </div>
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuLabel>Select a Club</DropdownMenuLabel>
+                {clubs?.map((club) => (
+                  <DropdownMenuCheckboxItem
+                    key={club.id}
+                    checked={selectedClub?.id === club.id}
+                    onCheckedChange={() => setSelectedClub(club)}
+                  >
+                    {club.name}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

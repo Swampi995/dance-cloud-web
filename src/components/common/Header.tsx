@@ -9,12 +9,13 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/lib/auth-context";
+
 import logoUrl from "@/assets/images/logo.avif";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { FirebaseError } from "firebase/app";
+import { useAuth } from "@/hooks/use-auth";
 
 const Header = (): JSX.Element => {
   const { user } = useAuth();

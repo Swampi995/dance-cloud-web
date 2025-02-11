@@ -17,12 +17,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/hooks/use-toast";
 import { useCallback } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { FirebaseError } from "firebase/app";
+import { useAuth } from "@/hooks/use-auth";
 
 const NavUser = () => {
   const { isMobile } = useSidebar();
