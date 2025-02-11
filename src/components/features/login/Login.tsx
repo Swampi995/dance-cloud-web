@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { JSX, useState, useEffect, useCallback } from "react";
+import { JSX, useState, useEffect, useCallback, MouseEvent } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import EyeOpen from "@/assets/svg/eye_open.svg?react";
@@ -61,7 +61,7 @@ const Login = (): JSX.Element => {
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/sessions");
     }
   }, [user, navigate]);
 
@@ -105,7 +105,7 @@ const Login = (): JSX.Element => {
   // Generalized provider login handler memoized with useCallback
   const loginWithProvider = useCallback(
     async (
-      e: React.MouseEvent,
+      e: MouseEvent,
       provider:
         | typeof googleAuthProvider
         | typeof appleAuthProvider
@@ -119,15 +119,15 @@ const Login = (): JSX.Element => {
 
   // Pre-bind provider-specific handlers to avoid inline arrow functions in JSX
   const handleAppleLogin = useCallback(
-    (e: React.MouseEvent) => loginWithProvider(e, appleAuthProvider),
+    (e: MouseEvent) => loginWithProvider(e, appleAuthProvider),
     [loginWithProvider],
   );
   const handleGoogleLogin = useCallback(
-    (e: React.MouseEvent) => loginWithProvider(e, googleAuthProvider),
+    (e: MouseEvent) => loginWithProvider(e, googleAuthProvider),
     [loginWithProvider],
   );
   const handleFacebookLogin = useCallback(
-    (e: React.MouseEvent) => loginWithProvider(e, facebookAuthProvider),
+    (e: MouseEvent) => loginWithProvider(e, facebookAuthProvider),
     [loginWithProvider],
   );
 

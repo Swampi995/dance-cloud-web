@@ -1,6 +1,6 @@
-import { Suspense, lazy } from "react";
+import { JSX, Suspense, lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
-import { AuthProvider } from "@/lib/auth-context";
+import { AuthProvider, useAuth } from "@/lib/auth-context";
 import Progress from "@/assets/svg/progress.svg?react";
 
 const LoadingFallback = () => (
@@ -9,7 +9,23 @@ const LoadingFallback = () => (
   </div>
 );
 
+const PrivateRoute = ({ children }: { children: JSX.Element }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <LoadingFallback />;
+  }
+
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
+const SidebarLayout = lazy(() => import("@/components/layout/SidebarLayout"));
 const RootLayout = lazy(() => import("@/components/layout/RootLayout"));
+
 const LaunchApp = lazy(
   () => import("@/components/features/launch/LaunchAppHero"),
 );
@@ -19,6 +35,7 @@ const LandingHero = lazy(
 const PrivacyPolicy = lazy(() => import("./components/features/privacy"));
 const Login = lazy(() => import("./components/features/login/Login"));
 const TermsOfService = lazy(() => import("./components/features/terms"));
+const Sessions = lazy(() => import("./components/features/sessions/Sessions"));
 
 function App() {
   return (
@@ -31,9 +48,18 @@ function App() {
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/login" element={<Login />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+            </Route>
+            <Route
+              element={
+                <PrivateRoute>
+                  <SidebarLayout />
+                </PrivateRoute>
+              }
+            >
+              <Route path="/sessions" element={<Sessions />} />
             </Route>
             <Route path="/launch" element={<LaunchApp />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
       </BrowserRouter>
