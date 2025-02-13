@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useState, useCallback, JSX } from "react";
 import { NavLink } from "react-router";
 import {
@@ -24,6 +23,8 @@ const Header = (): JSX.Element => {
 
   const handleSignOut = useCallback(async () => {
     try {
+      // Clear localStorage items
+      localStorage.removeItem(`selectedClubId:${user?.uid}`);
       await signOut(auth);
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -36,7 +37,7 @@ const Header = (): JSX.Element => {
         console.error(error);
       }
     }
-  }, [toast]);
+  }, [toast, user]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,7 +58,7 @@ const Header = (): JSX.Element => {
     >
       <NavLink
         to="/"
-        className="flex items-center gap-2 self-center text-xl font-bold"
+        className="flex items-center gap-2 self-center font-bold sm:text-xl"
       >
         <Avatar>
           <AvatarImage src={logoUrl} />
@@ -67,16 +68,14 @@ const Header = (): JSX.Element => {
       </NavLink>
       <NavigationMenu>
         <NavigationMenuList>
-          {user && (
-            <NavigationMenuItem>
-              <NavigationMenuLink
-                asChild
-                className={navigationMenuTriggerStyle()}
-              >
-                <NavLink to="/sessions">Sessions</NavLink>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          )}
+          <NavigationMenuItem className={user ? "" : "hidden"}>
+            <NavigationMenuLink
+              asChild
+              className={navigationMenuTriggerStyle()}
+            >
+              <NavLink to="/sessions">Sessions</NavLink>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink
               asChild

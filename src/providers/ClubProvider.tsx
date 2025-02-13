@@ -1,68 +1,26 @@
-import {
-  createContext,
-  useState,
-  useEffect,
-  ReactNode,
-  Dispatch,
-  SetStateAction,
-} from "react";
-import {
-  collection,
-  DocumentData,
-  getDocs,
-  query,
-  QueryDocumentSnapshot,
-  where,
-} from "firebase/firestore/lite";
-import { db } from "@/lib/firebase";
-import { Club, ClubSchema } from "@/schemas/club";
+import { useState, useEffect, ReactNode } from "react";
+import { ClubType } from "@/schemas/club";
 import { useAuth } from "@/hooks/use-auth";
-
-type ClubContextValue = {
-  clubs: Club[];
-  loading: boolean;
-  error: Error | null;
-  selectedClub: Club | null;
-  setSelectedClub: Dispatch<SetStateAction<Club | null>>;
-};
-
-const mapDocToClub = (doc: QueryDocumentSnapshot<DocumentData>): Club => {
-  const rawData = {
-    id: doc.id,
-    ...doc.data(),
-  };
-  const parsed = ClubSchema.parse(rawData);
-  return parsed;
-};
-
-const ClubContext = createContext<ClubContextValue>({
-  clubs: [],
-  loading: false,
-  error: null,
-  selectedClub: null,
-  setSelectedClub: () => {},
-});
+import { subscribeToClubsForUser } from "@/api/clubs";
+import { ClubContext } from "@/contexts/club-context";
 
 function ClubProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [clubs, setClubs] = useState<Club[]>([]);
+  const [clubs, setClubs] = useState<ClubType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [selectedClub, setSelectedClub] = useState<Club | null>(null);
+  const [selectedClub, setSelectedClub] = useState<ClubType | null>(null);
 
   useEffect(() => {
-    const fetchClubs = async () => {
-      if (!user) return;
-      setLoading(true);
+    if (!user) return;
+    setLoading(true);
 
-      try {
-        const clubsRef = collection(db, "clubs");
-        const q = query(clubsRef, where("admins", "array-contains", user.uid));
-        const snapshot = await getDocs(q);
-
-        const clubsData = snapshot.docs.map(mapDocToClub);
+    // Subscribe to clubs updates in real time
+    const unsubscribe = subscribeToClubsForUser(
+      // user.uid,
+      "f1WLBZdgCUYtbaGcwtn1GL9rH832",
+      (clubsData) => {
         setClubs(clubsData);
-
         if (clubsData.length > 0) {
           const storedClubId = localStorage.getItem(
             `selectedClubId:${user.uid}`,
@@ -70,18 +28,20 @@ function ClubProvider({ children }: { children: ReactNode }) {
           const matchedClub = storedClubId
             ? clubsData.find((club) => club.id === storedClubId)
             : null;
-
           setSelectedClub(matchedClub ?? clubsData[0]);
+        } else {
+          setSelectedClub(null);
         }
-      } catch (err) {
-        console.error("Error fetching clubs:", err);
-        setError(err as Error);
-      } finally {
         setLoading(false);
-      }
-    };
+      },
+      (err) => {
+        setError(err);
+        setLoading(false);
+      },
+    );
 
-    fetchClubs();
+    // Clean up the listener when the component unmounts or when the user changes.
+    return () => unsubscribe();
   }, [user]);
 
   useEffect(() => {
@@ -105,4 +65,4 @@ function ClubProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export { ClubContext, ClubProvider };
+export { ClubProvider };
