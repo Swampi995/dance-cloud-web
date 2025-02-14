@@ -4,23 +4,23 @@ import { DocumentReferenceSchema } from "./firebase";
 
 export const ClubCategorySchema = z.object({
   id: z.string(),
-  name: z.string(),
-  ageGroup: z.enum(["children", "adults", "seniors"]),
+  name: z.string().optional(),
+  ageGroup: z.enum(["children", "adults", "seniors"]).optional(),
 });
 
 export type ClubCategoryType = z.infer<typeof ClubCategorySchema>;
 
 export const ClubMembershipSchema = z.object({
   id: z.string(),
-  name: z.string(),
-  classesNo: z.number(),
+  name: z.string().optional(),
+  classesNo: z.number().or(z.string()),
   unlimitedClasses: z.boolean().optional(),
   price: z.number(),
   priceExtraSession: z.number().optional(),
-  orderNo: z.number(),
-  duration: z.number(),
+  orderNo: z.string().or(z.number()),
+  duration: z.string().or(z.number()),
   loyaltyDiscount: z.number().optional(),
-  category: ClubCategorySchema,
+  category: ClubCategorySchema.optional(),
 });
 
 export type ClubMembershipType = z.infer<typeof ClubMembershipSchema>;

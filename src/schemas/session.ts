@@ -5,7 +5,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { UserSchema } from "./user";
-import { UserMembershipSchema } from "./membership";
+import { ClubMembershipSchema, UserMembershipSchema } from "./membership";
 import { DocumentReferenceSchema } from "./firebase";
 
 // Base ClubSession schema uses references for user and membership.
@@ -18,10 +18,11 @@ export const BaseClubSessionSchema = z.object({
 
 export type BaseClubSessionType = z.infer<typeof BaseClubSessionSchema>;
 
-// Extended ClubSession schema uses data from the user and membership references
+// Extended ClubSession schema uses data from the user, user membership and club membership references
 export const ExtendedClubSessionSchema = BaseClubSessionSchema.extend({
   userData: z.nullable(UserSchema),
   userMembershipData: z.nullable(UserMembershipSchema),
+  clubMembershipData: z.nullable(ClubMembershipSchema),
 });
 
 export type ExtendedClubSessionType = z.infer<typeof ExtendedClubSessionSchema>;

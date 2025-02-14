@@ -1,4 +1,12 @@
-import { DatePicker } from "@/components/ui/date-picker";
+import { useState, FC } from "react";
+import {
+  Timestamp,
+  QueryDocumentSnapshot,
+  DocumentData,
+} from "firebase/firestore";
+import { DateRange } from "react-day-picker";
+import { format, subDays } from "date-fns";
+import { DatePickerWithRange } from "@/components/ui/date-picker";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Table,
@@ -8,7 +16,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CircleCheck, CircleDashed, CircleX } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -17,71 +24,113 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { CircleCheck, CircleDashed, CircleX } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useClubs } from "@/hooks/use-clubs";
 import { useClubSessions } from "@/hooks/use-club-sessions";
-import {
-  Timestamp,
-  QueryDocumentSnapshot,
-  DocumentData,
-} from "firebase/firestore";
-import { useState } from "react";
 import { useDynamicPageSize } from "@/hooks/use-dynamic-page-size";
-import { Skeleton } from "@/components/ui/skeleton";
 
-const Sessions = () => {
+/**
+ * Renders the table header for the sessions table.
+ *
+ * @returns {JSX.Element} The table header JSX element.
+ */
+function renderTableHeader() {
+  return (
+    <TableHeader>
+      <TableRow>
+        <TableHead className="w-[40%]">Member Name</TableHead>
+        <TableHead className="w-[25%] text-center">Check-In Time</TableHead>
+        <TableHead className="w-[10%] text-center">Expiry Date</TableHead>
+        <TableHead className="w-[20%] text-center">Type</TableHead>
+        <TableHead className="w-[5%] text-center">Active</TableHead>
+      </TableRow>
+    </TableHeader>
+  );
+}
+
+/**
+ * Sessions component displays a paginated table of club session check-ins.
+ *
+ * This component renders:
+ * - A header containing a sidebar trigger, title, and a date range picker.
+ * - A table displaying session details such as member name, check-in time,
+ *   membership expiry date, membership type, and active status.
+ * - Pagination controls to navigate between pages.
+ *
+ * The session data is fetched from Firestore using custom hooks. The data is
+ * filtered by a selected date range and supports pagination.
+ *
+ * @component
+ */
+const Sessions: FC = () => {
+  // Retrieve the currently selected club from context.
   const { selectedClub } = useClubs();
 
-  // Keep track of current page and a list of startAfterDoc snapshots for each page
+  /**
+   * Pagination state:
+   * - currentPage: index of the current page.
+   * - startAfterDocs: array of document snapshots used for Firestore pagination.
+   */
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [startAfterDocs, setStartAfterDocs] = useState<
     (QueryDocumentSnapshot<DocumentData> | null)[]
   >([null]);
 
+  // Get dynamic page size (number of sessions per page) from a custom hook.
   const dynamicPageSize = useDynamicPageSize();
 
-  // Pass the current page’s startAfterDoc to the hook
+  /**
+   * Date range state for filtering session check-ins.
+   * Default is from 7 days ago to today.
+   */
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 7),
+    to: new Date(),
+  });
+
   const { data, error, loading } = useClubSessions(
     selectedClub?.id ?? "",
     dynamicPageSize,
     startAfterDocs[currentPage],
+    dateRange?.from, // startDate
+    dateRange?.to, // endDate
   );
 
-  // Early return if no club is selected
+  // Early return: if no club is selected, display a message.
   if (!selectedClub) {
     return (
-      <div className="w-full place-self-center p-4 text-center text-4xl font-semibold">
+      <div className="w-full self-center p-4 text-center text-4xl font-semibold">
         No club selected.
       </div>
     );
   }
 
-  // Handle error state
+  // Error handling: if an error occurs during data fetching, display an error message.
   if (error) {
     return (
-      <div className="w-full place-self-center p-4 text-center text-4xl font-semibold text-red-500">
+      <div className="w-full self-center p-4 text-center text-4xl font-semibold text-red-500">
         Error: {error.message}
       </div>
     );
   }
 
-  // If we have no data or the sessions array is empty, show a fallback
-  if (!loading && (!data || data.sessions.length === 0)) {
-    return (
-      <div className="w-full place-self-center p-4 text-center text-4xl font-semibold">
-        No sessions found.
-      </div>
-    );
-  }
-
-  // Determine if we can go to the next/previous page
-  // A common check for "has next page" is whether you received a full `PAGE_SIZE` of docs
+  /**
+   * Determine if there are more pages to navigate.
+   *
+   * - canGoNext: true if the number of fetched sessions equals the page size and a lastVisible doc exists.
+   * - canGoPrev: true if the current page index is greater than zero.
+   */
   const canGoNext =
-    data.sessions.length === dynamicPageSize && data.lastVisible !== null;
+    data?.sessions.length === dynamicPageSize && data.lastVisible !== null;
   const canGoPrev = currentPage > 0;
 
+  /**
+   * Handles pagination to the next page.
+   * Updates the pagination state by storing the last visible document snapshot.
+   */
   const handleNext = () => {
     if (canGoNext && data.lastVisible) {
-      // Store the new lastVisible doc so we can jump back to it later
       setStartAfterDocs((prev) => {
         const docs = [...prev];
         docs[currentPage + 1] = data.lastVisible;
@@ -91,53 +140,41 @@ const Sessions = () => {
     }
   };
 
+  /**
+   * Handles pagination to the previous page.
+   * Simply decrements the current page index.
+   */
   const handlePrevious = () => {
     if (canGoPrev) {
       setCurrentPage(currentPage - 1);
     }
   };
 
-  const renderTableHeader = () => (
-    <TableHeader>
-      <TableRow>
-        <TableHead className="w-[45%]">Member Name</TableHead>
-        <TableHead className="w-[20%] text-center">Check-In Time</TableHead>
-        <TableHead className="w-1/4 text-center">Expiry Date</TableHead>
-        <TableHead className="w-[10%] text-center">Active</TableHead>
-      </TableRow>
-    </TableHeader>
-  );
-
   return (
     <div className="flex flex-1 flex-col gap-4 px-4 pb-4 sm:px-10">
-      <div className="mt-6 flex justify-between">
-        <div className="flex place-items-center">
+      {/* Header section: sidebar trigger, page title, and date range picker */}
+      <div className="mt-6 flex items-center justify-between">
+        <div className="flex items-center">
           <SidebarTrigger />
-          <h1 className="pl-4 text-lg font-bold sm:text-2xl lg:text-4xl">
+          <h1 className="pl-4 text-base font-bold sm:text-2xl lg:text-4xl">
             Session Check-ins
           </h1>
         </div>
-        <DatePicker />
+        <DatePickerWithRange value={dateRange} onChange={setDateRange} />
       </div>
 
+      {/* Main content area: table of sessions and pagination controls */}
       <div className="flex-1 space-y-4 rounded-xl bg-sidebar/70 p-1 py-4 sm:px-4">
-        {/* Search input
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-2">
-            <Search width={16} className="text-muted-foreground" />
-          </div>
-          <Input
-            className="max-w-xs pl-8 ring-1 ring-inset ring-sidebar-accent"
-            placeholder="Search by name"
-          />
-        </div> */}
-
         {loading ? (
+          // Display a loading skeleton while session data is being fetched.
           <Table>
             {renderTableHeader()}
             <TableBody>
               {Array.from({ length: dynamicPageSize }).map((_, i) => (
-                <TableRow key={i}>
+                <TableRow key={`skeleton-row-${i}`}>
+                  <TableCell>
+                    <Skeleton className="h-[24px]" />
+                  </TableCell>
                   <TableCell>
                     <Skeleton className="h-[24px]" />
                   </TableCell>
@@ -156,12 +193,12 @@ const Sessions = () => {
           </Table>
         ) : (
           <>
-            {/* Sessions table */}
+            {/* Sessions Table: Displays session details */}
             <Table>
               {renderTableHeader()}
               <TableBody>
-                {data.sessions.map((session) => {
-                  // Convert Firestore timestamps to JS Dates
+                {data?.sessions.map((session) => {
+                  // Convert Firestore Timestamps to JavaScript Date objects.
                   const checkInTime = (session.date as Timestamp).toDate();
                   const expiration = session.userMembershipData?.expiration
                     ? (
@@ -169,7 +206,7 @@ const Sessions = () => {
                       ).toDate()
                     : null;
 
-                  // Determine if the membership is active (expiration date is in the future)
+                  // Determine if the membership is active based on the expiration date.
                   const isActive = expiration ? expiration > new Date() : null;
 
                   return (
@@ -178,20 +215,24 @@ const Sessions = () => {
                         {session.userData?.name ?? "Unknown User"}
                       </TableCell>
                       <TableCell className="text-center">
-                        {checkInTime.toLocaleTimeString()}
+                        {format(checkInTime, "dd/MM/yyyy HH:mm")}
                       </TableCell>
                       <TableCell className="text-center">
-                        {expiration
-                          ? expiration.toLocaleDateString()
-                          : "No membership"}
+                        {expiration ? expiration.toLocaleDateString() : "—"}
                       </TableCell>
-                      <TableCell className="place-items-center">
-                        {isActive === null ? ( // TODO: Ugly double ternary, should make it prettier
-                          <CircleDashed className="text-muted-foreground" />
+                      <TableCell className="text-center">
+                        {session.clubMembershipData?.name?.replace(
+                          "Abonament",
+                          "",
+                        ) ?? "—"}
+                      </TableCell>
+                      <TableCell className="items-center text-center">
+                        {isActive === null ? (
+                          <CircleDashed className="mx-auto text-muted-foreground" />
                         ) : isActive ? (
-                          <CircleCheck className="text-green-500" />
+                          <CircleCheck className="mx-auto text-green-500" />
                         ) : (
-                          <CircleX className="text-red-500" />
+                          <CircleX className="mx-auto text-red-500" />
                         )}
                       </TableCell>
                     </TableRow>
@@ -200,31 +241,30 @@ const Sessions = () => {
               </TableBody>
             </Table>
 
-            {/* Pagination controls */}
+            {/* Pagination Controls */}
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    className={`hover:bg-sidebar ${!canGoPrev && "text-muted-foreground"}`}
+                    className={`hover:bg-sidebar ${
+                      !canGoPrev && "text-muted-foreground"
+                    } cursor-pointer`}
                     onClick={handlePrevious}
                     isActive={!canGoPrev}
-                    href="#"
                   />
                 </PaginationItem>
-
-                {/* Current Page Display (1-based) */}
                 <PaginationItem>
-                  <PaginationLink className="hover:bg-sidebar" href="#">
-                    Page {currentPage + 1}
+                  <PaginationLink className="hover:bg-transparent">
+                    {currentPage + 1}
                   </PaginationLink>
                 </PaginationItem>
-
                 <PaginationItem>
                   <PaginationNext
-                    className={`hover:bg-sidebar ${!canGoNext && "text-muted-foreground"}`}
+                    className={`hover:bg-sidebar ${
+                      !canGoNext && "text-muted-foreground"
+                    } cursor-pointer`}
                     onClick={handleNext}
                     isActive={!canGoNext}
-                    href="#"
                   />
                 </PaginationItem>
               </PaginationContent>

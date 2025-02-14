@@ -8,7 +8,12 @@
  */
 
 import { ClubSchema, ClubType } from "@/schemas/club";
-import { UserMembershipType, UserMembershipSchema } from "@/schemas/membership";
+import {
+  UserMembershipType,
+  UserMembershipSchema,
+  ClubMembershipSchema,
+  ClubMembershipType,
+} from "@/schemas/membership";
 import { BaseClubSessionType, BaseClubSessionSchema } from "@/schemas/session";
 import { UserType, UserSchema } from "@/schemas/user";
 import {
@@ -70,6 +75,25 @@ const mapDocToUserMembership = (
 };
 
 /**
+ * Converts a Firestore club membership document snapshot into a typed `ClubMembershipType` object.
+ *
+ * @param {DocumentSnapshot<DocumentData>} docSnap - The Firestore document snapshot of a club membership.
+ * @returns {ClubMembershipType} The parsed and validated club membership object.
+ * @throws Will throw an error if the document data does not match the ClubMembershipSchema.
+ *
+ * @example
+ * const membership = mapDocToClubMembership(clubMembershipDocSnapshot);
+ */
+const mapDocToClubMembership = (
+  docSnap: DocumentSnapshot<DocumentData>,
+): ClubMembershipType => {
+  // Merge the document ID with the document data
+  const rawData = { id: docSnap.id, ...docSnap.data() };
+  // Validate and parse the data using the ClubMembershipSchema
+  return ClubMembershipSchema.parse(rawData);
+};
+
+/**
  * Converts a Firestore club session document snapshot into a typed `BaseClubSessionType` object.
  *
  * @param {QueryDocumentSnapshot<DocumentData>} docSnap - The Firestore document snapshot of a club session.
@@ -93,4 +117,5 @@ export {
   mapDocToUserMembership,
   mapDocToUser,
   mapDocToClub,
+  mapDocToClubMembership,
 };
