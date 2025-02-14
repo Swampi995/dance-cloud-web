@@ -1,21 +1,15 @@
 import { JSX, Suspense, lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { AuthProvider } from "@/providers/AuthProvider";
-import Progress from "@/assets/svg/progress.svg?react";
 import { ClubProvider } from "./providers/ClubProvider";
 import { useAuth } from "./hooks/use-auth";
-
-const LoadingFallback = () => (
-  <div className="flex h-screen w-screen items-center justify-center">
-    <Progress className="h-8 w-8 animate-spin" />
-  </div>
-);
+import { Loading } from "./components/common/Loading";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <LoadingFallback />;
+    return <Loading />;
   }
 
   if (!user) {
@@ -44,7 +38,7 @@ function App() {
     <AuthProvider>
       <ClubProvider>
         <BrowserRouter>
-          <Suspense fallback={<LoadingFallback />}>
+          <Suspense fallback={<Loading />}>
             <Routes>
               <Route element={<RootLayout />}>
                 <Route index element={<LandingHero />} />

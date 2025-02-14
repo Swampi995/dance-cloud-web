@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GeoPoint } from "firebase/firestore/lite";
+import { GeoPoint } from "firebase/firestore";
 
 export const ClubSchema = z.object({
   id: z.string(),
@@ -19,7 +19,7 @@ export const ClubSchema = z.object({
   description: z.string().optional(),
   admins: z.array(z.string()),
   allowRegistration: z.boolean().optional(),
-  coordinates: z.instanceof(GeoPoint),
+  coordinates: z.instanceof(GeoPoint).optional(),
 });
 
-export type Club = z.infer<typeof ClubSchema>;
+export type ClubType = z.infer<typeof ClubSchema>;
