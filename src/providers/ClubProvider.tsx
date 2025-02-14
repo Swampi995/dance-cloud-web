@@ -43,8 +43,7 @@ function ClubProvider({ children }: { children: ReactNode }) {
     // Subscribe to real-time club updates for the user.
     // Note: The user.uid is commented out and replaced with a static value for now.
     const unsubscribe = subscribeToClubsForUser(
-      // Intended usage: user.uid,
-      "f1WLBZdgCUYtbaGcwtn1GL9rH832",
+      user.uid,
       // Success callback: update clubs and set selected club.
       (clubsData) => {
         setClubs(clubsData);

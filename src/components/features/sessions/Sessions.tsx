@@ -29,6 +29,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useClubs } from "@/hooks/use-clubs";
 import { useClubSessions } from "@/hooks/use-club-sessions";
 import { useDynamicPageSize } from "@/hooks/use-dynamic-page-size";
+import { useToast } from "@/hooks/use-toast";
 
 /**
  * Renders the table header for the sessions table.
@@ -80,6 +81,8 @@ const Sessions: FC = () => {
   // Get dynamic page size (number of sessions per page) from a custom hook.
   const dynamicPageSize = useDynamicPageSize();
 
+  const { toast } = useToast();
+
   /**
    * Date range state for filtering session check-ins.
    * Default is from 7 days ago to today.
@@ -97,22 +100,12 @@ const Sessions: FC = () => {
     dateRange?.to, // endDate
   );
 
-  // Early return: if no club is selected, display a message.
-  if (!selectedClub) {
-    return (
-      <div className="w-full self-center p-4 text-center text-4xl font-semibold">
-        No club selected.
-      </div>
-    );
-  }
-
-  // Error handling: if an error occurs during data fetching, display an error message.
+  // Error handling: if an error occurs during data fetching, display an error toast.
   if (error) {
-    return (
-      <div className="w-full self-center p-4 text-center text-4xl font-semibold text-red-500">
-        Error: {error.message}
-      </div>
-    );
+    toast({
+      description: "An error occurred. Please try again",
+      variant: "destructive",
+    });
   }
 
   /**
