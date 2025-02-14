@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback, JSX } from "react";
+"use client";
+import { useEffect, useState, JSX } from "react";
 import { NavLink } from "react-router";
 import {
   NavigationMenu,
@@ -10,34 +11,32 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import logoUrl from "@/assets/images/logo.avif";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { useToast } from "@/hooks/use-toast";
-import { FirebaseError } from "firebase/app";
+// import { signOut } from "firebase/auth";
+// import { auth } from "@/lib/firebase";
+// import { useToast } from "@/hooks/use-toast";
+// import { FirebaseError } from "firebase/app";
 import { useAuth } from "@/hooks/use-auth";
 
 const Header = (): JSX.Element => {
   const { user } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
-  const { toast } = useToast();
+  // const { toast } = useToast();
 
-  const handleSignOut = useCallback(async () => {
-    try {
-      // Clear localStorage items
-      localStorage.removeItem(`selectedClubId:${user?.uid}`);
-      await signOut(auth);
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        toast({
-          description: "An error occurred. Please try again.",
-          variant: "destructive",
-        });
-        console.error(error.code);
-      } else {
-        console.error(error);
-      }
-    }
-  }, [toast, user]);
+  // const handleSignOut = useCallback(async () => {
+  //   try {
+  //     await signOut(auth);
+  //   } catch (error) {
+  //     if (error instanceof FirebaseError) {
+  //       toast({
+  //         description: "An error occurred. Please try again.",
+  //         variant: "destructive",
+  //       });
+  //       console.error(error.code);
+  //     } else {
+  //       console.error(error);
+  //     }
+  //   }
+  // }, [toast]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,7 +83,7 @@ const Header = (): JSX.Element => {
               <NavLink to="/contact">Contact</NavLink>
             </NavigationMenuLink>
           </NavigationMenuItem>
-          <NavigationMenuItem>
+          {/* <NavigationMenuItem>
             <NavigationMenuLink
               asChild
               className={navigationMenuTriggerStyle()}
@@ -95,7 +94,7 @@ const Header = (): JSX.Element => {
                 <NavLink to="/login">Log In</NavLink>
               )}
             </NavigationMenuLink>
-          </NavigationMenuItem>
+          </NavigationMenuItem> */}
         </NavigationMenuList>
       </NavigationMenu>
     </div>
