@@ -1,5 +1,4 @@
 import { DatePicker } from "@/components/ui/date-picker";
-import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Table,
@@ -9,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CircleCheck, CircleDashed, CircleX, Search } from "lucide-react";
+import { CircleCheck, CircleDashed, CircleX } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -101,9 +100,9 @@ const Sessions = () => {
   const renderTableHeader = () => (
     <TableHeader>
       <TableRow>
-        <TableHead className="w-1/2">Member Name</TableHead>
-        <TableHead className="w-1/5 text-center">Check-In Time</TableHead>
-        <TableHead className="w-1/5 text-center">Expiry Date</TableHead>
+        <TableHead className="w-[45%]">Member Name</TableHead>
+        <TableHead className="w-[20%] text-center">Check-In Time</TableHead>
+        <TableHead className="w-1/4 text-center">Expiry Date</TableHead>
         <TableHead className="w-[10%] text-center">Active</TableHead>
       </TableRow>
     </TableHeader>
@@ -122,7 +121,7 @@ const Sessions = () => {
       </div>
 
       <div className="flex-1 space-y-4 rounded-xl bg-sidebar/70 p-1 py-4 sm:px-4">
-        {/* Search input */}
+        {/* Search input
         <div className="relative">
           <div className="absolute inset-y-0 left-0 flex items-center pl-2">
             <Search width={16} className="text-muted-foreground" />
@@ -131,7 +130,7 @@ const Sessions = () => {
             className="max-w-xs pl-8 ring-1 ring-inset ring-sidebar-accent"
             placeholder="Search by name"
           />
-        </div>
+        </div> */}
 
         {loading ? (
           <Table>
