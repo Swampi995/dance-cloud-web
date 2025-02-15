@@ -57,7 +57,7 @@ const Header = (): JSX.Element => {
     >
       <NavLink
         to="/"
-        className="flex items-center gap-2 self-center text-xl font-bold"
+        className="flex items-center gap-2 self-center font-bold sm:text-xl"
       >
         <Avatar>
           <AvatarImage src={logoUrl} />
@@ -67,16 +67,14 @@ const Header = (): JSX.Element => {
       </NavLink>
       <NavigationMenu>
         <NavigationMenuList>
-          {user && (
-            <NavigationMenuItem>
-              <NavigationMenuLink
-                asChild
-                className={navigationMenuTriggerStyle()}
-              >
-                <NavLink to="/sessions">Sessions</NavLink>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          )}
+          <NavigationMenuItem className={user ? "" : "hidden"}>
+            <NavigationMenuLink
+              asChild
+              className={navigationMenuTriggerStyle()}
+            >
+              <NavLink to="/sessions">Sessions</NavLink>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink
               asChild

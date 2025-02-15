@@ -5,7 +5,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import appImage1 from "@/assets/images/app_image_1.avif";
 import appImage2 from "@/assets/images/app_image_2.avif";
 import appImage3 from "@/assets/images/app_image_3.avif";
