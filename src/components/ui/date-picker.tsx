@@ -30,11 +30,11 @@ const DatePickerWithRange = ({
             id="date"
             variant="outline"
             className={cn(
-              "w-[200px] justify-start text-left text-xs font-normal sm:w-[300px] sm:text-sm",
+              "justify-start text-left text-xs font-normal sm:text-sm",
               !value && "text-muted-foreground",
             )}
           >
-            <CalendarIcon className="mr-2" />
+            <CalendarIcon className="sm:mr-2" />
             {value?.from ? (
               value.to ? (
                 <>

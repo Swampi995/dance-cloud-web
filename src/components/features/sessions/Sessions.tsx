@@ -40,11 +40,21 @@ function renderTableHeader() {
   return (
     <TableHeader>
       <TableRow>
-        <TableHead className="w-[40%]">Member Name</TableHead>
-        <TableHead className="w-[25%] text-center">Check-In Time</TableHead>
-        <TableHead className="w-[10%] text-center">Expiry Date</TableHead>
-        <TableHead className="w-[20%] text-center">Type</TableHead>
-        <TableHead className="w-[5%] text-center">Active</TableHead>
+        <TableHead className="w-[40%] text-xs sm:text-base">
+          Member Name
+        </TableHead>
+        <TableHead className="w-[25%] text-center text-xs sm:text-base">
+          Check-In
+        </TableHead>
+        <TableHead className="w-[10%] text-center text-xs sm:text-base">
+          Expiry
+        </TableHead>
+        <TableHead className="w-[20%] text-center text-xs sm:text-base">
+          Type
+        </TableHead>
+        <TableHead className="w-[5%] text-center text-xs sm:text-base">
+          Active
+        </TableHead>
       </TableRow>
     </TableHeader>
   );
@@ -146,10 +156,10 @@ const Sessions: FC = () => {
   return (
     <div className="flex flex-1 flex-col gap-4 px-4 pb-4 sm:px-10">
       {/* Header section: sidebar trigger, page title, and date range picker */}
-      <div className="mt-6 flex items-center justify-between">
+      <div className="mt-6 flex items-center justify-between space-x-2">
         <div className="flex items-center">
           <SidebarTrigger />
-          <h1 className="pl-4 text-base font-bold sm:text-2xl lg:text-4xl">
+          <h1 className="pl-4 text-sm font-bold sm:text-xl md:text-2xl lg:text-4xl">
             Session Check-ins
           </h1>
         </div>
@@ -239,7 +249,7 @@ const Sessions: FC = () => {
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    className={`hover:bg-sidebar ${
+                    className={`text-xs hover:bg-sidebar sm:text-base ${
                       !canGoPrev && "text-muted-foreground"
                     } cursor-pointer`}
                     onClick={handlePrevious}
@@ -247,13 +257,13 @@ const Sessions: FC = () => {
                   />
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationLink className="hover:bg-transparent">
+                  <PaginationLink className="text-xs hover:bg-transparent sm:text-base">
                     {currentPage + 1}
                   </PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext
-                    className={`hover:bg-sidebar ${
+                    className={`text-xs hover:bg-sidebar sm:text-base ${
                       !canGoNext && "text-muted-foreground"
                     } cursor-pointer`}
                     onClick={handleNext}
