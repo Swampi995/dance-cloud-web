@@ -4,9 +4,8 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
 } from "firebase/firestore";
-import { DateRange } from "react-day-picker";
-import { format, subDays } from "date-fns";
-import { DatePickerWithRange } from "@/components/ui/date-picker";
+import { format } from "date-fns";
+import { DatePicker } from "@/components/ui/date-picker";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Table,
@@ -97,17 +96,14 @@ const Sessions: FC = () => {
    * Date range state for filtering session check-ins.
    * Default is from 7 days ago to today.
    */
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: subDays(new Date(), 7),
-    to: new Date(),
-  });
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
   const { data, error, loading } = useClubSessions(
     selectedClub?.id ?? "",
     dynamicPageSize,
     startAfterDocs[currentPage],
-    dateRange?.from, // startDate
-    dateRange?.to, // endDate
+    date,
+    date,
   );
 
   // Error handling: if an error occurs during data fetching, display an error toast.
@@ -163,7 +159,7 @@ const Sessions: FC = () => {
             Session Check-ins
           </h1>
         </div>
-        <DatePickerWithRange value={dateRange} onChange={setDateRange} />
+        <DatePicker value={date} onChange={setDate} />
       </div>
 
       {/* Main content area: table of sessions and pagination controls */}
@@ -209,6 +205,12 @@ const Sessions: FC = () => {
                       ).toDate()
                     : null;
 
+                  const membershipName =
+                    session.clubMembershipData?.name?.replace(
+                      "Abonament",
+                      "",
+                    ) ?? "—";
+
                   // Determine if the membership is active based on the expiration date.
                   const isActive = expiration ? expiration > new Date() : null;
 
@@ -223,11 +225,10 @@ const Sessions: FC = () => {
                       <TableCell className="text-center">
                         {expiration ? expiration.toLocaleDateString() : "—"}
                       </TableCell>
-                      <TableCell className="text-center">
-                        {session.clubMembershipData?.name?.replace(
-                          "Abonament",
-                          "",
-                        ) ?? "—"}
+                      <TableCell
+                        className={`text-center ${membershipName.includes("7Card") && "text-orange-300"}`}
+                      >
+                        {membershipName}
                       </TableCell>
                       <TableCell className="items-center text-center">
                         {isActive === null ? (

@@ -44,21 +44,25 @@ const data = {
       name: "Club details",
       url: "#",
       icon: House,
+      disabled: true,
     },
     {
       name: "Schedule",
       url: "#",
       icon: CalendarDays,
+      disabled: true,
     },
     {
       name: "Sessions",
       url: "/sessions",
       icon: LayoutGrid,
+      disabled: false,
     },
     {
       name: "Analytics",
       url: "#",
       icon: TrendingUp,
+      disabled: true,
     },
   ],
   navSecondary: [
@@ -66,11 +70,13 @@ const data = {
       title: "Contact",
       url: "#",
       icon: LifeBuoy,
+      disabled: true,
     },
     {
       title: "Feedback",
       url: "#",
       icon: Send,
+      disabled: true,
     },
   ],
   memberships: [
@@ -78,16 +84,19 @@ const data = {
       name: "Members",
       url: "#",
       icon: UsersRound,
+      disabled: true,
     },
     {
       name: "Classes",
       url: "#",
       icon: GraduationCap,
+      disabled: true,
     },
     {
       name: "Memberships",
       url: "#",
       icon: Tag,
+      disabled: true,
     },
   ],
   events: [
@@ -95,11 +104,13 @@ const data = {
       name: "Upcoming",
       url: "#",
       icon: PartyPopper,
+      disabled: true,
     },
     {
       name: "Past",
       url: "#",
       icon: PartyPopper,
+      disabled: true,
     },
   ],
 };
