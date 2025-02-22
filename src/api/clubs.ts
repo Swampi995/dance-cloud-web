@@ -24,15 +24,15 @@ export const subscribeToClubsForUser = (
   const clubsRef = collection(db, "clubs");
 
   // Build a query to find clubs where the "admins" field includes the specified userId.
-  const q = query(clubsRef, where("admins", "array-contains", userId));
+  const clubQuery = query(clubsRef, where("admins", "array-contains", userId));
 
   // Start listening for real-time updates with onSnapshot.
   // onSnapshot returns an unsubscribe function to stop listening.
   return onSnapshot(
-    q,
-    (snapshot) => {
+    clubQuery,
+    (clubDocSnapshot) => {
       // Map each document in the snapshot to a ClubType object.
-      const clubsData = snapshot.docs.map(mapDocToClub);
+      const clubsData = clubDocSnapshot.docs.map(mapDocToClub);
       // Call the callback with the updated list of clubs.
       callback(clubsData);
     },

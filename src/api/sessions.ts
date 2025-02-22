@@ -130,14 +130,14 @@ export const subscribeToSessionsForClub = (
   // Subscribe to the main sessions query for real-time updates.
   const unsubscribe = onSnapshot(
     sessionsQuery,
-    (snapshot) => {
+    (sessionDocSnapshot) => {
       // Clear any existing nested subscriptions before processing the new snapshot.
       extraUnsubs.forEach((fn) => fn());
       extraUnsubs = [];
 
       // Map each session document into an extended session object.
-      const extendedSessions: ExtendedClubSessionType[] = snapshot.docs.map(
-        (docSnap) => {
+      const extendedSessions: ExtendedClubSessionType[] =
+        sessionDocSnapshot.docs.map((docSnap) => {
           // Map the base session data.
           const baseSession = mapDocToBaseSession(docSnap);
           // Create an extended session structure with placeholders for nested data.
@@ -151,12 +151,14 @@ export const subscribeToSessionsForClub = (
           // 1) Subscribe to real-time updates on the user document referenced in the session.
           const unsubUser = onSnapshot(
             baseSession.user,
-            (userSnap) => {
-              extendedSession.userData = mapDocToUser(userSnap);
+            (userDocSnapshot) => {
+              extendedSession.userData = mapDocToUser(userDocSnapshot);
               // Invoke callback with updated session data whenever user data changes.
               callback({
                 sessions: extendedSessions,
-                lastVisible: snapshot.docs[snapshot.docs.length - 1] || null,
+                lastVisible:
+                  sessionDocSnapshot.docs[sessionDocSnapshot.docs.length - 1] ||
+                  null,
               });
             },
             (err: FirestoreError) => {
@@ -169,9 +171,10 @@ export const subscribeToSessionsForClub = (
           // 2) Subscribe to real-time updates on the user membership document.
           const unsubMembership = onSnapshot(
             baseSession.membership,
-            (membershipSnap) => {
-              extendedSession.userMembershipData =
-                mapDocToUserMembership(membershipSnap);
+            (membershipDocSnapshot) => {
+              extendedSession.userMembershipData = mapDocToUserMembership(
+                membershipDocSnapshot,
+              );
 
               // 2a) If the user membership references a club membership, subscribe to that document.
               const clubMembershipRef =
@@ -179,14 +182,17 @@ export const subscribeToSessionsForClub = (
               if (clubMembershipRef) {
                 const unsubClubMembership = onSnapshot(
                   clubMembershipRef,
-                  (clubMembershipSnap) => {
-                    extendedSession.clubMembershipData =
-                      mapDocToClubMembership(clubMembershipSnap);
+                  (clubMembershipDocSnapshot) => {
+                    extendedSession.clubMembershipData = mapDocToClubMembership(
+                      clubMembershipDocSnapshot,
+                    );
                     // Callback with updated data when club membership data changes.
                     callback({
                       sessions: extendedSessions,
                       lastVisible:
-                        snapshot.docs[snapshot.docs.length - 1] || null,
+                        sessionDocSnapshot.docs[
+                          sessionDocSnapshot.docs.length - 1
+                        ] || null,
                     });
                   },
                   (err: FirestoreError) => {
@@ -200,7 +206,9 @@ export const subscribeToSessionsForClub = (
               // Callback with updated data when user membership data changes.
               callback({
                 sessions: extendedSessions,
-                lastVisible: snapshot.docs[snapshot.docs.length - 1] || null,
+                lastVisible:
+                  sessionDocSnapshot.docs[sessionDocSnapshot.docs.length - 1] ||
+                  null,
               });
             },
             (err: FirestoreError) => {
@@ -211,13 +219,12 @@ export const subscribeToSessionsForClub = (
           extraUnsubs.push(unsubMembership);
 
           return extendedSession;
-        },
-      );
+        });
 
       // Determine the last visible document from the snapshot (used for pagination).
       const lastVisible =
-        snapshot.docs.length > 0
-          ? snapshot.docs[snapshot.docs.length - 1]
+        sessionDocSnapshot.docs.length > 0
+          ? sessionDocSnapshot.docs[sessionDocSnapshot.docs.length - 1]
           : null;
 
       // Initial callback invocation with the current set of extended sessions.

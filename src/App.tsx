@@ -4,6 +4,7 @@ import { AuthProvider } from "@/providers/AuthProvider";
 import { ClubProvider } from "./providers/ClubProvider";
 import { useAuth } from "./hooks/use-auth";
 import { Loading } from "./components/common/Loading";
+import { Classes } from "./components/features/classes/Classes";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
@@ -54,6 +55,7 @@ function App() {
                 }
               >
                 <Route path="/sessions" element={<Sessions />} />
+                <Route path="/classes" element={<Classes />} />
               </Route>
               <Route path="/launch" element={<LaunchApp />} />
               <Route path="*" element={<Navigate to="/" replace />} />
