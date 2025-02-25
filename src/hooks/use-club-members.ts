@@ -1,5 +1,5 @@
 import { subscribeToMembersForClub } from "@/api/members";
-import { ClubMemberType } from "@/schemas/members";
+import { ExtendedClubMemberType } from "@/schemas/members";
 import { useEffect, useState } from "react";
 
 /**
@@ -12,17 +12,17 @@ import { useEffect, useState } from "react";
  * @param {string} clubId - The unique identifier of the club for which to subscribe to member updates.
  * @param {string} classId - The unique identifier of the club's class for which to subscribe to member updates.
  * @returns {{
- *   data: ClubMemberType[],
+ *   data: ExtendedClubMemberType[],
  *   error: Error | null,
  *   loading: boolean
  * }} An object containing:
- *   - `data`: An array of club member objects.
+ *   - `data`: An array of extended club member objects.
  *   - `error`: Any error encountered during the subscription (or `null` if no error occurred).
  *   - `loading`: A boolean indicating whether the data is currently being loaded.
  */
 const useClubMembers = (clubId: string, classId: string) => {
   // State to store the club member data.
-  const [data, setData] = useState<ClubMemberType[]>([]);
+  const [data, setData] = useState<ExtendedClubMemberType[]>([]);
 
   // State to store any error encountered during the subscription process.
   const [error, setError] = useState<Error | null>(null);

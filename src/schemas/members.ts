@@ -1,13 +1,19 @@
 import { z } from "zod";
-import { ClubClassSchema } from "./classes";
-import { UserSchema } from "./user";
 import { Timestamp } from "firebase/firestore";
+import { DocumentReferenceSchema } from "./firebase";
+import { UserSchema } from "./user";
 
-export const ClubMemberSchema = z.object({
+export const BaseClubMemberSchema = z.object({
   id: z.string(),
-  classes: ClubClassSchema,
-  user: UserSchema,
+  classes: z.array(DocumentReferenceSchema).optional(),
+  user: DocumentReferenceSchema,
   created: z.instanceof(Timestamp),
 });
 
-export type ClubMemberType = z.infer<typeof ClubMemberSchema>;
+export type BaseClubMemberType = z.infer<typeof BaseClubMemberSchema>;
+
+export const ExtendedClubMemberSchema = BaseClubMemberSchema.extend({
+  userData: z.nullable(UserSchema),
+});
+
+export type ExtendedClubMemberType = z.infer<typeof ExtendedClubMemberSchema>;

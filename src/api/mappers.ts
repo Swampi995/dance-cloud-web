@@ -9,7 +9,7 @@
 
 import { ClubClassSchema, ClubClassType } from "@/schemas/classes";
 import { ClubSchema, ClubType } from "@/schemas/club";
-import { ClubMemberSchema, ClubMemberType } from "@/schemas/members";
+import { BaseClubMemberSchema, BaseClubMemberType } from "@/schemas/members";
 import {
   UserMembershipType,
   UserMembershipSchema,
@@ -147,25 +147,25 @@ const mapDocToClubClass = (
 };
 
 /**
- * Converts a Firestore club class document snapshot into a typed `ClubMemberType` object.
+ * Converts a Firestore club class document snapshot into a typed `BaseClubMemberType` object.
  *
  * @param {QueryDocumentSnapshot<DocumentData>} clubMemberDocSnapshot - The Firestore document snapshot of a club member.
  * @returns {ClubClassType} The parsed and validated club member object.
- * @throws Will throw an error if the document data does not match the ClubMemberSchema.
+ * @throws Will throw an error if the document data does not match the BaseClubMemberSchema.
  *
  * @example
- * const class = mapDocToClubMember(clubMemberDocSnapshot);
+ * const class = mapDocToBaseClubMember(clubMemberDocSnapshot);
  */
-const mapDocToClubMember = (
+const mapDocToBaseClubMember = (
   clubMemberDocSnapshot: QueryDocumentSnapshot<DocumentData>,
-): ClubMemberType => {
+): BaseClubMemberType => {
   // Merge the document ID with the document data
   const rawData = {
     id: clubMemberDocSnapshot.id,
     ...clubMemberDocSnapshot.data(),
   };
   // Validate with Zod; parse() will throw if the data doesn't match the schema
-  return ClubMemberSchema.parse(rawData);
+  return BaseClubMemberSchema.parse(rawData);
 };
 
 export {
@@ -175,5 +175,5 @@ export {
   mapDocToClub,
   mapDocToClubMembership,
   mapDocToClubClass,
-  mapDocToClubMember,
+  mapDocToBaseClubMember,
 };
