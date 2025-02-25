@@ -21,6 +21,7 @@ const Classes: FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<number>(
     new Date().getMonth(),
   );
+  const [selectedClass, setSelectedClass] = useState<string | null>(null);
 
   // Log data for debugging
   useEffect(() => {
@@ -63,7 +64,12 @@ const Classes: FC = () => {
         />
       </div>
       <div className="flex flex-1 justify-between rounded-xl p-1 py-4 sm:px-4">
-        <Select>
+        <Select
+          onValueChange={(value) => {
+            setSelectedClass(value);
+            console.log("Selected Class:", selectedClass);
+          }}
+        >
           <SelectTrigger className="w-auto">
             <SelectValue placeholder="Select a class" />
           </SelectTrigger>

@@ -14,6 +14,21 @@ import { mapDocToClub } from "./mappers"; // Import helper to map Firestore docs
  * @param {(clubs: ClubType[]) => void} callback - Function called with the updated clubs data.
  * @param {(error: Error) => void} [errorCallback] - Optional function called when an error occurs.
  * @returns {() => void} A function to unsubscribe the Firestore listener.
+ *
+ * @example
+ * // Subscribe to clubs for a user with ID 'user123'
+ * const unsubscribe = subscribeToClubsForUser(
+ *   "user123",
+ *   (clubs) => {
+ *     console.log("Updated clubs:", clubs);
+ *   },
+ *   (error) => {
+ *     console.error("Error fetching clubs:", error);
+ *   }
+ * );
+ *
+ * // Later, when you want to stop listening for updates:
+ * unsubscribe();
  */
 export const subscribeToClubsForUser = (
   userId: string,

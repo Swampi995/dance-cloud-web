@@ -20,6 +20,17 @@ import { mapDocToClubClass } from "./mappers";
  * @param {(data: ClubClassType[]) => void} callback - A function to be called with the updated list of club classes.
  * @param {(error: Error) => void} [errorCallback] - An optional function to be called if an error occurs.
  * @returns {() => void} A function to unsubscribe from the real-time updates.
+ *
+ * @example
+ * // Subscribe to updates for a club's classes:
+ * const unsubscribe = subscribeToClassesForClub("club123", (classes) => {
+ *   console.log("Updated club classes:", classes);
+ * }, (error) => {
+ *   console.error("Error subscribing to classes:", error);
+ * });
+ *
+ * // When you no longer need to receive updates, call the unsubscribe function:
+ * unsubscribe();
  */
 export const subscribeToClassesForClub = (
   clubId: string,
