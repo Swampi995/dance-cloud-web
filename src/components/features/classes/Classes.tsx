@@ -1,3 +1,4 @@
+import { HorizontalCalendar } from "@/components/ui/horizontal-calendar";
 import { MonthPicker } from "@/components/ui/month-picker";
 import {
   Select,
@@ -8,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useClubClasses } from "@/hooks/use-club-classes";
+import { useClubMembers } from "@/hooks/use-club-members";
 import { useClubs } from "@/hooks/use-clubs";
 import { useToast } from "@/hooks/use-toast";
 import { ClubClassType } from "@/schemas/classes";
@@ -17,39 +19,58 @@ const Classes: FC = () => {
   const { selectedClub } = useClubs();
   const { toast } = useToast();
   // TODO: Add loading state
-  const { data, error } = useClubClasses(selectedClub?.id ?? "");
+
   const [selectedMonth, setSelectedMonth] = useState<number>(
     new Date().getMonth(),
   );
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
 
+  const {
+    data: classesData,
+    // loading: _classesLoading,
+    error: classesError,
+  } = useClubClasses(selectedClub?.id ?? "");
+  const {
+    data: membersData,
+    // loading: _membersLoading,
+    // error: _membersError,
+  } = useClubMembers(selectedClub?.id ?? "", selectedClass ?? "");
+
+  useEffect(() => {
+    console.log("useClubMembers -> membersData", membersData);
+  }, [membersData]);
+
   // Log data for debugging
   useEffect(() => {
-    console.log("useClubClasses -> data", data);
-  }, [data]);
+    console.log("useClubClasses -> classesData", classesData);
+  }, [classesData]);
 
   // Trigger a toast if an error occurs
   useEffect(() => {
-    if (error) {
+    if (classesError) {
       toast({
         title: "Error loading classes",
         description:
-          error.message || "An error occurred while fetching club classes.",
+          classesError.message ||
+          "An error occurred while fetching club classes.",
         variant: "destructive",
       });
     }
-  }, [error, toast]);
+  }, [classesError, toast]);
 
   const selectItems = useMemo(() => {
-    return data?.map((clubClass: ClubClassType) => (
-      <SelectItem key={clubClass.id} value={clubClass.name}>
+    return classesData?.map((clubClass: ClubClassType) => (
+      <SelectItem key={clubClass.id} value={clubClass.id}>
         {clubClass.name}
       </SelectItem>
     ));
-  }, [data]);
+  }, [classesData]);
 
   return (
-    <div className="flex flex-1 flex-col gap-4 px-4 pb-4 sm:px-10">
+    <div
+      className="flex flex-1 flex-col gap-4 px-4 pb-4 sm:px-10"
+      style={{ width: "calc(100% - 250px)" }}
+    >
       <div className="mt-6 flex items-center justify-between space-x-2">
         <div className="flex items-center">
           <SidebarTrigger />
@@ -63,11 +84,10 @@ const Classes: FC = () => {
           width={120}
         />
       </div>
-      <div className="flex flex-1 justify-between rounded-xl p-1 py-4 sm:px-4">
+      <div className="flex justify-between rounded-xl p-1 py-4 sm:px-4">
         <Select
           onValueChange={(value) => {
             setSelectedClass(value);
-            console.log("Selected Class:", selectedClass);
           }}
         >
           <SelectTrigger className="w-auto">
@@ -76,6 +96,7 @@ const Classes: FC = () => {
           <SelectContent>{selectItems}</SelectContent>
         </Select>
       </div>
+      <HorizontalCalendar month={1} year={2025} />
     </div>
   );
 };
