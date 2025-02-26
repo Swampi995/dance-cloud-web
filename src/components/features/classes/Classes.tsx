@@ -1,4 +1,4 @@
-import { HorizontalCalendar } from "@/components/ui/horizontal-calendar";
+import { HorizontalCalendar } from "@/components/features/classes/HorizontalCalendar";
 import { MonthPicker } from "@/components/ui/month-picker";
 import {
   Select,
@@ -14,16 +14,20 @@ import { useClubs } from "@/hooks/use-clubs";
 import { useToast } from "@/hooks/use-toast";
 import { ClubClassType } from "@/schemas/classes";
 import { FC, useEffect, useMemo, useState } from "react";
+import { ClassDetails } from "./ClassDetails";
 
 const Classes: FC = () => {
   const { selectedClub } = useClubs();
+  // console.log("selectedClub", selectedClub);
   const { toast } = useToast();
   // TODO: Add loading state
 
   const [selectedMonth, setSelectedMonth] = useState<number>(
     new Date().getMonth(),
   );
-  const [selectedClass, setSelectedClass] = useState<string | null>(null);
+  const [selectedClass, setSelectedClass] = useState<ClubClassType | null>(
+    null,
+  );
 
   const {
     data: classesData,
@@ -34,15 +38,15 @@ const Classes: FC = () => {
     data: membersData,
     // loading: _membersLoading,
     // error: _membersError,
-  } = useClubMembers(selectedClub?.id ?? "", selectedClass ?? "");
+  } = useClubMembers(selectedClub?.id ?? "", selectedClass?.id ?? "");
 
   useEffect(() => {
-    console.log("useClubMembers -> membersData", membersData);
+    // console.log("useClubMembers -> membersData", membersData);
   }, [membersData]);
 
   // Log data for debugging
   useEffect(() => {
-    console.log("useClubClasses -> classesData", classesData);
+    // console.log("useClubClasses -> classesData", classesData);
   }, [classesData]);
 
   // Trigger a toast if an error occurs
@@ -68,33 +72,37 @@ const Classes: FC = () => {
 
   return (
     <div
-      className="flex flex-1 flex-col gap-4 px-4 pb-4 sm:px-10"
+      className="flex flex-1 flex-col gap-4 px-4 sm:px-10"
       style={{ width: "calc(100% - 250px)" }}
     >
-      <div className="mt-6 flex items-center justify-between space-x-2">
-        <div className="flex items-center">
-          <SidebarTrigger />
-          <h1 className="pl-4 text-sm font-bold sm:text-xl md:text-2xl lg:text-4xl">
-            Monthly summary
-          </h1>
-        </div>
-        <MonthPicker
-          value={selectedMonth}
-          onChange={setSelectedMonth}
-          width={120}
-        />
+      <div className="mb-4 mt-6 flex items-center">
+        <SidebarTrigger />
+        <h1 className="pl-4 text-sm font-bold sm:text-xl md:text-2xl lg:text-4xl">
+          Monthly summary
+        </h1>
       </div>
-      <div className="flex justify-between rounded-xl p-1 py-4 sm:px-4">
-        <Select
-          onValueChange={(value) => {
-            setSelectedClass(value);
-          }}
-        >
-          <SelectTrigger className="w-auto">
-            <SelectValue placeholder="Select a class" />
-          </SelectTrigger>
-          <SelectContent>{selectItems}</SelectContent>
-        </Select>
+      <div className="flex flex-col justify-between space-y-2 rounded-xl">
+        <div className="flex items-center space-x-2">
+          <Select
+            onValueChange={(value) => {
+              const clubClass = classesData.find(
+                (classData) => classData.id === value,
+              );
+              setSelectedClass(clubClass ?? null);
+            }}
+          >
+            <SelectTrigger className="w-[300px]">
+              <SelectValue placeholder="Select a class" />
+            </SelectTrigger>
+            <SelectContent>{selectItems}</SelectContent>
+          </Select>
+          <MonthPicker
+            value={selectedMonth}
+            onChange={setSelectedMonth}
+            width={120}
+          />
+        </div>
+        <ClassDetails clubClass={selectedClass} />
       </div>
       <HorizontalCalendar month={1} year={2025} />
     </div>
