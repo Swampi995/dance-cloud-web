@@ -44,9 +44,9 @@ const useClubClasses = (clubId: string) => {
         setLoading(false);
       },
       // Error callback: log the error, update the error state, and mark loading as complete.
-      (err) => {
-        console.error("Error subscribing to classes:", err);
-        setError(err);
+      (error) => {
+        console.error("Error subscribing to classes:", error);
+        setError(error);
         setLoading(false);
       },
     );

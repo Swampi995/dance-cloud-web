@@ -42,13 +42,13 @@ const useClubMembers = (clubId: string, classId: string) => {
       classId,
       // Success callback: update the club member data and mark loading as complete.
       (newData) => {
-        setData(newData);
+        setData([...newData]);
         setLoading(false);
       },
       // Error callback: log the error, update the error state, and mark loading as complete.
-      (err) => {
-        console.error("Error subscribing to members:", err);
-        setError(err);
+      (error) => {
+        console.error("Error subscribing to members:", error);
+        setError(error);
         setLoading(false);
       },
     );

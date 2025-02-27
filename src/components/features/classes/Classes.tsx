@@ -1,3 +1,4 @@
+import { FC, memo, useEffect, useMemo, useState, useCallback } from "react";
 import { HorizontalCalendar } from "@/components/features/classes/HorizontalCalendar";
 import { MonthPicker } from "@/components/ui/month-picker";
 import {
@@ -9,19 +10,89 @@ import {
 } from "@/components/ui/select";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useClubClasses } from "@/hooks/use-club-classes";
-import { useClubMembers } from "@/hooks/use-club-members";
 import { useClubs } from "@/hooks/use-clubs";
 import { useToast } from "@/hooks/use-toast";
 import { ClubClassType } from "@/schemas/classes";
-import { FC, useEffect, useMemo, useState } from "react";
 import { ClassDetails } from "./ClassDetails";
+
+const Header: FC = memo(() => (
+  <div className="mb-4 mt-6 flex items-center">
+    <SidebarTrigger />
+    <h1 className="pl-4 text-sm font-bold sm:text-xl md:text-2xl lg:text-4xl">
+      Monthly summary
+    </h1>
+  </div>
+));
+
+Header.displayName = "Header";
+
+interface ClassSelectorProps {
+  classesData: ClubClassType[];
+  onSelect: (selectedId: string) => void;
+}
+
+const ClassSelector: FC<ClassSelectorProps> = memo(
+  ({ classesData, onSelect }) => {
+    const selectItems = useMemo(
+      () =>
+        classesData.map((clubClass: ClubClassType) => (
+          <SelectItem key={clubClass.id} value={clubClass.id}>
+            {clubClass.name}
+          </SelectItem>
+        )),
+      [classesData],
+    );
+
+    return (
+      <Select onValueChange={(value) => onSelect(value)}>
+        <SelectTrigger className="w-[300px]">
+          <SelectValue placeholder="Select a class" />
+        </SelectTrigger>
+        <SelectContent>{selectItems}</SelectContent>
+      </Select>
+    );
+  },
+);
+
+ClassSelector.displayName = "ClassSelector";
+
+interface ControlsProps {
+  classesData: ClubClassType[];
+  onSelectClass: (classData: ClubClassType | null) => void;
+  selectedMonth: number;
+  onMonthChange: (month: number) => void;
+}
+
+const Controls: FC<ControlsProps> = memo(
+  ({ classesData, onSelectClass, selectedMonth, onMonthChange }) => {
+    const handleSelect = useCallback(
+      (selectedId: string) => {
+        const clubClass = classesData.find(
+          (classData) => classData.id === selectedId,
+        );
+        onSelectClass(clubClass ?? null);
+      },
+      [classesData, onSelectClass],
+    );
+
+    return (
+      <div className="flex items-center space-x-2">
+        <ClassSelector classesData={classesData} onSelect={handleSelect} />
+        <MonthPicker
+          value={selectedMonth}
+          onChange={onMonthChange}
+          width={120}
+        />
+      </div>
+    );
+  },
+);
+
+Controls.displayName = "Controls";
 
 const Classes: FC = () => {
   const { selectedClub } = useClubs();
-  // console.log("selectedClub", selectedClub);
   const { toast } = useToast();
-  // TODO: Add loading state
-
   const [selectedMonth, setSelectedMonth] = useState<number>(
     new Date().getMonth(),
   );
@@ -29,27 +100,15 @@ const Classes: FC = () => {
     null,
   );
 
-  const {
-    data: classesData,
-    // loading: _classesLoading,
-    error: classesError,
-  } = useClubClasses(selectedClub?.id ?? "");
-  const {
-    data: membersData,
-    // loading: _membersLoading,
-    // error: _membersError,
-  } = useClubMembers(selectedClub?.id ?? "", selectedClass?.id ?? "");
+  // Check why this isn't triggering a refresh of the class details when the club changes
+  const { data: classesData = [], error: classesError } = useClubClasses(
+    selectedClub?.id ?? "",
+  );
 
-  useEffect(() => {
-    // console.log("useClubMembers -> membersData", membersData);
-  }, [membersData]);
+  // TODO: Check if this is alright, and where to add similar changes
+  // Reset the selectedClass if selectedClub changes
+  useEffect(() => setSelectedClass(null), [selectedClub]);
 
-  // Log data for debugging
-  useEffect(() => {
-    // console.log("useClubClasses -> classesData", classesData);
-  }, [classesData]);
-
-  // Trigger a toast if an error occurs
   useEffect(() => {
     if (classesError) {
       toast({
@@ -62,47 +121,20 @@ const Classes: FC = () => {
     }
   }, [classesError, toast]);
 
-  const selectItems = useMemo(() => {
-    return classesData?.map((clubClass: ClubClassType) => (
-      <SelectItem key={clubClass.id} value={clubClass.id}>
-        {clubClass.name}
-      </SelectItem>
-    ));
-  }, [classesData]);
-
   return (
     <div
       className="flex flex-1 flex-col gap-4 px-4 sm:px-10"
       style={{ width: "calc(100% - 250px)" }}
     >
-      <div className="mb-4 mt-6 flex items-center">
-        <SidebarTrigger />
-        <h1 className="pl-4 text-sm font-bold sm:text-xl md:text-2xl lg:text-4xl">
-          Monthly summary
-        </h1>
-      </div>
+      <Header />
       <div className="flex flex-col justify-between space-y-2 rounded-xl">
-        <div className="flex items-center space-x-2">
-          <Select
-            onValueChange={(value) => {
-              const clubClass = classesData.find(
-                (classData) => classData.id === value,
-              );
-              setSelectedClass(clubClass ?? null);
-            }}
-          >
-            <SelectTrigger className="w-[300px]">
-              <SelectValue placeholder="Select a class" />
-            </SelectTrigger>
-            <SelectContent>{selectItems}</SelectContent>
-          </Select>
-          <MonthPicker
-            value={selectedMonth}
-            onChange={setSelectedMonth}
-            width={120}
-          />
-        </div>
-        <ClassDetails clubClass={selectedClass} />
+        <Controls
+          classesData={classesData}
+          onSelectClass={setSelectedClass}
+          selectedMonth={selectedMonth}
+          onMonthChange={setSelectedMonth}
+        />
+        <ClassDetails clubClass={selectedClass} club={selectedClub} />
       </div>
       <HorizontalCalendar month={1} year={2025} />
     </div>

@@ -17,6 +17,7 @@ import {
   ClubMembershipType,
 } from "@/schemas/membership";
 import { BaseClubSessionType, BaseClubSessionSchema } from "@/schemas/session";
+import { BaseClubTeacherSchema, BaseClubTeacherType } from "@/schemas/teachers";
 import { UserType, UserSchema } from "@/schemas/user";
 import {
   QueryDocumentSnapshot,
@@ -132,7 +133,7 @@ const mapDocToBaseSession = (
  * @throws Will throw an error if the document data does not match the ClubClassSchema.
  *
  * @example
- * const class = mapDocToClubClass(clubClassDocSnapshot);
+ * const clubClass = mapDocToClubClass(clubClassDocSnapshot);
  */
 const mapDocToClubClass = (
   clubClassDocSnapshot: QueryDocumentSnapshot<DocumentData>,
@@ -147,14 +148,14 @@ const mapDocToClubClass = (
 };
 
 /**
- * Converts a Firestore club class document snapshot into a typed `BaseClubMemberType` object.
+ * Converts a Firestore club member document snapshot into a typed `BaseClubMemberType` object.
  *
  * @param {QueryDocumentSnapshot<DocumentData>} clubMemberDocSnapshot - The Firestore document snapshot of a club member.
  * @returns {ClubClassType} The parsed and validated club member object.
  * @throws Will throw an error if the document data does not match the BaseClubMemberSchema.
  *
  * @example
- * const class = mapDocToBaseClubMember(clubMemberDocSnapshot);
+ * const clubMember = mapDocToBaseClubMember(clubMemberDocSnapshot);
  */
 const mapDocToBaseClubMember = (
   clubMemberDocSnapshot: QueryDocumentSnapshot<DocumentData>,
@@ -168,6 +169,28 @@ const mapDocToBaseClubMember = (
   return BaseClubMemberSchema.parse(rawData);
 };
 
+/**
+ * Converts a Firestore club teacher document snapshot into a typed `BaseClubTeacherType` object.
+ *
+ * @param {QueryDocumentSnapshot<DocumentData>} clubTeacherDocSnapshot - The Firestore document snapshot of a club teacher.
+ * @returns {ClubClassType} The parsed and validated club teacher object.
+ * @throws Will throw an error if the document data does not match the BaseClubTeacherSchema.
+ *
+ * @example
+ * const clubTeacher = mapDocToBaseClubTeacher(clubTeacherDocSnapshot);
+ */
+const mapDocToBaseClubTeacher = (
+  clubTeacherDocSnapshot: QueryDocumentSnapshot<DocumentData>,
+): BaseClubTeacherType => {
+  // Merge the document ID with the document data
+  const rawData = {
+    id: clubTeacherDocSnapshot.id,
+    ...clubTeacherDocSnapshot.data(),
+  };
+  // Validate with Zod; parse() will throw if the data doesn't match the schema
+  return BaseClubTeacherSchema.parse(rawData);
+};
+
 export {
   mapDocToBaseSession,
   mapDocToUserMembership,
@@ -176,4 +199,5 @@ export {
   mapDocToClubMembership,
   mapDocToClubClass,
   mapDocToBaseClubMember,
+  mapDocToBaseClubTeacher,
 };
