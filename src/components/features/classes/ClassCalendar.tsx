@@ -1,14 +1,24 @@
-import { FC, memo } from "react";
+import { useClubMembers } from "@/hooks/use-club-members";
+import { ClubClassType } from "@/schemas/classes";
+import { ClubType } from "@/schemas/club";
+import { FC, memo, useEffect } from "react";
 
-type HorizontalCalendarProps = {
+type ClassCalendarProps = {
+  club: ClubType | null;
+  clubClass: ClubClassType | null;
   month: number; // 1-indexed month (e.g., 1 for January)
   year: number;
 };
 
 const cellWidth = 80; // width in pixels for each day cell
 
-const HorizontalCalendar: FC<HorizontalCalendarProps> = memo(
-  ({ month, year }) => {
+const ClassCalendar: FC<ClassCalendarProps> = memo(
+  ({ club, clubClass, month, year }) => {
+    const { data } = useClubMembers(club?.id ?? "", clubClass?.id ?? "");
+    useEffect(
+      () => console.log("useEffect -> useClubMembers -> data", data),
+      [data],
+    );
     // Determine the number of days in the given month.
     const numDays = new Date(year, month, 0).getDate();
 
@@ -44,6 +54,8 @@ const HorizontalCalendar: FC<HorizontalCalendarProps> = memo(
   },
 );
 
-HorizontalCalendar.displayName = "HorizontalCalendar";
+ClassCalendar.displayName = "ClassCalendar";
 
-export { HorizontalCalendar };
+export { ClassCalendar };
+
+// TODO: Split in components, memoize and docs before wrapping up

@@ -1,5 +1,14 @@
+/**
+ * This file contains the main `Classes` page component, which is responsible for:
+ * - Displaying the page header (with sidebar trigger and title).
+ * - Fetching and listing classes for a selected club.
+ * - Providing controls for selecting a class and month.
+ * - Displaying detailed information about a selected class.
+ * - Displaying a horizontal calendar component.
+ */
+
 import { FC, memo, useEffect, useMemo, useState, useCallback } from "react";
-import { HorizontalCalendar } from "@/components/features/classes/HorizontalCalendar";
+
 import { MonthPicker } from "@/components/ui/month-picker";
 import {
   Select,
@@ -14,7 +23,12 @@ import { useClubs } from "@/hooks/use-clubs";
 import { useToast } from "@/hooks/use-toast";
 import { ClubClassType } from "@/schemas/classes";
 import { ClassDetails } from "./ClassDetails";
+import { ClassCalendar } from "./ClassCalendar";
 
+/**
+ * Renders the page header component, including the sidebar trigger
+ * and the main page title.
+ */
 const Header: FC = memo(() => (
   <div className="mb-4 mt-6 flex items-center">
     <SidebarTrigger />
@@ -23,16 +37,31 @@ const Header: FC = memo(() => (
     </h1>
   </div>
 ));
-
 Header.displayName = "Header";
 
+/**
+ * Defines the props for the ClassSelector component.
+ */
 interface ClassSelectorProps {
+  /**
+   * The array of classes available for selection.
+   */
   classesData: ClubClassType[];
+  /**
+   * Callback function that is called when a class is selected.
+   * Receives the selected class ID as an argument.
+   */
   onSelect: (selectedId: string) => void;
 }
 
+/**
+ * Renders a dropdown to select a class from the given array of classes.
+ *
+ * @param {ClassSelectorProps} props - The component props.
+ */
 const ClassSelector: FC<ClassSelectorProps> = memo(
   ({ classesData, onSelect }) => {
+    // Memoize the creation of select items to avoid unnecessary re-renders.
     const selectItems = useMemo(
       () =>
         classesData.map((clubClass: ClubClassType) => (
@@ -53,18 +82,43 @@ const ClassSelector: FC<ClassSelectorProps> = memo(
     );
   },
 );
-
 ClassSelector.displayName = "ClassSelector";
 
+/**
+ * Defines the props for the Controls component.
+ */
 interface ControlsProps {
+  /**
+   * The array of classes available for selection.
+   */
   classesData: ClubClassType[];
+  /**
+   * Callback function called when a user selects a class, passing the corresponding class data object
+   * or null if none is selected.
+   */
   onSelectClass: (classData: ClubClassType | null) => void;
+  /**
+   * The currently selected month (0-based index).
+   */
   selectedMonth: number;
+  /**
+   * Callback function to change the selected month.
+   */
   onMonthChange: (month: number) => void;
 }
 
+/**
+ * Displays a class selector and a month picker, allowing the user to filter and view
+ * the data for a particular class and month.
+ *
+ * @param {ControlsProps} props - The component props.
+ */
 const Controls: FC<ControlsProps> = memo(
   ({ classesData, onSelectClass, selectedMonth, onMonthChange }) => {
+    /**
+     * Handles selection of a class by finding it in the classesData array
+     * and calling `onSelectClass` with the found class or null if not found.
+     */
     const handleSelect = useCallback(
       (selectedId: string) => {
         const clubClass = classesData.find(
@@ -87,28 +141,39 @@ const Controls: FC<ControlsProps> = memo(
     );
   },
 );
-
 Controls.displayName = "Controls";
 
+/**
+ * The main `Classes` component that displays a monthly summary of classes for the selected club.
+ * It fetches the list of classes for the currently selected club and provides controls
+ * for selecting a specific class and month. The selected class's details are displayed in
+ * the `ClassDetails` component.
+ *
+ * @returns {JSX.Element} The rendered `Classes` component.
+ */
 const Classes: FC = () => {
   const { selectedClub } = useClubs();
   const { toast } = useToast();
+
+  // The currently selected month (defaults to the current month).
   const [selectedMonth, setSelectedMonth] = useState<number>(
     new Date().getMonth(),
   );
+
+  // The currently selected class. Null when no class is selected.
   const [selectedClass, setSelectedClass] = useState<ClubClassType | null>(
     null,
   );
 
-  // Check why this isn't triggering a refresh of the class details when the club changes
+  // Reset the selected class if the selected club changes.
+  useEffect(() => setSelectedClass(null), [selectedClub]);
+
+  // Fetch the classes for the currently selected club.
   const { data: classesData = [], error: classesError } = useClubClasses(
     selectedClub?.id ?? "",
   );
 
-  // TODO: Check if this is alright, and where to add similar changes
-  // Reset the selectedClass if selectedClub changes
-  useEffect(() => setSelectedClass(null), [selectedClub]);
-
+  // Display an error toast if there's an error loading classes.
   useEffect(() => {
     if (classesError) {
       toast({
@@ -136,11 +201,16 @@ const Classes: FC = () => {
         />
         <ClassDetails clubClass={selectedClass} club={selectedClub} />
       </div>
-      <HorizontalCalendar month={1} year={2025} />
+      <ClassCalendar
+        clubClass={selectedClass}
+        club={selectedClub}
+        month={1}
+        year={2025}
+      />
     </div>
   );
 };
 
 Classes.displayName = "Classes";
 
-export { Classes };
+export default Classes;

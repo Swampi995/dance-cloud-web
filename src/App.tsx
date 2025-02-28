@@ -4,7 +4,6 @@ import { AuthProvider } from "@/providers/AuthProvider";
 import { ClubProvider } from "./providers/ClubProvider";
 import { useAuth } from "./hooks/use-auth";
 import { Loading } from "./components/common/Loading";
-import { Classes } from "./components/features/classes/Classes";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
@@ -33,6 +32,7 @@ const PrivacyPolicy = lazy(() => import("./components/features/privacy"));
 const Login = lazy(() => import("./components/features/login/Login"));
 const TermsOfService = lazy(() => import("./components/features/terms"));
 const Sessions = lazy(() => import("./components/features/sessions/Sessions"));
+const Classes = lazy(() => import("./components/features/classes/Classes"));
 
 function App() {
   return (

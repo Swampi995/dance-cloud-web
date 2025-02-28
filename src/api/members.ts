@@ -7,7 +7,11 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { mapDocToBaseClubMember, mapDocToUser } from "./mappers";
+import {
+  mapDocToBaseClubMember,
+  mapDocToUser,
+  mapDocToUserMembership,
+} from "./mappers";
 import { ExtendedClubMemberType } from "@/schemas/members";
 
 /**
@@ -15,9 +19,14 @@ import { ExtendedClubMemberType } from "@/schemas/members";
  *
  * This function sets up a Firestore listener on the "members" subcollection of the specified club.
  * It filters the documents to include only those where the "classes" array contains the provided classId.
- * When a change is detected, each club member document with its user reference is mapped to a ExtendedClubMemberType object using the mapDocToBaseClubMember and mapDocToUser functions,
- * and the resulting array is passed to the callback function.
- * In case of an error during the subscription, the error is logged to the console and, if provided, the errorCallback is invoked.
+ * For each club member document, it creates an extended club member object by:
+ *  - Mapping the base club member data using `mapDocToBaseClubMember`.
+ *  - Establishing a nested listener on the user document referenced in the base club member and mapping it using `mapDocToUser`.
+ *  - Setting up another nested listener to fetch the user's membership data for the club, mapped via `mapDocToUserMembership`.
+ *
+ * The callback is invoked with the updated list of extended club member objects whenever any relevant data changes.
+ * If an error occurs at any point in the subscription process, the error is logged and the optional errorCallback
+ * is invoked.
  *
  * @param clubId - The unique identifier of the club.
  * @param classId - The identifier of the class to filter the club members by.
@@ -51,9 +60,10 @@ export const subscribeToMembersForClub = (
   const clubDocRef = doc(db, "clubs", clubId);
   const clubClassDocRef = doc(clubDocRef, "classes", classId);
 
+  // Reference to the "members" subcollection within the club document.
   const clubMembersRef = collection(clubDocRef, "members");
 
-  // Create a query against the "members" subcollection.
+  // Create a query to filter club members whose "classes" array contains the specified club class reference.
   const clubMembersQuery = query(
     clubMembersRef,
     where("classes", "array-contains", clubClassDocRef),
@@ -79,6 +89,7 @@ export const subscribeToMembersForClub = (
           const extendedClubMember: ExtendedClubMemberType = {
             ...baseClubMember,
             userData: null,
+            userMembershipData: null,
           };
 
           // Subscribe to real-time updates on the user document referenced in the base club member.
@@ -86,7 +97,43 @@ export const subscribeToMembersForClub = (
             baseClubMember.user,
             (userDocSnapshot) => {
               extendedClubMember.userData = mapDocToUser(userDocSnapshot);
-              // Invoke callback with updated session data whenever user data changes.
+
+              // Build a reference to the "memberships" subcollection for the user.
+              const userMembershipsRef = collection(
+                db,
+                "users",
+                extendedClubMember.userData.id,
+                "memberships",
+              );
+
+              // Create a query to fetch the membership data for the current club.
+              const membershipQuery = query(
+                userMembershipsRef,
+                where("club", "==", clubDocRef),
+              );
+
+              // Subscribe to real-time updates on the membership data.
+              const unsubMembership = onSnapshot(
+                membershipQuery,
+                (membershipSnapshot) => {
+                  if (!membershipSnapshot.empty) {
+                    const membershipDoc = membershipSnapshot.docs[0];
+                    extendedClubMember.userMembershipData =
+                      mapDocToUserMembership(membershipDoc);
+                    // Invoke the callback with updated data.
+                    callback(extendedClubMembers);
+                  }
+                },
+                (err: FirestoreError) => {
+                  console.error("Error fetching membership data:", err);
+                  if (errorCallback) errorCallback(err);
+                },
+              );
+
+              // Store the unsubscribe function for the membership listener.
+              extraUnsubs.push(unsubMembership);
+
+              // Invoke the callback with updated user data.
               callback(extendedClubMembers);
             },
             (err: FirestoreError) => {
@@ -95,6 +142,7 @@ export const subscribeToMembersForClub = (
             },
           );
 
+          // Store the unsubscribe function for the user listener.
           extraUnsubs.push(unsubUser);
 
           return extendedClubMember;
