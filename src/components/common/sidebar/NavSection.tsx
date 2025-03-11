@@ -35,7 +35,7 @@ const NavSection = ({
               isActive={location.pathname === item.url}
               asChild
             >
-              <button onClick={() => item.disabled && navigate(item.url)}>
+              <button onClick={() => !item.disabled && navigate(item.url)}>
                 <item.icon />
                 <span>{item.name}</span>
               </button>

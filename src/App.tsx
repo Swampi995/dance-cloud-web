@@ -32,6 +32,7 @@ const PrivacyPolicy = lazy(() => import("./components/features/privacy"));
 const Login = lazy(() => import("./components/features/login/Login"));
 const TermsOfService = lazy(() => import("./components/features/terms"));
 const Sessions = lazy(() => import("./components/features/sessions/Sessions"));
+const Classes = lazy(() => import("./components/features/classes/Classes"));
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
                 }
               >
                 <Route path="/sessions" element={<Sessions />} />
+                <Route path="/classes" element={<Classes />} />
               </Route>
               <Route path="/launch" element={<LaunchApp />} />
               <Route path="*" element={<Navigate to="/" replace />} />

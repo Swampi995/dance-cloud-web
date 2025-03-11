@@ -7,7 +7,9 @@
  * @module mappers
  */
 
+import { ClubClassSchema, ClubClassType } from "@/schemas/classes";
 import { ClubSchema, ClubType } from "@/schemas/club";
+import { BaseClubMemberSchema, BaseClubMemberType } from "@/schemas/members";
 import {
   UserMembershipType,
   UserMembershipSchema,
@@ -15,6 +17,7 @@ import {
   ClubMembershipType,
 } from "@/schemas/membership";
 import { BaseClubSessionType, BaseClubSessionSchema } from "@/schemas/session";
+import { BaseClubTeacherSchema, BaseClubTeacherType } from "@/schemas/teachers";
 import { UserType, UserSchema } from "@/schemas/user";
 import {
   QueryDocumentSnapshot,
@@ -25,15 +28,17 @@ import {
 /**
  * Converts a Firestore club document snapshot into a typed `ClubType` object.
  *
- * @param {QueryDocumentSnapshot<DocumentData>} doc - The Firestore document snapshot of a club.
+ * @param {QueryDocumentSnapshot<DocumentData>} clubDocSnapshot - The Firestore document snapshot of a club.
  * @returns {ClubType} The parsed and validated club object.
  *
  * @example
- * const club = mapDocToClub(docSnapshot);
+ * const club = mapDocToClub(clubDocSnapshot);
  */
-const mapDocToClub = (doc: QueryDocumentSnapshot<DocumentData>): ClubType => {
+const mapDocToClub = (
+  clubDocSnapshot: QueryDocumentSnapshot<DocumentData>,
+): ClubType => {
   // Merge the document ID with the document data
-  const rawData = { id: doc.id, ...doc.data() };
+  const rawData = { id: clubDocSnapshot.id, ...clubDocSnapshot.data() };
   // Validate and parse the data using Zod
   return ClubSchema.parse(rawData);
 };
@@ -41,16 +46,18 @@ const mapDocToClub = (doc: QueryDocumentSnapshot<DocumentData>): ClubType => {
 /**
  * Converts a Firestore user document snapshot into a typed `UserType` object.
  *
- * @param {DocumentSnapshot<DocumentData>} docSnap - The Firestore document snapshot of a user.
+ * @param {DocumentSnapshot<DocumentData>} userDocSnapshot - The Firestore document snapshot of a user.
  * @returns {UserType} The parsed and validated user object.
  * @throws Will throw an error if the document data does not match the UserSchema.
  *
  * @example
  * const user = mapDocToUser(userDocSnapshot);
  */
-const mapDocToUser = (docSnap: DocumentSnapshot<DocumentData>): UserType => {
+const mapDocToUser = (
+  userDocSnapshot: DocumentSnapshot<DocumentData>,
+): UserType => {
   // Merge the document ID with the document data
-  const rawData = { id: docSnap.id, ...docSnap.data() };
+  const rawData = { id: userDocSnapshot.id, ...userDocSnapshot.data() };
   // Validate with Zod; parse() will throw if the data doesn't match the schema
   return UserSchema.parse(rawData);
 };
@@ -58,18 +65,21 @@ const mapDocToUser = (docSnap: DocumentSnapshot<DocumentData>): UserType => {
 /**
  * Converts a Firestore membership document snapshot into a typed `UserMembershipType` object.
  *
- * @param {DocumentSnapshot<DocumentData>} docSnap - The Firestore document snapshot of a user membership.
+ * @param {DocumentSnapshot<DocumentData>} userMembershipDocSnapshot - The Firestore document snapshot of a user membership.
  * @returns {UserMembershipType} The parsed and validated membership object.
  * @throws Will throw an error if the document data does not match the UserMembershipSchema.
  *
  * @example
- * const membership = mapDocToUserMembership(membershipDocSnapshot);
+ * const membership = mapDocToUserMembership(userMembershipDocSnapshot);
  */
 const mapDocToUserMembership = (
-  docSnap: DocumentSnapshot<DocumentData>,
+  userMembershipDocSnapshot: DocumentSnapshot<DocumentData>,
 ): UserMembershipType => {
   // Merge the document ID with the document data
-  const rawData = { id: docSnap.id, ...docSnap.data() };
+  const rawData = {
+    id: userMembershipDocSnapshot.id,
+    ...userMembershipDocSnapshot.data(),
+  };
   // Validate with Zod; parse() will throw if the data doesn't match the schema
   return UserMembershipSchema.parse(rawData);
 };
@@ -77,7 +87,7 @@ const mapDocToUserMembership = (
 /**
  * Converts a Firestore club membership document snapshot into a typed `ClubMembershipType` object.
  *
- * @param {DocumentSnapshot<DocumentData>} docSnap - The Firestore document snapshot of a club membership.
+ * @param {DocumentSnapshot<DocumentData>} clubMembershipDocSnapshot - The Firestore document snapshot of a club membership.
  * @returns {ClubMembershipType} The parsed and validated club membership object.
  * @throws Will throw an error if the document data does not match the ClubMembershipSchema.
  *
@@ -85,10 +95,13 @@ const mapDocToUserMembership = (
  * const membership = mapDocToClubMembership(clubMembershipDocSnapshot);
  */
 const mapDocToClubMembership = (
-  docSnap: DocumentSnapshot<DocumentData>,
+  clubMembershipDocSnapshot: DocumentSnapshot<DocumentData>,
 ): ClubMembershipType => {
   // Merge the document ID with the document data
-  const rawData = { id: docSnap.id, ...docSnap.data() };
+  const rawData = {
+    id: clubMembershipDocSnapshot.id,
+    ...clubMembershipDocSnapshot.data(),
+  };
   // Validate and parse the data using the ClubMembershipSchema
   return ClubMembershipSchema.parse(rawData);
 };
@@ -96,7 +109,7 @@ const mapDocToClubMembership = (
 /**
  * Converts a Firestore club session document snapshot into a typed `BaseClubSessionType` object.
  *
- * @param {QueryDocumentSnapshot<DocumentData>} docSnap - The Firestore document snapshot of a club session.
+ * @param {QueryDocumentSnapshot<DocumentData>} sessionDocSnapshot - The Firestore document snapshot of a club session.
  * @returns {BaseClubSessionType} The parsed and validated club session object.
  * @throws Will throw an error if the document data does not match the BaseClubSessionSchema.
  *
@@ -104,12 +117,78 @@ const mapDocToClubMembership = (
  * const session = mapDocToBaseSession(sessionDocSnapshot);
  */
 const mapDocToBaseSession = (
-  docSnap: QueryDocumentSnapshot<DocumentData>,
+  sessionDocSnapshot: QueryDocumentSnapshot<DocumentData>,
 ): BaseClubSessionType => {
   // Merge the document ID with the document data
-  const rawData = { id: docSnap.id, ...docSnap.data() };
+  const rawData = { id: sessionDocSnapshot.id, ...sessionDocSnapshot.data() };
   // Validate with Zod; parse() will throw if the data doesn't match the schema
   return BaseClubSessionSchema.parse(rawData);
+};
+
+/**
+ * Converts a Firestore club class document snapshot into a typed `ClubClassType` object.
+ *
+ * @param {QueryDocumentSnapshot<DocumentData>} clubClassDocSnapshot - The Firestore document snapshot of a club class.
+ * @returns {ClubClassType} The parsed and validated club class object.
+ * @throws Will throw an error if the document data does not match the ClubClassSchema.
+ *
+ * @example
+ * const clubClass = mapDocToClubClass(clubClassDocSnapshot);
+ */
+const mapDocToClubClass = (
+  clubClassDocSnapshot: QueryDocumentSnapshot<DocumentData>,
+): ClubClassType => {
+  // Merge the document ID with the document data
+  const rawData = {
+    id: clubClassDocSnapshot.id,
+    ...clubClassDocSnapshot.data(),
+  };
+  // Validate with Zod; parse() will throw if the data doesn't match the schema
+  return ClubClassSchema.parse(rawData);
+};
+
+/**
+ * Converts a Firestore club member document snapshot into a typed `BaseClubMemberType` object.
+ *
+ * @param {QueryDocumentSnapshot<DocumentData>} clubMemberDocSnapshot - The Firestore document snapshot of a club member.
+ * @returns {ClubClassType} The parsed and validated club member object.
+ * @throws Will throw an error if the document data does not match the BaseClubMemberSchema.
+ *
+ * @example
+ * const clubMember = mapDocToBaseClubMember(clubMemberDocSnapshot);
+ */
+const mapDocToBaseClubMember = (
+  clubMemberDocSnapshot: QueryDocumentSnapshot<DocumentData>,
+): BaseClubMemberType => {
+  // Merge the document ID with the document data
+  const rawData = {
+    id: clubMemberDocSnapshot.id,
+    ...clubMemberDocSnapshot.data(),
+  };
+  // Validate with Zod; parse() will throw if the data doesn't match the schema
+  return BaseClubMemberSchema.parse(rawData);
+};
+
+/**
+ * Converts a Firestore club teacher document snapshot into a typed `BaseClubTeacherType` object.
+ *
+ * @param {QueryDocumentSnapshot<DocumentData>} clubTeacherDocSnapshot - The Firestore document snapshot of a club teacher.
+ * @returns {ClubClassType} The parsed and validated club teacher object.
+ * @throws Will throw an error if the document data does not match the BaseClubTeacherSchema.
+ *
+ * @example
+ * const clubTeacher = mapDocToBaseClubTeacher(clubTeacherDocSnapshot);
+ */
+const mapDocToBaseClubTeacher = (
+  clubTeacherDocSnapshot: QueryDocumentSnapshot<DocumentData>,
+): BaseClubTeacherType => {
+  // Merge the document ID with the document data
+  const rawData = {
+    id: clubTeacherDocSnapshot.id,
+    ...clubTeacherDocSnapshot.data(),
+  };
+  // Validate with Zod; parse() will throw if the data doesn't match the schema
+  return BaseClubTeacherSchema.parse(rawData);
 };
 
 export {
@@ -118,4 +197,7 @@ export {
   mapDocToUser,
   mapDocToClub,
   mapDocToClubMembership,
+  mapDocToClubClass,
+  mapDocToBaseClubMember,
+  mapDocToBaseClubTeacher,
 };

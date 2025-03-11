@@ -70,9 +70,9 @@ const useClubSessions = (
         setLoading(false);
       },
       // Error callback: Log the error, update the error state, and mark loading as complete.
-      (err) => {
-        console.error("Error subscribing to sessions:", err);
-        setError(err);
+      (error) => {
+        console.error("Error subscribing to sessions:", error);
+        setError(error);
         setLoading(false);
       },
       startDate,

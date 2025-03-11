@@ -68,8 +68,8 @@ function ClubProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       },
       // Error callback: update error state and stop loading.
-      (err) => {
-        setError(err);
+      (error) => {
+        setError(error);
         setLoading(false);
       },
     );
