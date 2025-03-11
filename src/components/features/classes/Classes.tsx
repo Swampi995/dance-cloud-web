@@ -204,7 +204,7 @@ const Classes: FC = () => {
       <ClassCalendar
         clubClass={selectedClass}
         club={selectedClub}
-        month={1}
+        month={selectedMonth}
         year={2025}
       />
     </div>
