@@ -95,9 +95,9 @@ const data = {
     },
     {
       name: "Classes",
-      url: "#",
+      url: "/classes",
       icon: GraduationCap,
-      disabled: true,
+      disabled: false,
     },
     {
       name: "Memberships",
