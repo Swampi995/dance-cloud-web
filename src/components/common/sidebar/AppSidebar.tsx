@@ -61,7 +61,7 @@ const data = {
     },
     {
       name: "Monthly Summary",
-      url: "/classes",
+      url: "/monthly_summary",
       icon: BarChart,
       disabled: false,
     },
@@ -95,9 +95,9 @@ const data = {
     },
     {
       name: "Classes",
-      url: "/classes",
+      url: "#",
       icon: GraduationCap,
-      disabled: false,
+      disabled: true,
     },
     {
       name: "Memberships",

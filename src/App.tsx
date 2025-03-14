@@ -55,7 +55,7 @@ function App() {
                 }
               >
                 <Route path="/sessions" element={<Sessions />} />
-                <Route path="/classes" element={<Classes />} />
+                <Route path="/monthly_summary" element={<Classes />} />
               </Route>
               <Route path="/launch" element={<LaunchApp />} />
               <Route path="*" element={<Navigate to="/" replace />} />

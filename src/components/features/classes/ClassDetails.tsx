@@ -266,7 +266,10 @@ const ClassDetails: FC<ClassDetailsProps> = memo(
         <CardContent className="space-y-2">
           <InfoRow label="Name" value={clubClass?.name ?? "Select a class"} />
           <InfoRow label="Level" value={clubClass?.level ?? "Select a class"} />
-          <InfoRow label="Sessions" value={sessionCount.toString()} />
+          <InfoRow
+            label="Sessions"
+            value={isClassSelected ? sessionCount.toString() : "Select a class"}
+          />
 
           <div className="flex place-items-center justify-between space-x-10">
             <p className="text-sm">Schedule</p>

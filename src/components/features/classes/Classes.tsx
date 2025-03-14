@@ -73,7 +73,10 @@ const ClassSelector: FC<ClassSelectorProps> = memo(
     );
 
     return (
-      <Select onValueChange={(value) => onSelect(value)}>
+      <Select
+        onValueChange={(value) => onSelect(value)}
+        disabled={!selectItems.length}
+      >
         <SelectTrigger className="w-[300px]">
           <SelectValue placeholder="Select a class" />
         </SelectTrigger>
