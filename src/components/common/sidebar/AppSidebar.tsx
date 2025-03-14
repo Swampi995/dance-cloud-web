@@ -1,6 +1,7 @@
 import { ComponentProps } from "react";
 import { useNavigate } from "react-router";
 import {
+  BarChart,
   CalendarDays,
   ChevronDown,
   GraduationCap,
@@ -59,6 +60,12 @@ const data = {
       disabled: false,
     },
     {
+      name: "Monthly Summary",
+      url: "/classes",
+      icon: BarChart,
+      disabled: false,
+    },
+    {
       name: "Analytics",
       url: "#",
       icon: TrendingUp,
@@ -88,9 +95,9 @@ const data = {
     },
     {
       name: "Classes",
-      url: "/classes",
+      url: "#",
       icon: GraduationCap,
-      disabled: false,
+      disabled: true,
     },
     {
       name: "Memberships",

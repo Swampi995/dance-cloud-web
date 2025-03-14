@@ -155,6 +155,8 @@ const Classes: FC = () => {
   const { selectedClub } = useClubs();
   const { toast } = useToast();
 
+  const year = useMemo(() => new Date().getFullYear(), []);
+
   // The currently selected month (defaults to the current month).
   const [selectedMonth, setSelectedMonth] = useState<number>(
     new Date().getMonth(),
@@ -199,13 +201,18 @@ const Classes: FC = () => {
           selectedMonth={selectedMonth}
           onMonthChange={setSelectedMonth}
         />
-        <ClassDetails clubClass={selectedClass} club={selectedClub} />
+        <ClassDetails
+          clubClass={selectedClass}
+          club={selectedClub}
+          month={selectedMonth}
+          year={year}
+        />
       </div>
       <ClassCalendar
         clubClass={selectedClass}
         club={selectedClub}
         month={selectedMonth}
-        year={2025}
+        year={year}
       />
     </div>
   );

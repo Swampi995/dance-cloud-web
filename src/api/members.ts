@@ -22,7 +22,8 @@ import { ExtendedClubMemberType } from "@/schemas/members";
  * For each club member document, it creates an extended club member object by:
  *  - Mapping the base club member data using `mapDocToBaseClubMember`.
  *  - Establishing a nested listener on the user document referenced in the base club member and mapping it using `mapDocToUser`.
- *  - Setting up another nested listener to fetch the user's membership data for the club, mapped via `mapDocToUserMembership`.
+ *  - Setting up a nested listener to fetch the user's membership data for the club, mapped via `mapDocToUserMembership`.
+ *  - Setting up a nested listener to fetch the user's past membership data for the club, mapped via `mapDocToUserMembership`.
  *
  * The callback is invoked with the updated list of extended club member objects whenever any relevant data changes.
  * If an error occurs at any point in the subscription process, the error is logged and the optional errorCallback
@@ -90,6 +91,7 @@ export const subscribeToMembersForClub = (
             ...baseClubMember,
             userData: null,
             userMembershipData: null,
+            userPastMembershipData: null,
           };
 
           // Subscribe to real-time updates on the user document referenced in the base club member.
@@ -106,9 +108,23 @@ export const subscribeToMembersForClub = (
                 "memberships",
               );
 
+              // Build a reference to the "pastMemberships" subcollection for the user.
+              const userPastMembershipsRef = collection(
+                db,
+                "users",
+                extendedClubMember.userData.id,
+                "pastMemberships",
+              );
+
               // Create a query to fetch the membership data for the current club.
               const membershipQuery = query(
                 userMembershipsRef,
+                where("club", "==", clubDocRef),
+              );
+
+              // Create a query to fetch the past membership data for the current club.
+              const pastMembershipQuery = query(
+                userPastMembershipsRef,
                 where("club", "==", clubDocRef),
               );
 
@@ -130,8 +146,29 @@ export const subscribeToMembersForClub = (
                 },
               );
 
+              // Subscribe to real-time updates on the past membership data.
+              const unsubPastMembership = onSnapshot(
+                pastMembershipQuery,
+                (pastMembershipSnapshot) => {
+                  if (!pastMembershipSnapshot.empty) {
+                    // We can have more than one past membership, so we store them in an array
+                    const pastMembershipDocs = pastMembershipSnapshot.docs;
+                    extendedClubMember.userPastMembershipData =
+                      pastMembershipDocs.map(mapDocToUserMembership);
+                    // Invoke the callback with updated data.
+                    callback(extendedClubMembers);
+                  }
+                },
+                (err: FirestoreError) => {
+                  console.error("Error fetching past membership data:", err);
+                  if (errorCallback) errorCallback(err);
+                },
+              );
+
               // Store the unsubscribe function for the membership listener.
               extraUnsubs.push(unsubMembership);
+              // Store the unsubscribe function for the pastMembership listener.
+              extraUnsubs.push(unsubPastMembership);
 
               // Invoke the callback with updated user data.
               callback(extendedClubMembers);
