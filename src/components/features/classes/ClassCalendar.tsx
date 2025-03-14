@@ -1,3 +1,4 @@
+import { useSidebar } from "@/components/ui/sidebar";
 import { useClubMembers } from "@/hooks/use-club-members";
 import { ClubClassType } from "@/schemas/classes";
 import { ClubType } from "@/schemas/club";
@@ -55,6 +56,8 @@ const ClassCalendar: FC<ClassCalendarProps> = memo(
       clubClass?.id ?? "",
     );
 
+    const { open } = useSidebar();
+
     // Hook to track the window width.
     const [windowWidth, setWindowWidth] = useState(
       typeof window !== "undefined" ? window.innerWidth : 0,
@@ -74,10 +77,10 @@ const ClassCalendar: FC<ClassCalendarProps> = memo(
 
     // Calculate cellWidth based on window width and number of days in the month.
     const cellWidth = useMemo(() => {
-      const availableWidth = windowWidth - 32 - 335; // Account for the container's horizontal padding (e.g., p-4 on each side) & the sidebar
+      const availableWidth = windowWidth - 32 - 80 - (open ? 255 : 0); // Account for the container's horizontal padding (e.g., p-4 on each side) & the sidebar
       const widthPerDay = availableWidth / numDays;
-      return Math.max(54, widthPerDay);
-    }, [windowWidth, numDays]);
+      return Math.max(43, widthPerDay);
+    }, [windowWidth, numDays, open]);
 
     // Determine the start date of the calendar (first day of the month).
     const calendarStartDate = useMemo(
@@ -91,10 +94,7 @@ const ClassCalendar: FC<ClassCalendarProps> = memo(
     );
 
     // Day labels remain static.
-    const dayLabels = useMemo(
-      () => ["SU", "MO", "TU", "WE", "TH", "FR", "SA"],
-      [],
-    );
+    const dayLabels = useMemo(() => ["S", "M", "T", "W", "T", "F", "S"], []);
 
     // Build an array of day objects for the calendar.
     const days = useMemo(() => {
