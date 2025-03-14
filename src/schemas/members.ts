@@ -16,6 +16,7 @@ export type BaseClubMemberType = z.infer<typeof BaseClubMemberSchema>;
 export const ExtendedClubMemberSchema = BaseClubMemberSchema.extend({
   userData: z.nullable(UserSchema),
   userMembershipData: z.nullable(UserMembershipSchema),
+  userPastMembershipData: z.nullable(z.array(UserMembershipSchema)),
 });
 
 export type ExtendedClubMemberType = z.infer<typeof ExtendedClubMemberSchema>;

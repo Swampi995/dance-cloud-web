@@ -72,7 +72,7 @@ const Header = (): JSX.Element => {
               asChild
               className={navigationMenuTriggerStyle()}
             >
-              <NavLink to="/sessions">Sessions</NavLink>
+              <NavLink to="/sessions">Dashboard</NavLink>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>

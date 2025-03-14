@@ -1,7 +1,7 @@
 import { useClubMembers } from "@/hooks/use-club-members";
 import { ClubClassType } from "@/schemas/classes";
 import { ClubType } from "@/schemas/club";
-import { FC, memo, useMemo } from "react";
+import { FC, memo, useMemo, useState, useEffect, Fragment } from "react";
 
 /**
  * Props for the ClassCalendar component.
@@ -19,19 +19,18 @@ type ClassCalendarProps = {
   year: number;
 };
 
-const cellWidth = 80; // width in pixels for each day cell
 const entryHeight = 40; // height in pixels for each member entry row
 
 /**
  * Generates a random purple shade in HSL format.
  *
- * Purple hues are typically around 250 to 290 degrees.
+ * Purple hues are now more narrowly defined around 260 to 280 degrees.
  * Saturation is randomly chosen between 40% and 100% and lightness between 30% and 70%.
  *
  * @returns {string} A string representing an HSL color.
  */
 const getRandomPurple = () => {
-  const hue = Math.floor(Math.random() * 40) + 250;
+  const hue = Math.floor(Math.random() * 20) + 260; // hue between 260 and 280 degrees
   const saturation = Math.floor(Math.random() * 60) + 40;
   const lightness = Math.floor(Math.random() * 40) + 30;
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
@@ -39,9 +38,11 @@ const getRandomPurple = () => {
 
 /**
  * Renders a calendar view for a club class, displaying the class members over the days of the specified month.
+ * In addition to the current membership (displayed in a random purple shade), if a member has past membership data,
+ * each past membership period (from the `userPastMembershipData` array) is displayed on the same row with a gray color.
  *
- * This component calculates the days in the month, filters valid members based on their membership start
- * and expiration dates, and assigns a random purple shade to each member to display their entry consistently.
+ * If a member does not have an active membership event for the current month, but has past membership data,
+ * their past membership events are still displayed.
  *
  * @component
  * @param {ClassCalendarProps} props - The properties for the ClassCalendar component.
@@ -54,12 +55,30 @@ const ClassCalendar: FC<ClassCalendarProps> = memo(
       clubClass?.id ?? "",
     );
 
+    // Hook to track the window width.
+    const [windowWidth, setWindowWidth] = useState(
+      typeof window !== "undefined" ? window.innerWidth : 0,
+    );
+
+    useEffect(() => {
+      const handleResize = () => setWindowWidth(window.innerWidth);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     // Calculate number of days in the given month and year.
-    // For a 0-indexed month, new Date(year, month + 1, 0) gives the last day of the month.
     const numDays = useMemo(
       () => new Date(year, month + 1, 0).getDate(),
       [year, month],
     );
+
+    // Calculate cellWidth based on window width and number of days in the month.
+    const cellWidth = useMemo(() => {
+      const availableWidth = windowWidth - 32 - 335; // Account for the container's horizontal padding (e.g., p-4 on each side) & the sidebar
+      const widthPerDay = availableWidth / numDays;
+      return Math.max(54, widthPerDay);
+    }, [windowWidth, numDays]);
+
     // Determine the start date of the calendar (first day of the month).
     const calendarStartDate = useMemo(
       () => new Date(year, month, 1),
@@ -86,20 +105,31 @@ const ClassCalendar: FC<ClassCalendarProps> = memo(
       });
     }, [numDays, year, month, dayLabels]);
 
-    // Filter members whose membership dates intersect with the current month.
+    // Filter members: include if active membership intersects the month
+    // OR if any past membership period intersects the month.
     const validMembers = useMemo(() => {
       return members?.filter((member) => {
-        if (
-          !member.userMembershipData ||
-          !member.userData ||
-          !member.userMembershipData.startDate ||
-          !member.userMembershipData.expiration
-        ) {
-          return false;
-        }
-        const start = member.userMembershipData.startDate.toDate();
-        const expiration = member.userMembershipData.expiration.toDate();
-        return expiration >= calendarStartDate && start <= calendarEndDate;
+        const activeValid =
+          member.userMembershipData &&
+          member.userData &&
+          member.userMembershipData.startDate &&
+          member.userMembershipData.expiration &&
+          member.userMembershipData.startDate.toDate() <= calendarEndDate &&
+          member.userMembershipData.expiration.toDate() >= calendarStartDate;
+
+        const pastValid =
+          member.userPastMembershipData &&
+          Array.isArray(member.userPastMembershipData) &&
+          member.userPastMembershipData.some((past) => {
+            if (!past.startDate || !past.expiration) return false;
+            const pastStart = past.startDate.toDate();
+            const pastExpiration = past.expiration.toDate();
+            return (
+              pastExpiration >= calendarStartDate &&
+              pastStart <= calendarEndDate
+            );
+          });
+        return activeValid || pastValid;
       });
     }, [members, calendarStartDate, calendarEndDate]);
 
@@ -115,8 +145,8 @@ const ClassCalendar: FC<ClassCalendarProps> = memo(
     }, [validMembers]);
 
     return (
-      <div className="overflow-x-auto rounded-sm bg-sidebar p-4">
-        <div className="min-w-max">
+      <div className="overflow-x-auto">
+        <div className="w-max rounded-sm bg-sidebar p-4">
           {/* Calendar Header */}
           <div className="flex">
             {days.map(({ day, label }, index) => (
@@ -140,37 +170,90 @@ const ClassCalendar: FC<ClassCalendarProps> = memo(
             }}
           >
             {validMembers?.map((member, index) => {
-              const start = member.userMembershipData!.startDate!.toDate();
-              const expiration =
-                member.userMembershipData!.expiration!.toDate();
-
-              // Determine effective start and end days within the current month.
-              const effectiveStartDay =
-                start < calendarStartDate ? 1 : start.getDate();
-              const effectiveEndDay =
-                expiration > calendarEndDate ? numDays : expiration.getDate();
-
-              // Calculate left offset and width based on effective start/end days.
-              const left = (effectiveStartDay - 1) * cellWidth;
-              const width =
-                (effectiveEndDay - effectiveStartDay + 1) * cellWidth;
-
               return (
-                <div
-                  key={member.userData!.name}
-                  className="absolute flex items-center justify-center rounded-xl border"
-                  style={{
-                    top: index * entryHeight,
-                    left,
-                    width,
-                    height: entryHeight - 10,
-                    backgroundColor: memberColors[member.userData!.name],
-                  }}
-                >
-                  <span className="truncate px-1 text-sm">
-                    {member.userData!.name}
-                  </span>
-                </div>
+                <Fragment key={member.userData!.name}>
+                  {/* Past membership segments */}
+                  {member.userPastMembershipData &&
+                    Array.isArray(member.userPastMembershipData) &&
+                    member.userPastMembershipData.map((past, pastIndex) => {
+                      if (!past.startDate || !past.expiration) return null;
+                      const pastStart = past.startDate.toDate();
+                      const pastExpiration = past.expiration.toDate();
+                      // Only render if the past membership period intersects with the current month.
+                      if (
+                        pastExpiration < calendarStartDate ||
+                        pastStart > calendarEndDate
+                      ) {
+                        return null;
+                      }
+                      const pastEffectiveStartDay =
+                        pastStart < calendarStartDate ? 1 : pastStart.getDate();
+                      const pastEffectiveEndDay =
+                        pastExpiration > calendarEndDate
+                          ? numDays
+                          : pastExpiration.getDate();
+                      const pastLeft = (pastEffectiveStartDay - 1) * cellWidth;
+                      const pastWidth =
+                        (pastEffectiveEndDay - pastEffectiveStartDay + 1) *
+                        cellWidth;
+                      return (
+                        <div
+                          key={`${member.userData!.name}-past-${pastIndex}`}
+                          className="absolute flex items-center justify-center rounded-xl border bg-neutral-800"
+                          style={{
+                            top: index * entryHeight,
+                            left: pastLeft,
+                            width: pastWidth,
+                            height: entryHeight - 10,
+                            zIndex: 1,
+                          }}
+                        >
+                          <span className="truncate px-1 text-sm">
+                            {member.userData!.name}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  {/* Current membership segment (only if active membership data exists) */}
+                  {member.userMembershipData &&
+                    member.userMembershipData.startDate &&
+                    member.userMembershipData.expiration &&
+                    (() => {
+                      const currentStart =
+                        member.userMembershipData.startDate.toDate();
+                      const currentExpiration =
+                        member.userMembershipData.expiration.toDate();
+                      const effectiveStartDay =
+                        currentStart < calendarStartDate
+                          ? 1
+                          : currentStart.getDate();
+                      const effectiveEndDay =
+                        currentExpiration > calendarEndDate
+                          ? numDays
+                          : currentExpiration.getDate();
+                      const currentLeft = (effectiveStartDay - 1) * cellWidth;
+                      const currentWidth =
+                        (effectiveEndDay - effectiveStartDay + 1) * cellWidth;
+                      return (
+                        <div
+                          className="absolute flex items-center justify-center rounded-xl border"
+                          style={{
+                            top: index * entryHeight,
+                            left: currentLeft,
+                            width: currentWidth,
+                            height: entryHeight - 10,
+                            backgroundColor:
+                              memberColors[member.userData!.name],
+                            zIndex: 2,
+                          }}
+                        >
+                          <span className="truncate px-1 text-sm">
+                            {member.userData!.name}
+                          </span>
+                        </div>
+                      );
+                    })()}
+                </Fragment>
               );
             })}
           </div>
