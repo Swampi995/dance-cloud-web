@@ -2,34 +2,10 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { FC, memo, useState } from "react";
 import { YearCalendar } from "./YearCalendar";
-
-type ViewType = "Year" | "Month" | "Day";
-
-interface ViewSelectorProps {
-  activeView: ViewType;
-  onChange: (view: ViewType) => void;
-}
-
-const ViewSelector: FC<ViewSelectorProps> = ({ activeView, onChange }) => {
-  const views: ViewType[] = ["Year", "Month", "Day"];
-  return (
-    <div className="flex space-x-2">
-      {views.map((view) => (
-        <Button
-          key={view}
-          variant={activeView === view ? "default" : "outline"}
-          size={"sm"}
-          onClick={() => onChange(view)}
-        >
-          {view}
-        </Button>
-      ))}
-    </div>
-  );
-};
+import ViewSelector from "./ViewSelector";
 
 interface NavigationControlsProps {
-  activeView: ViewType;
+  activeView: string;
   currentDate: Date;
   onDateChange: (date: Date) => void;
 }
@@ -108,10 +84,10 @@ const NavigationControls: FC<NavigationControlsProps> = ({
 };
 
 interface NavigationHeaderProps {
-  activeView: ViewType;
+  activeView: string;
   currentDate: Date;
   onDateChange: (date: Date) => void;
-  onViewChange: (view: ViewType) => void;
+  onViewChange: (view: string) => void;
 }
 
 const NavigationHeader: FC<NavigationHeaderProps> = ({
@@ -145,7 +121,7 @@ const NavigationHeader: FC<NavigationHeaderProps> = ({
       <h1 className="text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
         {formattedDate}
       </h1>
-      <div className="flex space-x-2">
+      <div className="flex items-center space-x-2">
         <ViewSelector activeView={activeView} onChange={onViewChange} />
         <NavigationControls
           activeView={activeView}
@@ -158,8 +134,8 @@ const NavigationHeader: FC<NavigationHeaderProps> = ({
 };
 
 interface HeaderProps {
-  activeView: ViewType;
-  setActiveView: (view: ViewType) => void;
+  activeView: string;
+  setActiveView: (view: string) => void;
   currentDate: Date;
   setCurrentDate: (date: Date) => void;
 }
@@ -178,7 +154,7 @@ Header.displayName = "Header";
 
 const Schedule: FC = () => {
   // Lift state up so that Header and Calendar share the same date.
-  const [activeView, setActiveView] = useState<ViewType>("Year");
+  const [activeView, setActiveView] = useState<string>("Year");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
   return (
