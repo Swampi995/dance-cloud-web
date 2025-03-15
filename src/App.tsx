@@ -33,6 +33,7 @@ const Login = lazy(() => import("./components/features/login/Login"));
 const TermsOfService = lazy(() => import("./components/features/terms"));
 const Sessions = lazy(() => import("./components/features/sessions/Sessions"));
 const Classes = lazy(() => import("./components/features/classes/Classes"));
+const Schedule = lazy(() => import("./components/features/schedule/Schedule"));
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
               >
                 <Route path="/sessions" element={<Sessions />} />
                 <Route path="/monthly_summary" element={<Classes />} />
+                <Route path="/schedule" element={<Schedule />} />
               </Route>
               <Route path="/launch" element={<LaunchApp />} />
               <Route path="*" element={<Navigate to="/" replace />} />
