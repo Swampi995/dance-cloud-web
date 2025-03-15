@@ -146,7 +146,7 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
   }, [year]);
 
   return (
-    <div className="mx-auto grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {monthsData.map(({ monthName, monthIndex, days }) => (
         <Card key={monthName} className="border-0 bg-sidebar/70">
           <CardHeader>
