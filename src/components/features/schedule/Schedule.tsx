@@ -1,87 +1,8 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { FC, memo, useState } from "react";
 import { YearCalendar } from "./YearCalendar";
-import ViewSelector from "./ViewSelector";
-
-interface NavigationControlsProps {
-  activeView: string;
-  currentDate: Date;
-  onDateChange: (date: Date) => void;
-}
-
-const NavigationControls: FC<NavigationControlsProps> = ({
-  activeView,
-  currentDate,
-  onDateChange,
-}) => {
-  const handlePrevious = () => {
-    if (activeView === "Year") {
-      onDateChange(
-        new Date(
-          currentDate.getFullYear() - 1,
-          currentDate.getMonth(),
-          currentDate.getDate(),
-        ),
-      );
-    } else if (activeView === "Month") {
-      onDateChange(
-        new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth() - 1,
-          currentDate.getDate(),
-        ),
-      );
-    } else if (activeView === "Day") {
-      onDateChange(
-        new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          currentDate.getDate() - 1,
-        ),
-      );
-    }
-  };
-
-  const handleNext = () => {
-    if (activeView === "Year") {
-      onDateChange(
-        new Date(
-          currentDate.getFullYear() + 1,
-          currentDate.getMonth(),
-          currentDate.getDate(),
-        ),
-      );
-    } else if (activeView === "Month") {
-      onDateChange(
-        new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth() + 1,
-          currentDate.getDate(),
-        ),
-      );
-    } else if (activeView === "Day") {
-      onDateChange(
-        new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          currentDate.getDate() + 1,
-        ),
-      );
-    }
-  };
-
-  return (
-    <div className="flex space-x-2">
-      <Button variant="outline" size={"sm"} onClick={handlePrevious}>
-        ←
-      </Button>
-      <Button variant="outline" size={"sm"} onClick={handleNext}>
-        →
-      </Button>
-    </div>
-  );
-};
+import { ViewSelector } from "./ViewSelector";
+import { NavigationControls } from "./NavigationControls";
 
 interface NavigationHeaderProps {
   activeView: string;
@@ -96,39 +17,14 @@ const NavigationHeader: FC<NavigationHeaderProps> = ({
   onDateChange,
   onViewChange,
 }) => {
-  // Format the date based on the active view.
-  const formattedDate = (() => {
-    if (activeView === "Year") {
-      return currentDate.toLocaleDateString(undefined, { year: "numeric" });
-    } else if (activeView === "Month") {
-      return currentDate.toLocaleDateString(undefined, {
-        month: "long",
-        year: "numeric",
-      });
-    } else if (activeView === "Day") {
-      return currentDate.toLocaleDateString(undefined, {
-        weekday: "short",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-    }
-    return currentDate.toDateString();
-  })();
-
   return (
     <div className="items-center justify-between space-x-4 space-y-4 text-right md:flex md:space-y-0">
-      <h1 className="text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
-        {formattedDate}
-      </h1>
-      <div className="flex items-center space-x-2">
-        <ViewSelector activeView={activeView} onChange={onViewChange} />
-        <NavigationControls
-          activeView={activeView}
-          currentDate={currentDate}
-          onDateChange={onDateChange}
-        />
-      </div>
+      <NavigationControls
+        activeView={activeView}
+        currentDate={currentDate}
+        onDateChange={onDateChange}
+      />
+      <ViewSelector activeView={activeView} onChange={onViewChange} />
     </div>
   );
 };
@@ -184,4 +80,5 @@ const Schedule: FC = () => {
 };
 
 Schedule.displayName = "Schedule";
+
 export default Schedule;

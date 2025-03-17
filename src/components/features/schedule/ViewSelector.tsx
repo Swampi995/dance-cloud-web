@@ -22,4 +22,6 @@ const ViewSelector: FC<ViewSelectorProps> = ({ activeView, onChange }) => {
   );
 };
 
-export default ViewSelector;
+ViewSelector.displayName = "ViewSelector";
+
+export { ViewSelector };
