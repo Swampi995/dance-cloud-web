@@ -28,6 +28,7 @@ const NavigationHeader: FC<NavigationHeaderProps> = ({
     </div>
   );
 };
+NavigationHeader.displayName = "NavigationHeader";
 
 interface HeaderProps {
   activeView: string;
@@ -78,7 +79,6 @@ const Schedule: FC = () => {
     </div>
   );
 };
-
 Schedule.displayName = "Schedule";
 
 export default Schedule;

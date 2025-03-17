@@ -100,7 +100,6 @@ const NavigationControls: FC<NavigationControlsProps> = ({
     </div>
   );
 };
-
 NavigationControls.displayName = "NavigationControls";
 
 export { NavigationControls };

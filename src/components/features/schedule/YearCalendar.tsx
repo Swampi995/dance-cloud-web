@@ -187,7 +187,6 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
     </div>
   );
 };
-
 YearCalendar.displayName = "YearCalendar";
 
 export { YearCalendar };

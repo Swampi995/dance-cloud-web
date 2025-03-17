@@ -22,8 +22,8 @@ import { useClubClasses } from "@/hooks/use-club-classes";
 import { useClubs } from "@/hooks/use-clubs";
 import { useToast } from "@/hooks/use-toast";
 import { ClubClassType } from "@/schemas/classes";
-import { ClassDetails } from "./ClassDetails";
 import { ClassCalendar } from "./ClassCalendar";
+import { ClassDetails } from "./ClassDetails";
 
 /**
  * Renders the page header component, including the sidebar trigger
@@ -220,7 +220,6 @@ const Classes: FC = () => {
     </div>
   );
 };
-
 Classes.displayName = "Classes";
 
 export default Classes;

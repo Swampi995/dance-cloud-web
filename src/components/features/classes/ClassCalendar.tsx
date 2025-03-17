@@ -262,7 +262,6 @@ const ClassCalendar: FC<ClassCalendarProps> = memo(
     );
   },
 );
-
 ClassCalendar.displayName = "ClassCalendar";
 
 export { ClassCalendar };

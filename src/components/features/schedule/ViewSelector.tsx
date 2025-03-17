@@ -21,7 +21,6 @@ const ViewSelector: FC<ViewSelectorProps> = ({ activeView, onChange }) => {
     </Tabs>
   );
 };
-
 ViewSelector.displayName = "ViewSelector";
 
 export { ViewSelector };

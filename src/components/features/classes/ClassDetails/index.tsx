@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ClubClassType } from "@/schemas/classes";
 import { ClubType } from "@/schemas/club";
 import { useClubTeachers } from "@/hooks/use-club-teachers";
+import { InfoRow } from "./InfoRow";
+import { ScheduleList } from "./ScheduleItem";
+import { TeachersList } from "./TeacherList";
 
 /**
  * Props for the ClassDetails component.
@@ -31,159 +34,6 @@ const daysOfWeek = [
   "Friday",
   "Saturday",
 ];
-
-/**
- * Props for the InfoRow component.
- * @typedef {Object} InfoRowProps
- * @property {string} label - The label for the information.
- * @property {string} value - The corresponding value.
- */
-interface InfoRowProps {
-  label: string;
-  value: string;
-}
-
-/**
- * A component that displays a label and a value in a row.
- *
- * @param {InfoRowProps} props - The properties for the component.
- * @returns {JSX.Element} The rendered InfoRow component.
- */
-const InfoRow: FC<InfoRowProps> = memo(({ label, value }) => (
-  <div className="flex place-items-center justify-between space-x-10">
-    <p className="text-sm">{label}</p>
-    <p className="font-medium">{value}</p>
-  </div>
-));
-
-/**
- * Props for the ScheduleItem component.
- * @typedef {Object} ScheduleItemProps
- * @property {string} large - The schedule string for larger screens.
- * @property {string} small - The schedule string for smaller screens.
- */
-interface ScheduleItemProps {
-  large: string;
-  small: string;
-}
-
-/**
- * A component that displays a single schedule item.
- * It shows different formats for large and small screens.
- *
- * @param {ScheduleItemProps} props - The properties for the schedule item.
- * @returns {JSX.Element} The rendered ScheduleItem component.
- */
-const ScheduleItem: FC<ScheduleItemProps> = memo(({ large, small }) => (
-  <div>
-    <span className="hidden rounded-sm bg-sidebar-accent px-2 py-1 text-sm lg:inline">
-      {large}
-    </span>
-    <span className="inline rounded-sm bg-sidebar-accent px-2 py-1 text-sm lg:hidden">
-      {small}
-    </span>
-  </div>
-));
-
-/**
- * Props for the ScheduleList component.
- * @typedef {Object} ScheduleListProps
- * @property {{ large: string; small: string }[]} schedules - The list of schedule items.
- * @property {boolean} isClassSelected - Indicates if a class is currently selected.
- */
-interface ScheduleListProps {
-  schedules: { large: string; small: string }[];
-  isClassSelected: boolean;
-}
-
-/**
- * A component that displays a list of schedule items.
- * If no class is selected, it prompts the user to select one.
- *
- * @param {ScheduleListProps} props - The properties for the schedule list.
- * @returns {JSX.Element} The rendered ScheduleList component.
- */
-const ScheduleList: FC<ScheduleListProps> = memo(
-  ({ schedules, isClassSelected }) => {
-    if (!isClassSelected) {
-      return <span>Select a class</span>;
-    }
-    if (schedules.length === 0) {
-      return (
-        <span className="rounded-sm bg-sidebar-accent px-2 py-1 text-sm">
-          No schedule set
-        </span>
-      );
-    }
-    return (
-      <>
-        {schedules.map((sched, index) => (
-          <ScheduleItem
-            key={`schedule_${index}`}
-            large={sched.large}
-            small={sched.small}
-          />
-        ))}
-      </>
-    );
-  },
-);
-
-/**
- * Props for the TeacherItem component.
- * @typedef {Object} TeacherItemProps
- * @property {string} name - The name of the teacher.
- */
-interface TeacherItemProps {
-  name: string;
-}
-
-/**
- * A component that displays a single teacher's name.
- *
- * @param {TeacherItemProps} props - The properties for the teacher item.
- * @returns {JSX.Element} The rendered TeacherItem component.
- */
-const TeacherItem: FC<TeacherItemProps> = memo(({ name }) => (
-  <div>
-    <span className="rounded-sm bg-sidebar-accent px-2 py-1 text-sm">
-      {name}
-    </span>
-  </div>
-));
-
-/**
- * Props for the TeachersList component.
- * @typedef {Object} TeachersListProps
- * @property {string[]} teachers - An array of teacher names.
- * @property {boolean} isClassSelected - Indicates if a class is currently selected.
- */
-interface TeachersListProps {
-  teachers: string[];
-  isClassSelected: boolean;
-}
-
-/**
- * A component that displays a list of teachers.
- * If no class is selected, it prompts the user to select one.
- *
- * @param {TeachersListProps} props - The properties for the teachers list.
- * @returns {JSX.Element} The rendered TeachersList component.
- */
-const TeachersList: FC<TeachersListProps> = memo(
-  ({ teachers, isClassSelected }) => {
-    if (!isClassSelected) {
-      return <span>Select a class</span>;
-    }
-    return (
-      <>
-        {teachers.map((teacher, index) => (
-          <TeacherItem key={`teacher_${index}`} name={teacher} />
-        ))}
-      </>
-    );
-  },
-);
 
 /**
  * A component that displays detailed information about a club class,
@@ -274,20 +124,22 @@ const ClassDetails: FC<ClassDetailsProps> = memo(
           <div className="flex place-items-center justify-between space-x-10">
             <p className="text-sm">Schedule</p>
             <div className="flex flex-wrap gap-1 font-medium md:gap-2 lg:gap-4">
-              <ScheduleList
-                schedules={formattedSchedules}
-                isClassSelected={isClassSelected}
-              />
+              {!isClassSelected ? (
+                <span>Select a class</span>
+              ) : (
+                <ScheduleList schedules={formattedSchedules} />
+              )}
             </div>
           </div>
 
           <div className="flex place-items-center justify-between space-x-10">
             <p className="text-sm">Teachers</p>
             <div className="flex flex-wrap gap-1 font-medium md:gap-2 lg:gap-4">
-              <TeachersList
-                teachers={sortedTeacherNames}
-                isClassSelected={isClassSelected}
-              />
+              {!isClassSelected ? (
+                <span>Select a class</span>
+              ) : (
+                <TeachersList teachers={sortedTeacherNames} />
+              )}
             </div>
           </div>
         </CardContent>
@@ -295,7 +147,6 @@ const ClassDetails: FC<ClassDetailsProps> = memo(
     );
   },
 );
-
 ClassDetails.displayName = "ClassDetails";
 
 export { ClassDetails };
