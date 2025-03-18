@@ -1,10 +1,10 @@
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 
 interface NavigationControlsProps {
   activeView: string;
   currentDate: Date;
-  onDateChange: (date: Date) => void;
+  onDateChange: Dispatch<SetStateAction<Date>>;
 }
 
 const NavigationControls: FC<NavigationControlsProps> = ({

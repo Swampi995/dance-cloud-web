@@ -9,25 +9,7 @@
 
 import { Dispatch, SetStateAction, useMemo } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-
-// Array of month names used for display.
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-// Array of abbreviated weekday headers.
-const WEEKDAY_HEADERS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+import { MONTH_NAMES, WEEKDAY_HEADERS } from "@/constants";
 
 /**
  * Returns the number of days in a given month.
@@ -142,7 +124,7 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
 
   // Memoize calendar data for each month so it recalculates only when the `year` changes.
   const monthsData = useMemo(() => {
-    return monthNames.map((monthName, monthIndex) => {
+    return MONTH_NAMES.map((monthName, monthIndex) => {
       const days = generateCalendarDays(year, monthIndex);
       return { monthName, monthIndex, days };
     });

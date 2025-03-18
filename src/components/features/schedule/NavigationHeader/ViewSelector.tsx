@@ -1,16 +1,16 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 
 interface ViewSelectorProps {
   activeView: string;
-  onChange: (view: string) => void;
+  onViewChange: Dispatch<SetStateAction<string>>;
 }
 
-const ViewSelector: FC<ViewSelectorProps> = ({ activeView, onChange }) => {
+const ViewSelector: FC<ViewSelectorProps> = ({ activeView, onViewChange }) => {
   const views: string[] = ["Year", "Month", "Day"];
 
   return (
-    <Tabs value={activeView} onValueChange={onChange}>
+    <Tabs value={activeView} onValueChange={onViewChange}>
       <TabsList className="flex space-x-2">
         {views.map((view) => (
           <TabsTrigger key={view} value={view}>
