@@ -7,7 +7,7 @@
  * and trailing days (from the next month) to complete each week. The current day is highlighted.
  */
 
-import React, { useMemo } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 // Array of month names used for display.
@@ -109,9 +109,11 @@ function generateCalendarDays(year: number, month: number): CalendarCell[] {
  * Props for the YearCalendar component.
  *
  * @property {number} [year] - The year to display. Defaults to the current year if not provided.
+ * @property {Dispatch<SetStateAction<Date>>} [onDateChange] - The state setter to change the currentDate
  */
 interface YearCalendarProps {
   year?: number;
+  onDateChange: Dispatch<SetStateAction<Date>>;
 }
 
 /**
@@ -131,6 +133,7 @@ interface YearCalendarProps {
  */
 const YearCalendar: React.FC<YearCalendarProps> = ({
   year = new Date().getFullYear(),
+  onDateChange,
 }) => {
   const today = new Date();
   const todayYear = today.getFullYear();
@@ -148,7 +151,11 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {monthsData.map(({ monthName, monthIndex, days }) => (
-        <Card key={monthName} className="border-0 bg-sidebar/70">
+        <Card
+          key={monthName}
+          className="cursor-pointer border-0 bg-sidebar/70"
+          onClick={() => onDateChange(new Date(year, monthIndex, 1))}
+        >
           <CardHeader>
             <h3 className="text-left text-lg font-semibold text-purple-300">
               {monthName}

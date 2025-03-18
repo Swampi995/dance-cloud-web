@@ -74,7 +74,10 @@ const Schedule: FC = () => {
         />
         {/* Conditionally render different calendars based on activeView.
             Here, we only render the YearCalendar for brevity. */}
-        <YearCalendar year={currentDate.getFullYear()} />
+        <YearCalendar
+          year={currentDate.getFullYear()}
+          onDateChange={setCurrentDate}
+        />
       </div>
     </div>
   );
