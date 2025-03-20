@@ -1,8 +1,9 @@
 import { useSidebar } from "@/components/ui/sidebar";
 import { useClubMembers } from "@/hooks/use-club-members";
+import { useWindowDimensions } from "@/hooks/use-window-dimensions";
 import { ClubClassType } from "@/schemas/classes";
 import { ClubType } from "@/schemas/club";
-import { FC, memo, useMemo, useState, useEffect, Fragment } from "react";
+import { FC, memo, useMemo, Fragment } from "react";
 
 /**
  * Props for the ClassCalendar component.
@@ -56,18 +57,10 @@ const ClassCalendar: FC<ClassCalendarProps> = memo(
       clubClass?.id ?? "",
     );
 
-    const { open } = useSidebar();
+    const { open, openMobile, isMobile } = useSidebar();
 
-    // Hook to track the window width.
-    const [windowWidth, setWindowWidth] = useState(
-      typeof window !== "undefined" ? window.innerWidth : 0,
-    );
-
-    useEffect(() => {
-      const handleResize = () => setWindowWidth(window.innerWidth);
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
+    // Use a hook to get the window dimensions
+    const { width: windowWidth } = useWindowDimensions();
 
     // Calculate number of days in the given month and year.
     const numDays = useMemo(
@@ -75,12 +68,17 @@ const ClassCalendar: FC<ClassCalendarProps> = memo(
       [year, month],
     );
 
+    const isSidebarOpen = useMemo(
+      () => (isMobile ? openMobile : open),
+      [isMobile, openMobile, open],
+    );
+
     // Calculate cellWidth based on window width and number of days in the month.
     const cellWidth = useMemo(() => {
-      const availableWidth = windowWidth - 32 - 80 - (open ? 255 : 0); // Account for the container's horizontal padding (e.g., p-4 on each side) & the sidebar
+      const availableWidth = windowWidth - 32 - 80 - (isSidebarOpen ? 255 : 0); // Account for the container's horizontal padding (e.g., p-4 on each side) & the sidebar
       const widthPerDay = availableWidth / numDays;
       return Math.max(43, widthPerDay);
-    }, [windowWidth, numDays, open]);
+    }, [windowWidth, numDays, isSidebarOpen]);
 
     // Determine the start date of the calendar (first day of the month).
     const calendarStartDate = useMemo(

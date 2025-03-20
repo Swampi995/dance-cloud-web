@@ -7,95 +7,22 @@
  * and trailing days (from the next month) to complete each week. The current day is highlighted.
  */
 
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, memo, SetStateAction, useMemo } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { MONTH_NAMES, WEEKDAY_HEADERS } from "@/constants";
-
-/**
- * Returns the number of days in a given month.
- * Note: Month is zero-indexed (0 = January, 11 = December).
- *
- * @param {number} year - The full year (e.g., 2025).
- * @param {number} month - The zero-indexed month.
- * @returns {number} The number of days in the specified month.
- */
-function getDaysInMonth(year: number, month: number): number {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-/**
- * Type representing the kind of day shown in the calendar.
- * - "prev": Day from the previous month.
- * - "current": Day from the current month.
- * - "next": Day from the next month.
- */
-type DayType = "prev" | "current" | "next";
-
-/**
- * Represents a cell in the calendar grid.
- *
- * @property {number} day - The day number to display.
- * @property {DayType} type - Indicates whether the day belongs to the previous, current, or next month.
- */
-interface CalendarCell {
-  day: number;
-  type: DayType;
-}
-
-/**
- * Generates an array of calendar cells for a specific month.
- *
- * The function creates a grid that includes:
- * - Leading days from the previous month (if the month does not start on Sunday).
- * - All days of the current month.
- * - Trailing days from the next month to complete the final week.
- *
- * @param {number} year - The full year (e.g., 2025).
- * @param {number} month - The zero-indexed month for which the calendar is generated.
- * @returns {CalendarCell[]} An array of CalendarCell objects representing each cell in the calendar grid.
- */
-function generateCalendarDays(year: number, month: number): CalendarCell[] {
-  const daysInMonth = getDaysInMonth(year, month);
-  const firstDayIndex = new Date(year, month, 1).getDay();
-  const totalCells = Math.ceil((firstDayIndex + daysInMonth) / 7) * 7;
-
-  // Calculate information for the previous month.
-  const prevMonth = month - 1;
-  const prevYear = prevMonth < 0 ? year - 1 : year;
-  const prevMonthIndex = prevMonth < 0 ? 11 : prevMonth;
-  const daysInPrevMonth = getDaysInMonth(prevYear, prevMonthIndex);
-
-  const days: CalendarCell[] = [];
-
-  // Add leading days from the previous month.
-  for (let i = 0; i < firstDayIndex; i++) {
-    const day = daysInPrevMonth - firstDayIndex + 1 + i;
-    days.push({ day, type: "prev" });
-  }
-
-  // Add days for the current month.
-  for (let day = 1; day <= daysInMonth; day++) {
-    days.push({ day, type: "current" });
-  }
-
-  // Add trailing days from the next month.
-  const trailingDaysCount = totalCells - days.length;
-  for (let day = 1; day <= trailingDaysCount; day++) {
-    days.push({ day, type: "next" });
-  }
-
-  return days;
-}
+import { generateCalendarDays } from "./helpers";
 
 /**
  * Props for the YearCalendar component.
  *
  * @property {number} [year] - The year to display. Defaults to the current year if not provided.
  * @property {Dispatch<SetStateAction<Date>>} [onDateChange] - The state setter to change the currentDate
+ * @property {Dispatch<SetStateAction<string>>} [onViewChange] - The state setter to change the currentView
  */
 interface YearCalendarProps {
   year?: number;
   onDateChange: Dispatch<SetStateAction<Date>>;
+  onViewChange: Dispatch<SetStateAction<string>>;
 }
 
 /**
@@ -116,6 +43,7 @@ interface YearCalendarProps {
 const YearCalendar: React.FC<YearCalendarProps> = ({
   year = new Date().getFullYear(),
   onDateChange,
+  onViewChange,
 }) => {
   const today = new Date();
   const todayYear = today.getFullYear();
@@ -135,8 +63,11 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
       {monthsData.map(({ monthName, monthIndex, days }) => (
         <Card
           key={monthName}
-          className="cursor-pointer border-0 bg-sidebar/70"
-          onClick={() => onDateChange(new Date(year, monthIndex, 1))}
+          className="cursor-pointer border-0 bg-sidebar/70 hover:bg-neutral-800"
+          onClick={() => {
+            onDateChange(new Date(year, monthIndex, 1));
+            onViewChange("Month");
+          }}
         >
           <CardHeader>
             <h3 className="text-left text-lg font-semibold text-purple-300">
@@ -178,4 +109,4 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
 };
 YearCalendar.displayName = "YearCalendar";
 
-export { YearCalendar };
+export default memo(YearCalendar);
