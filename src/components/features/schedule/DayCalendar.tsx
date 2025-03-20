@@ -1,104 +1,184 @@
-/**
- * @fileoverview DayCalendar Component
- *
- * This file contains the DayCalendar React component which renders a calendar view for a single day.
- * The component displays a header with the full date and a grid of hourly cells.
- * Clicking on an hour cell triggers the onDateChange callback with the corresponding Date object.
- */
-
-import { Dispatch, memo, SetStateAction, useMemo } from "react";
+import { memo, useMemo, useRef, useCallback } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { useSidebar } from "@/components/ui/sidebar";
+import { useWindowDimensions } from "@/hooks/use-window-dimensions";
 
 interface DayCalendarProps {
   /**
    * The date to display. Defaults to the current date if not provided.
    */
   date?: Date;
+}
+
+/**
+ * Formats the given hour and minute into a 12-hour clock time string.
+ *
+ * @param {number} hour - The hour in 24-hour format.
+ * @param {number} minute - The minute.
+ * @returns {string} The formatted time string.
+ */
+function formatTime(hour: number, minute: number): string {
+  const period = hour < 12 ? "AM" : "PM";
+  let hour12 = hour % 12;
+  if (hour12 === 0) hour12 = 12;
+  return `${hour12}:${minute.toString().padStart(2, "0")} ${period}`;
+}
+
+/**
+ * A React functional component that displays a day calendar view with time intervals.
+ * It highlights the current interval if the date is today and displays an indicator
+ * showing the time corresponding to the cursor's position.
+ *
+ * @param {DayCalendarProps} props - The component properties.
+ * @param {Date} [props.date=new Date()] - The date to display. Defaults to the current date.
+ * @returns {JSX.Element} The rendered day calendar component.
+ */
+const DayCalendar: React.FC<DayCalendarProps> = ({ date = new Date() }) => {
+  const { width: windowWidth } = useWindowDimensions();
+  const { open, openMobile, isMobile } = useSidebar();
+
+  const isSidebarOpen = useMemo(
+    () => (isMobile ? openMobile : open),
+    [isMobile, openMobile, open],
+  );
+
+  const isSmallScreen = useMemo(
+    () => (isSidebarOpen ? windowWidth - 255 : windowWidth) < 1280,
+    [isSidebarOpen, windowWidth],
+  );
+
+  const availableWidth = useMemo(
+    () =>
+      isSmallScreen
+        ? windowWidth - 80 - (isSidebarOpen ? 255 : 0)
+        : windowWidth - 32 - 80 - (isSidebarOpen ? 255 : 0),
+    [windowWidth, isSmallScreen, isSidebarOpen],
+  );
+
+  const now = useMemo(() => new Date(), []);
+  const isToday = useMemo(
+    () =>
+      date.getFullYear() === now.getFullYear() &&
+      date.getMonth() === now.getMonth() &&
+      date.getDate() === now.getDate(),
+    [date, now],
+  );
+
+  const intervals = useMemo(
+    () =>
+      Array.from({ length: 48 }, (_, i) => ({
+        hour: Math.floor(i / 2),
+        minute: i % 2 === 0 ? 0 : 30,
+      })),
+    [],
+  );
+
+  const currentIntervalIndex = useMemo(
+    () =>
+      isToday ? now.getHours() * 2 + (now.getMinutes() >= 30 ? 1 : 0) : -1,
+    [isToday, now],
+  );
+
+  const headerDate = useMemo(
+    () =>
+      date.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }),
+    [date],
+  );
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLDivElement>(null);
+
   /**
-   * Callback that receives a new Date when a specific hour is selected.
+   * Handles mouse move events over the calendar container to update the time indicator.
+   *
+   * @param {React.MouseEvent<HTMLDivElement>} e - The mouse move event.
    */
-  onDateChange: Dispatch<SetStateAction<Date>>;
-}
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current || !indicatorRef.current || !labelRef.current)
+      return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const cursorY = e.clientY - rect.top;
+    // Update the indicator position and display it.
+    indicatorRef.current.style.top = `${cursorY}px`;
+    indicatorRef.current.style.display = "block";
 
-/**
- * Helper function to format an hour in 12-hour format with AM/PM.
- *
- * @param {number} hour - The hour (0-23).
- * @returns {string} The formatted hour string.
- */
-function formatHour(hour: number): string {
-  if (hour === 0) return "12 AM";
-  if (hour < 12) return `${hour} AM`;
-  if (hour === 12) return "12 PM";
-  return `${hour - 12} PM`;
-}
+    // Calculate the time based on the cursor's position.
+    const containerHeight = containerRef.current.offsetHeight;
+    const totalMinutes = Math.floor((cursorY / containerHeight) * 1440);
+    const clampedMinutes = Math.max(0, Math.min(totalMinutes, 1439));
+    const hour = Math.floor(clampedMinutes / 60);
+    const minute = clampedMinutes % 60;
+    labelRef.current.textContent = formatTime(hour, minute);
+  }, []);
 
-/**
- * DayCalendar Component
- *
- * This component renders a day view with a header displaying the full date and a grid of hourly cells.
- * Clicking on an hour cell updates the selected date with that specific hour.
- *
- * @component
- * @param {DayCalendarProps} props - The props for the component.
- * @returns {JSX.Element} A calendar view for a single day.
- *
- * @example
- * <DayCalendar date={new Date()} onDateChange={setDate} />
- */
-const DayCalendar: React.FC<DayCalendarProps> = ({
-  date = new Date(),
-  onDateChange,
-}) => {
-  const now = new Date();
-  const isToday =
-    date.getFullYear() === now.getFullYear() &&
-    date.getMonth() === now.getMonth() &&
-    date.getDate() === now.getDate();
-
-  // Create an array of 24 hours (0 through 23).
-  const hours = useMemo(() => Array.from({ length: 24 }, (_, i) => i), []);
-
-  // Format the header date string.
-  const headerDate = date.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  /**
+   * Handles mouse leave events from the calendar container to hide the time indicator.
+   */
+  const handleMouseLeave = useCallback(() => {
+    if (indicatorRef.current) {
+      indicatorRef.current.style.display = "none";
+    }
+  }, []);
 
   return (
-    <Card className="border-0 bg-sidebar/70">
+    <Card className="border-0 bg-sidebar/70" style={{ width: availableWidth }}>
       <CardHeader>
         <h3 className="text-left text-lg font-semibold text-purple-300">
           {headerDate}
         </h3>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-4 gap-2">
-          {hours.map((hour) => {
-            const isCurrentHour = isToday && hour === now.getHours();
-            return (
-              <div
-                key={hour}
-                onClick={() =>
-                  onDateChange(
-                    new Date(
-                      date.getFullYear(),
-                      date.getMonth(),
-                      date.getDate(),
-                      hour,
-                    ),
-                  )
-                }
-                className={`flex h-10 cursor-pointer items-center justify-center rounded-full text-sm text-white hover:bg-purple-500 ${
-                  isCurrentHour && "bg-purple-500"
-                }`}
-              >
-                {formatHour(hour)}
-              </div>
-            );
-          })}
+      <CardContent className="p-0">
+        <div className="relative">
+          <div
+            ref={containerRef}
+            className="flex flex-col"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          >
+            {intervals.map((interval, i) => {
+              const isCurrentInterval = i === currentIntervalIndex;
+              return (
+                <div
+                  key={i}
+                  className={`flex h-32 border-t pl-6 pt-2 text-sm text-white hover:bg-neutral-900 ${
+                    isCurrentInterval ? "bg-purple-900/50" : ""
+                  }`}
+                >
+                  {formatTime(interval.hour, interval.minute)}
+                </div>
+              );
+            })}
+          </div>
+          {/* The indicator is always mounted but hidden by default. */}
+          <div
+            ref={indicatorRef}
+            style={{
+              position: "absolute",
+              left: 10,
+              right: 0,
+              pointerEvents: "none",
+              display: "none",
+            }}
+          >
+            <div
+              ref={labelRef}
+              className="rounded-full bg-purple-400/30 text-purple-500"
+              style={{
+                position: "absolute",
+                left: 0,
+                transform: "translateY(-50%)",
+                padding: "2px 6px",
+                fontSize: "0.75rem",
+              }}
+            />
+            <hr className="ml-16 border-t border-purple-500" />
+          </div>
         </div>
       </CardContent>
     </Card>

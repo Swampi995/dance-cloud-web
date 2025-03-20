@@ -33,7 +33,7 @@ const Schedule: FC = () => {
           />
         );
       case "Day":
-        return <DayCalendar date={currentDate} onDateChange={setCurrentDate} />;
+        return <DayCalendar date={currentDate} />;
       default:
         return null;
     }
@@ -45,7 +45,7 @@ const Schedule: FC = () => {
       style={{ width: "calc(100% - 250px)" }}
     >
       <Header />
-      <div className="mx-auto space-y-4">
+      <div className="mx-auto mb-10 space-y-4">
         <NavigationHeader
           activeView={activeView}
           currentDate={currentDate}

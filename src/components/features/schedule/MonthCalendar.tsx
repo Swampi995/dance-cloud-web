@@ -64,9 +64,9 @@ const MonthDay: React.FC<MonthDayProps> = ({
   <Card
     onClick={() => onDayClick(cell)}
     style={{ width, height }}
-    className={`cursor-pointer rounded-none border-[0.5px] bg-transparent shadow-none hover:bg-neutral-800 ${
+    className={`cursor-pointer rounded-none border-[0.5px] bg-transparent shadow-none hover:bg-neutral-900 ${
       cell.type === "current" ? "" : "text-gray-400"
-    } ${isToday ? "bg-purple-700 text-white" : ""}`}
+    } ${isToday ? "bg-purple-900/50 text-white" : ""}`}
   >
     <CardHeader className="p-1">
       <div className="flex items-center justify-between">
