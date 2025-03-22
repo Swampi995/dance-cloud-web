@@ -49,9 +49,9 @@ const data = {
     },
     {
       name: "Schedule",
-      url: "#",
+      url: "/schedule",
       icon: CalendarDays,
-      disabled: true,
+      disabled: false,
     },
     {
       name: "Sessions",
