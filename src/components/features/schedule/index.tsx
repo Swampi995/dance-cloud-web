@@ -41,7 +41,7 @@ const Schedule: FC = () => {
 
   return (
     <div
-      className="flex flex-1 flex-col gap-4 px-4 sm:px-10"
+      className="flex flex-1 flex-col"
       style={{ width: "calc(100% - 250px)" }}
     >
       <Header />

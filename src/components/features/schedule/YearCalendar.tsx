@@ -70,7 +70,7 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
           }}
         >
           <CardHeader>
-            <h3 className="text-left text-lg font-semibold text-purple-300">
+            <h3 className="text-left text-lg font-semibold text-purple-300 min-[2000px]:text-xl min-[2500px]:text-2xl min-[3000px]:text-3xl">
               {monthName}
             </h3>
           </CardHeader>
@@ -78,7 +78,10 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
             <div className="grid grid-cols-7 gap-1">
               {/* Render weekday headers */}
               {WEEKDAY_HEADERS.map((day) => (
-                <div key={day} className="text-center text-xs font-medium">
+                <div
+                  key={day}
+                  className="text-center text-xs font-medium min-[2000px]:text-base min-[2500px]:text-lg min-[3000px]:text-xl"
+                >
                   {day}
                 </div>
               ))}
@@ -92,7 +95,7 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
                 return (
                   <div
                     key={index}
-                    className={`flex h-8 w-8 items-center justify-center text-sm ${
+                    className={`flex h-8 w-8 items-center justify-center text-sm min-[2000px]:h-9 min-[2000px]:w-9 min-[2000px]:text-base min-[2500px]:h-12 min-[2500px]:w-12 min-[2500px]:text-lg min-[3000px]:h-14 min-[3000px]:w-14 min-[3000px]:text-xl ${
                       cell.type === "current" ? "" : "text-gray-400"
                     } ${isToday ? "rounded-full bg-purple-900/50 text-white" : ""}`}
                   >
