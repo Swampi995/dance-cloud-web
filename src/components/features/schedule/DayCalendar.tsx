@@ -1,5 +1,5 @@
 import { memo, useMemo, useRef, useCallback } from "react";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useWindowDimensions } from "@/hooks/use-window-dimensions";
 
@@ -79,17 +79,6 @@ const DayCalendar: React.FC<DayCalendarProps> = ({ date = new Date() }) => {
     [isToday, now],
   );
 
-  const headerDate = useMemo(
-    () =>
-      date.toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      }),
-    [date],
-  );
-
   const containerRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
@@ -128,11 +117,6 @@ const DayCalendar: React.FC<DayCalendarProps> = ({ date = new Date() }) => {
 
   return (
     <Card className="border-0 bg-sidebar/70" style={{ width: availableWidth }}>
-      <CardHeader>
-        <h3 className="text-left text-lg font-semibold text-purple-300">
-          {headerDate}
-        </h3>
-      </CardHeader>
       <CardContent className="p-0">
         <div className="relative">
           <div
@@ -146,8 +130,8 @@ const DayCalendar: React.FC<DayCalendarProps> = ({ date = new Date() }) => {
               return (
                 <div
                   key={i}
-                  className={`flex h-32 border-t pl-6 pt-2 text-sm text-white hover:bg-neutral-900 ${
-                    isCurrentInterval ? "bg-purple-900/50" : ""
+                  className={`flex h-32 pl-6 pt-2 text-sm ${isCurrentInterval ? "text-neutral-300" : "text-neutral-400"} hover:bg-purple-900/10 hover:text-neutral-100 ${i !== 0 ? "border-t" : ""} ${!isCurrentInterval && i % 2 === 0 ? "bg-sidebar/60" : ""} ${
+                    isCurrentInterval ? "bg-purple-900/30" : ""
                   }`}
                 >
                   {formatTime(interval.hour, interval.minute)}

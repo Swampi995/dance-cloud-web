@@ -90,11 +90,11 @@ const NavigationControls: FC<NavigationControlsProps> = ({
 
   return (
     <div className="flex items-center space-x-2 place-self-center">
-      <Button variant="outline" size="sm" onClick={handlePrevious}>
+      <Button variant="secondary" size="sm" onClick={handlePrevious}>
         ←
       </Button>
       <span className="text-base font-bold">{formattedDate}</span>
-      <Button variant="outline" size="sm" onClick={handleNext}>
+      <Button variant="secondary" size="sm" onClick={handleNext}>
         →
       </Button>
     </div>

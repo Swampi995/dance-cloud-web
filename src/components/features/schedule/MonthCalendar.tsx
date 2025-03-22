@@ -13,12 +13,6 @@ import { CalendarCell, generateCalendarDays } from "./helpers";
 
 /**
  * Props for the MonthCalendar component.
- *
- * @typedef {Object} MonthCalendarProps
- * @property {number} [year] - The year to display. Defaults to the current year.
- * @property {number} [month] - The month to display (0-indexed). Defaults to the current month.
- * @property {Dispatch<SetStateAction<Date>>} onDateChange - Callback to update the selected date.
- * @property {Dispatch<SetStateAction<string>>} onViewChange - Callback to update the current view.
  */
 interface MonthCalendarProps {
   year?: number;
@@ -29,14 +23,6 @@ interface MonthCalendarProps {
 
 /**
  * Props for the MonthDay component.
- *
- * @typedef {Object} MonthDayProps
- * @property {CalendarCell} cell - The calendar cell data.
- * @property {(cell: CalendarCell) => void} onDayClick - Callback when a day is clicked.
- * @property {boolean} isToday - Flag indicating if this cell represents today's date.
- * @property {number} width - The width of the cell.
- * @property {number} height - The height of the cell.
- * @property {string} [weekday] - Optional weekday label.
  */
 interface MonthDayProps {
   cell: CalendarCell;
@@ -45,13 +31,11 @@ interface MonthDayProps {
   width: number;
   height: number;
   weekday?: string;
+  isWeekend?: boolean; // <-- New prop to indicate weekend cells
 }
 
 /**
  * MonthDay component renders an individual day cell for the month view.
- *
- * @param {MonthDayProps} props - The props for MonthDay.
- * @returns {JSX.Element} The rendered day cell.
  */
 const MonthDay: React.FC<MonthDayProps> = ({
   cell,
@@ -60,31 +44,42 @@ const MonthDay: React.FC<MonthDayProps> = ({
   width,
   height,
   weekday,
-}) => (
-  <Card
-    onClick={() => onDayClick(cell)}
-    style={{ width, height }}
-    className={`cursor-pointer rounded-none border-[0.5px] bg-transparent shadow-none hover:bg-neutral-900 ${
-      cell.type === "current" ? "" : "text-gray-400"
-    } ${isToday ? "bg-purple-900/50 text-white" : ""}`}
-  >
-    <CardHeader className="p-1">
-      <div className="flex items-center justify-between">
-        {weekday && (
-          <div className="text-left text-sm font-semibold">{weekday}</div>
-        )}
-        <div className="text-right text-sm font-semibold">{cell.day}</div>
-      </div>
-    </CardHeader>
-    <CardContent className="p-0" />
-  </Card>
-);
+  isWeekend,
+}) => {
+  const baseClasses =
+    "cursor-pointer rounded-none border-[0.5px] shadow-none hover:bg-purple-900/10 hover:text-neutral-100";
+
+  const textColor =
+    cell.type === "current" ? "text-neutral-300" : "text-neutral-600";
+
+  let bgClasses = "bg-transparent";
+  if (isToday) {
+    bgClasses = "bg-purple-900/30 text-neutral-200";
+  } else if (isWeekend) {
+    bgClasses = "bg-neutral-900/50";
+  }
+
+  return (
+    <Card
+      onClick={() => onDayClick(cell)}
+      style={{ width, height }}
+      className={`${baseClasses} ${bgClasses} ${textColor}`}
+    >
+      <CardHeader className="p-1">
+        <div className="flex items-center justify-between">
+          {weekday && (
+            <div className="text-left text-sm font-semibold">{weekday}</div>
+          )}
+          <div className="text-right text-sm font-semibold">{cell.day}</div>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0" />
+    </Card>
+  );
+};
 
 /**
  * MonthCalendar component renders a calendar view for a given month.
- *
- * @param {MonthCalendarProps} props - The props for MonthCalendar.
- * @returns {JSX.Element} The rendered month calendar.
  */
 const MonthCalendar: React.FC<MonthCalendarProps> = ({
   year = new Date().getFullYear(),
@@ -125,9 +120,6 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({
 
   /**
    * Computes the full date for a given calendar cell.
-   *
-   * @param {CalendarCell} cell - The calendar cell.
-   * @returns {Date} The computed Date object corresponding to the cell.
    */
   const getDateForCell = useCallback(
     (cell: CalendarCell): Date => {
@@ -151,8 +143,6 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({
   /**
    * Handles the day click event by computing the full date of the clicked cell
    * and updating the date and view.
-   *
-   * @param {CalendarCell} cell - The calendar cell that was clicked.
    */
   const handleDayClick = useCallback(
     (cell: CalendarCell) => {
@@ -168,7 +158,9 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({
       <Card className="h-full border-0 bg-sidebar/70">
         <CardContent className="h-full p-0">
           <div
-            className={`grid h-full ${isSmallScreen ? "grid-cols-1" : "grid-cols-7"}`}
+            className={`grid h-full ${
+              isSmallScreen ? "grid-cols-1" : "grid-cols-7"
+            }`}
           >
             {/* Render weekday headers only on larger screens */}
             {!isSmallScreen &&
@@ -178,13 +170,17 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({
                 </div>
               ))}
             {days.map((cell, index) => {
+              const cellDate = getDateForCell(cell);
               const isToday =
                 cell.type === "current" &&
                 year === today.getFullYear() &&
                 month === today.getMonth() &&
                 cell.day === today.getDate();
+              // Determine if the cell is a weekend (Sunday=0 or Saturday=6)
+              const isWeekend =
+                cellDate.getDay() === 0 || cellDate.getDay() === 6;
               const weekday = isSmallScreen
-                ? getDateForCell(cell).toLocaleString("default", {
+                ? cellDate.toLocaleString("default", {
                     weekday: "short",
                   })
                 : undefined;
@@ -197,6 +193,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({
                   width={cellWidth}
                   height={cellHeight}
                   weekday={weekday}
+                  isWeekend={isWeekend}
                 />
               );
             })}
