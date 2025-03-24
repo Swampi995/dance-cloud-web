@@ -2,12 +2,16 @@ import { memo, useMemo, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useWindowDimensions } from "@/hooks/use-window-dimensions";
+import { ClubClassType } from "@/schemas/classes";
+import { ClubEventType } from "@/schemas/events";
 
 interface DayCalendarProps {
   /**
    * The date to display. Defaults to the current date if not provided.
    */
   date?: Date;
+  classesData: ClubClassType[];
+  eventsData: ClubEventType[];
 }
 
 /**

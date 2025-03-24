@@ -1,6 +1,9 @@
 import { FC, useState, lazy, Suspense, memo } from "react";
 import { NavigationHeader } from "./NavigationHeader";
 import { Header } from "./Header";
+import { useClubEvents } from "@/hooks/use-club-events";
+import { useClubs } from "@/hooks/use-clubs";
+import { useClubClasses } from "@/hooks/use-club-classes";
 
 // Lazy-load the calendar components.
 const YearCalendar = lazy(() => import("./YearCalendar"));
@@ -12,6 +15,12 @@ const Schedule: FC = () => {
   const [activeView, setActiveView] = useState<string>("Year");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
+  const { selectedClub } = useClubs();
+  const { data: eventData } = useClubEvents(selectedClub?.id ?? "");
+  const { data: classesData } = useClubClasses(selectedClub?.id ?? "");
+  // console.log("eventData", eventData);
+  // console.log("classesData", classesData);
+
   // Render the appropriate calendar based on the active view.
   const renderCalendar = () => {
     switch (activeView) {
@@ -21,6 +30,8 @@ const Schedule: FC = () => {
             year={currentDate.getFullYear()}
             onDateChange={setCurrentDate}
             onViewChange={setActiveView}
+            classesData={classesData}
+            eventsData={eventData}
           />
         );
       case "Month":
@@ -30,10 +41,18 @@ const Schedule: FC = () => {
             month={currentDate.getMonth()}
             onDateChange={setCurrentDate}
             onViewChange={setActiveView}
+            classesData={classesData}
+            eventsData={eventData}
           />
         );
       case "Day":
-        return <DayCalendar date={currentDate} />;
+        return (
+          <DayCalendar
+            date={currentDate}
+            classesData={classesData}
+            eventsData={eventData}
+          />
+        );
       default:
         return null;
     }

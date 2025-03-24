@@ -10,6 +10,8 @@ import { WEEKDAY_HEADERS } from "@/constants";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useWindowDimensions } from "@/hooks/use-window-dimensions";
 import { CalendarCell, generateCalendarDays } from "./helpers";
+import { ClubClassType } from "@/schemas/classes";
+import { ClubEventType } from "@/schemas/events";
 
 /**
  * Props for the MonthCalendar component.
@@ -19,6 +21,8 @@ interface MonthCalendarProps {
   month?: number;
   onDateChange: Dispatch<SetStateAction<Date>>;
   onViewChange: Dispatch<SetStateAction<string>>;
+  classesData: ClubClassType[];
+  eventsData: ClubEventType[];
 }
 
 /**

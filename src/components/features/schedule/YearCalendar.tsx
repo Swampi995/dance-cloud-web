@@ -11,6 +11,8 @@ import { Dispatch, memo, SetStateAction, useMemo } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { MONTH_NAMES, WEEKDAY_HEADERS } from "@/constants";
 import { generateCalendarDays } from "./helpers";
+import { ClubClassType } from "@/schemas/classes";
+import { ClubEventType } from "@/schemas/events";
 
 /**
  * Props for the YearCalendar component.
@@ -23,6 +25,8 @@ interface YearCalendarProps {
   year?: number;
   onDateChange: Dispatch<SetStateAction<Date>>;
   onViewChange: Dispatch<SetStateAction<string>>;
+  classesData: ClubClassType[];
+  eventsData: ClubEventType[];
 }
 
 /**

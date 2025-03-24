@@ -113,7 +113,7 @@ const ClassDetails: FC<ClassDetailsProps> = memo(
         <CardHeader>
           <CardTitle className="text-sm font-light">Class Overview</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-2 text-sm">
           <InfoRow label="Name" value={clubClass?.name ?? "Select a class"} />
           <InfoRow label="Level" value={clubClass?.level ?? "Select a class"} />
           <InfoRow
