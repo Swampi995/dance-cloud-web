@@ -1,5 +1,5 @@
 import { memo, useMemo, useRef, useCallback } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useWindowDimensions } from "@/hooks/use-window-dimensions";
 
@@ -24,10 +24,52 @@ function formatTime(hour: number, minute: number): string {
   return `${hour12}:${minute.toString().padStart(2, "0")} ${period}`;
 }
 
+interface DayIntervalProps {
+  interval: { hour: number; minute: number };
+  isCurrent: boolean;
+  index: number;
+  availableWidth: number;
+  height: number;
+}
+
 /**
- * A React functional component that displays a day calendar view with time intervals.
- * It highlights the current interval if the date is today and displays an indicator
- * showing the time corresponding to the cursor's position.
+ * DayInterval renders a single time interval using the Card, CardHeader, and CardContent
+ * structure. Its styling logic mimics the MonthDay component.
+ */
+const DayInterval: React.FC<DayIntervalProps> = ({
+  interval,
+  isCurrent,
+  index,
+  availableWidth,
+  height,
+}) => {
+  const baseClasses =
+    "rounded-xl border-[0.5px] p-1 text-sm font-semibold hover:bg-purple-300/10 hover:text-neutral-100";
+  const textColor = isCurrent ? "text-neutral-300" : "text-neutral-400";
+  const bgClasses = !isCurrent
+    ? index % 2 === 0
+      ? "bg-neutral-900/50"
+      : "bg-sidebar/70"
+    : "bg-purple-900/30";
+
+  return (
+    <Card
+      style={{ width: availableWidth, height }}
+      className={`${baseClasses} ${bgClasses} ${textColor}`}
+    >
+      <CardHeader className="p-0">
+        <div className="text-left text-sm font-semibold">
+          {formatTime(interval.hour, interval.minute)}
+        </div>
+      </CardHeader>
+      <CardContent className="p-0" />
+    </Card>
+  );
+};
+
+/**
+ * DayCalendar displays a day view with 48 half-hour intervals.
+ * It now uses a grid of DayInterval cards to mimic the structure of MonthCalendar.
  *
  * @param {DayCalendarProps} props - The component properties.
  * @param {Date} [props.date=new Date()] - The date to display. Defaults to the current date.
@@ -79,15 +121,14 @@ const DayCalendar: React.FC<DayCalendarProps> = ({ date = new Date() }) => {
     [isToday, now],
   );
 
+  // Define a fixed height for each interval card (as used previously with "h-32").
+  const intervalHeight = 128;
+
+  // Refs for the mouse position indicator.
   const containerRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
 
-  /**
-   * Handles mouse move events over the calendar container to update the time indicator.
-   *
-   * @param {React.MouseEvent<HTMLDivElement>} e - The mouse move event.
-   */
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current || !indicatorRef.current || !labelRef.current)
       return;
@@ -106,9 +147,6 @@ const DayCalendar: React.FC<DayCalendarProps> = ({ date = new Date() }) => {
     labelRef.current.textContent = formatTime(hour, minute);
   }, []);
 
-  /**
-   * Handles mouse leave events from the calendar container to hide the time indicator.
-   */
   const handleMouseLeave = useCallback(() => {
     if (indicatorRef.current) {
       indicatorRef.current.style.display = "none";
@@ -121,24 +159,21 @@ const DayCalendar: React.FC<DayCalendarProps> = ({ date = new Date() }) => {
         <div className="relative">
           <div
             ref={containerRef}
-            className="flex flex-col"
+            className="grid grid-cols-1"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
           >
             {intervals.map((interval, i) => {
               const isCurrentInterval = i === currentIntervalIndex;
-              const bgColor = !isCurrentInterval
-                ? i % 2 === 0
-                  ? "bg-neutral-900/50"
-                  : "bg-sidebar/70"
-                : "bg-purple-900/30";
               return (
-                <div
+                <DayInterval
                   key={i}
-                  className={`flex h-32 rounded-xl border-[0.5px] p-1 text-sm font-semibold hover:bg-purple-300/10 hover:text-neutral-100 ${isCurrentInterval ? "text-neutral-300" : "text-neutral-400"} ${bgColor}`}
-                >
-                  {formatTime(interval.hour, interval.minute)}
-                </div>
+                  interval={interval}
+                  isCurrent={isCurrentInterval}
+                  index={i}
+                  availableWidth={availableWidth}
+                  height={intervalHeight}
+                />
               );
             })}
           </div>
@@ -147,24 +182,23 @@ const DayCalendar: React.FC<DayCalendarProps> = ({ date = new Date() }) => {
             ref={indicatorRef}
             style={{
               position: "absolute",
-              left: 10,
-              right: 0,
+              left: 0,
+              right: 4,
               pointerEvents: "none",
               display: "none",
             }}
           >
             <div
               ref={labelRef}
-              className="rounded-full bg-purple-400/30 text-purple-500"
+              className="rounded-full text-purple-500"
               style={{
                 position: "absolute",
-                left: 0,
+                right: 0,
                 transform: "translateY(-50%)",
-                padding: "2px 6px",
                 fontSize: "0.75rem",
               }}
             />
-            <hr className="ml-16 border-t border-purple-500" />
+            <hr className="mr-14 border-t-[0.25px] border-purple-500" />
           </div>
         </div>
       </CardContent>
