@@ -9,6 +9,7 @@
 
 import { ClubClassSchema, ClubClassType } from "@/schemas/classes";
 import { ClubSchema, ClubType } from "@/schemas/club";
+import { ClubEventSchema, ClubEventType } from "@/schemas/events";
 import { BaseClubMemberSchema, BaseClubMemberType } from "@/schemas/members";
 import {
   UserMembershipType,
@@ -151,7 +152,7 @@ const mapDocToClubClass = (
  * Converts a Firestore club member document snapshot into a typed `BaseClubMemberType` object.
  *
  * @param {QueryDocumentSnapshot<DocumentData>} clubMemberDocSnapshot - The Firestore document snapshot of a club member.
- * @returns {ClubClassType} The parsed and validated club member object.
+ * @returns {BaseClubMemberType} The parsed and validated club member object.
  * @throws Will throw an error if the document data does not match the BaseClubMemberSchema.
  *
  * @example
@@ -173,7 +174,7 @@ const mapDocToBaseClubMember = (
  * Converts a Firestore club teacher document snapshot into a typed `BaseClubTeacherType` object.
  *
  * @param {QueryDocumentSnapshot<DocumentData>} clubTeacherDocSnapshot - The Firestore document snapshot of a club teacher.
- * @returns {ClubClassType} The parsed and validated club teacher object.
+ * @returns {ClubTeacherType} The parsed and validated club teacher object.
  * @throws Will throw an error if the document data does not match the BaseClubTeacherSchema.
  *
  * @example
@@ -191,6 +192,28 @@ const mapDocToBaseClubTeacher = (
   return BaseClubTeacherSchema.parse(rawData);
 };
 
+/**
+ * Converts a Firestore club event document snapshot into a typed `ClubEventType` object.
+ *
+ * @param {QueryDocumentSnapshot<DocumentData>} clubEventDocSnapshot - The Firestore document snapshot of a club event.
+ * @returns {ClubEventType} The parsed and validated club event object.
+ * @throws Will throw an error if the document data does not match the ClubEventSchema.
+ *
+ * @example
+ * const clubEvent = mapDocToClubEvent(clubEventDocSnapshot);
+ */
+const mapDocToClubEvent = (
+  clubEventDocSnapshot: QueryDocumentSnapshot<DocumentData>,
+): ClubEventType => {
+  // Merge the document ID with the document data
+  const rawData = {
+    id: clubEventDocSnapshot.id,
+    ...clubEventDocSnapshot.data(),
+  };
+  // Validate with Zod; parse() will throw if the data doesn't match the schema
+  return ClubEventSchema.parse(rawData);
+};
+
 export {
   mapDocToBaseSession,
   mapDocToUserMembership,
@@ -200,4 +223,5 @@ export {
   mapDocToClubClass,
   mapDocToBaseClubMember,
   mapDocToBaseClubTeacher,
+  mapDocToClubEvent,
 };

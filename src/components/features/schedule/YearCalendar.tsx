@@ -1,3 +1,4 @@
+// YearCalendar.tsx
 /**
  * @fileoverview YearCalendar Component
  *
@@ -11,39 +12,23 @@ import { Dispatch, memo, SetStateAction, useMemo } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { MONTH_NAMES, WEEKDAY_HEADERS } from "@/constants";
 import { generateCalendarDays } from "./helpers";
+import { ClubClassType } from "@/schemas/classes";
+import { ClubEventType } from "@/schemas/events";
 
-/**
- * Props for the YearCalendar component.
- *
- * @property {number} [year] - The year to display. Defaults to the current year if not provided.
- * @property {Dispatch<SetStateAction<Date>>} [onDateChange] - The state setter to change the currentDate
- * @property {Dispatch<SetStateAction<string>>} [onViewChange] - The state setter to change the currentView
- */
 interface YearCalendarProps {
   year?: number;
   onDateChange: Dispatch<SetStateAction<Date>>;
   onViewChange: Dispatch<SetStateAction<string>>;
+  classesData: ClubClassType[];
+  eventsData: ClubEventType[];
 }
 
-/**
- * YearCalendar Component
- *
- * This component renders a calendar view for the entire year.
- * Each month is displayed in a card with a header for the month name and a grid layout
- * that shows the days. The calendar includes days from the previous and next months to ensure
- * that each week is fully populated, and the current day is highlighted if it falls within the displayed year.
- *
- * @component
- * @param {YearCalendarProps} props - The props for the component.
- * @returns {JSX.Element} A grid layout of calendar cards representing each month of the year.
- *
- * @example
- * <YearCalendar year={2025} />
- */
 const YearCalendar: React.FC<YearCalendarProps> = ({
   year = new Date().getFullYear(),
   onDateChange,
   onViewChange,
+  classesData,
+  eventsData,
 }) => {
   const today = new Date();
   const todayYear = today.getFullYear();
@@ -87,19 +72,83 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
               ))}
               {/* Render calendar cells */}
               {days.map((cell, index) => {
+                // Compute the actual date for the cell based on its type
+                let cellDate: Date;
+                if (cell.type === "current") {
+                  cellDate = new Date(year, monthIndex, cell.day);
+                } else if (cell.type === "prev") {
+                  const prevMonth = monthIndex === 0 ? 11 : monthIndex - 1;
+                  const prevYear = monthIndex === 0 ? year - 1 : year;
+                  cellDate = new Date(prevYear, prevMonth, cell.day);
+                } else {
+                  const nextMonth = monthIndex === 11 ? 0 : monthIndex + 1;
+                  const nextYear = monthIndex === 11 ? year + 1 : year;
+                  cellDate = new Date(nextYear, nextMonth, cell.day);
+                }
+
+                // Check if there is any class scheduled for this day
+                // (Assuming each class's schedule.day corresponds to the JS getDay() number)
+                const hasClass = classesData.some((cls) =>
+                  cls.schedule?.some((s) => s.day === cellDate.getDay()),
+                );
+
+                // Check if an event spans this day
+                const cellTime = new Date(
+                  cellDate.getFullYear(),
+                  cellDate.getMonth(),
+                  cellDate.getDate(),
+                ).getTime();
+                const hasEvent = eventsData.some((event) => {
+                  // Convert the timestamp to a Date (if needed)
+                  const eventStart = event.startDate.toDate();
+                  const eventEnd = event.endDate.toDate();
+                  const eventStartTime = new Date(
+                    eventStart.getFullYear(),
+                    eventStart.getMonth(),
+                    eventStart.getDate(),
+                  ).getTime();
+                  const eventEndTime = new Date(
+                    eventEnd.getFullYear(),
+                    eventEnd.getMonth(),
+                    eventEnd.getDate(),
+                  ).getTime();
+                  return cellTime >= eventStartTime && cellTime <= eventEndTime;
+                });
+
                 const isToday =
                   cell.type === "current" &&
                   year === todayYear &&
                   monthIndex === todayMonth &&
                   cell.day === todayDate;
+
                 return (
                   <div
                     key={index}
-                    className={`flex h-8 w-8 items-center justify-center text-sm min-[2000px]:h-9 min-[2000px]:w-9 min-[2000px]:text-base min-[2500px]:h-12 min-[2500px]:w-12 min-[2500px]:text-lg min-[3000px]:h-14 min-[3000px]:w-14 min-[3000px]:text-xl ${
-                      cell.type === "current" ? "" : "text-gray-400"
-                    } ${isToday ? "rounded-full bg-purple-900/50 text-white" : ""}`}
+                    className={`relative flex h-8 w-8 items-center justify-center text-sm min-[2000px]:h-9 min-[2000px]:w-9 min-[2000px]:text-base min-[2500px]:h-12 min-[2500px]:w-12 min-[2500px]:text-lg min-[3000px]:h-14 min-[3000px]:w-14 min-[3000px]:text-xl ${isToday ? "rounded-full bg-neutral-800" : ""}`}
                   >
-                    {cell.day}
+                    {/* Render event circle (purple-300) */}
+                    {hasEvent && (
+                      <div
+                        className={`absolute ${
+                          hasClass ? "inset-0" : "inset-0"
+                        } rounded-full border border-purple-300`}
+                      ></div>
+                    )}
+                    {/* Render class circle (purple-600) – inset if event circle is also present */}
+                    {hasClass && (
+                      <div
+                        className={`absolute ${
+                          hasEvent ? "inset-[3px]" : "inset-0"
+                        } rounded-full border border-purple-900`}
+                      ></div>
+                    )}
+                    <div
+                      className={`relative z-10 ${
+                        cell.type === "current" ? "" : "text-gray-400"
+                      } ${isToday ? "font-bold text-white" : ""}`}
+                    >
+                      {cell.day}
+                    </div>
                   </div>
                 );
               })}
@@ -110,6 +159,7 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
     </div>
   );
 };
+
 YearCalendar.displayName = "YearCalendar";
 
 export default memo(YearCalendar);
