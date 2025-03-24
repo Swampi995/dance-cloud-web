@@ -11,7 +11,7 @@ const ViewSelector: FC<ViewSelectorProps> = ({ activeView, onViewChange }) => {
 
   return (
     <Tabs value={activeView} onValueChange={onViewChange}>
-      <TabsList className="flex space-x-2">
+      <TabsList className="flex w-fit space-x-2 place-self-center">
         {views.map((view) => (
           <TabsTrigger key={view} value={view}>
             {view}

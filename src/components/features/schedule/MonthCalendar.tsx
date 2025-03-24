@@ -47,12 +47,12 @@ const MonthDay: React.FC<MonthDayProps> = ({
   isWeekend,
 }) => {
   const baseClasses =
-    "cursor-pointer rounded-none border-[0.5px] shadow-none hover:bg-purple-900/10 hover:text-neutral-100";
+    "cursor-pointer  rounded-xl border-[0.5px] shadow-none hover:bg-purple-300/10 hover:text-neutral-100";
 
   const textColor =
     cell.type === "current" ? "text-neutral-300" : "text-neutral-600";
 
-  let bgClasses = "bg-transparent";
+  let bgClasses = "bg-sidebar/70";
   if (isToday) {
     bgClasses = "bg-purple-900/30 text-neutral-200";
   } else if (isWeekend) {
@@ -113,10 +113,14 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({
     [availableWidth, isSmallScreen],
   );
 
-  const days = useMemo(() => generateCalendarDays(year, month), [year, month]);
+  // Pass !isSmallScreen to include trailing days only on larger screens.
+  const days = useMemo(
+    () => generateCalendarDays(year, month, !isSmallScreen),
+    [year, month, isSmallScreen],
+  );
 
   const totalRows = isSmallScreen ? days.length : 1 + days.length / 7;
-  const cellHeight = !isSmallScreen ? windowHeight / totalRows : 150;
+  const cellHeight = !isSmallScreen ? windowHeight / totalRows : 128;
 
   /**
    * Computes the full date for a given calendar cell.
@@ -155,7 +159,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({
 
   return (
     <div>
-      <Card className="h-full border-0 bg-sidebar/70">
+      <Card className="h-full border-0">
         <CardContent className="h-full p-0">
           <div
             className={`grid h-full ${
@@ -165,7 +169,10 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({
             {/* Render weekday headers only on larger screens */}
             {!isSmallScreen &&
               WEEKDAY_HEADERS.map((day) => (
-                <div key={day} className="bg-black pb-3 text-xs font-medium">
+                <div
+                  key={day}
+                  className="bg-black pb-3 text-xs font-medium text-neutral-200"
+                >
                   {day}
                 </div>
               ))}

@@ -33,31 +33,35 @@ export interface CalendarCell {
  * Generates an array of calendar cells for a specific month.
  *
  * The function creates:
- * - Leading days from the previous month (if the month does not start on Sunday).
- * - All days of the current month.
- * - Trailing days from the next month to complete the final week.
+ * - If `includeExtraDays` is true (default), it adds leading days from the previous month
+ *   and trailing days from the next month to fill out the calendar grid.
+ * - If false, only days from the current month are included.
  *
  * @param {number} year - The full year (e.g., 2025).
  * @param {number} month - The zero-indexed month for which the calendar is generated.
+ * @param {boolean} [includeExtraDays=true] - Whether to include extra days from the adjacent months.
  * @returns {CalendarCell[]} An array of CalendarCell objects representing each cell in the calendar grid.
  */
-function generateCalendarDays(year: number, month: number): CalendarCell[] {
+function generateCalendarDays(
+  year: number,
+  month: number,
+  includeExtraDays: boolean = true,
+): CalendarCell[] {
   const daysInMonth = getDaysInMonth(year, month);
-  const firstDayIndex = new Date(year, month, 1).getDay();
-  const totalCells = Math.ceil((firstDayIndex + daysInMonth) / 7) * 7;
-
-  // Calculate information for the previous month.
-  const prevMonth = month - 1;
-  const prevYear = prevMonth < 0 ? year - 1 : year;
-  const prevMonthIndex = prevMonth < 0 ? 11 : prevMonth;
-  const daysInPrevMonth = getDaysInMonth(prevYear, prevMonthIndex);
-
   const days: CalendarCell[] = [];
 
-  // Add leading days from the previous month.
-  for (let i = 0; i < firstDayIndex; i++) {
-    const day = daysInPrevMonth - firstDayIndex + 1 + i;
-    days.push({ day, type: "prev" });
+  if (includeExtraDays) {
+    // Add leading days from the previous month.
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const prevMonth = month - 1;
+    const prevYear = prevMonth < 0 ? year - 1 : year;
+    const prevMonthIndex = prevMonth < 0 ? 11 : prevMonth;
+    const daysInPrevMonth = getDaysInMonth(prevYear, prevMonthIndex);
+
+    for (let i = 0; i < firstDayIndex; i++) {
+      const day = daysInPrevMonth - firstDayIndex + 1 + i;
+      days.push({ day, type: "prev" });
+    }
   }
 
   // Add days for the current month.
@@ -65,10 +69,14 @@ function generateCalendarDays(year: number, month: number): CalendarCell[] {
     days.push({ day, type: "current" });
   }
 
-  // Add trailing days from the next month.
-  const trailingDaysCount = totalCells - days.length;
-  for (let day = 1; day <= trailingDaysCount; day++) {
-    days.push({ day, type: "next" });
+  if (includeExtraDays) {
+    // Add trailing days from the next month.
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalCells = Math.ceil((firstDayIndex + daysInMonth) / 7) * 7;
+    const trailingDaysCount = totalCells - days.length;
+    for (let day = 1; day <= trailingDaysCount; day++) {
+      days.push({ day, type: "next" });
+    }
   }
 
   return days;

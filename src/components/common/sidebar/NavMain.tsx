@@ -4,6 +4,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useNavigate, useLocation } from "react-router";
 
@@ -19,6 +20,7 @@ const NavMain = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isMobile, openMobile, toggleSidebar } = useSidebar();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -31,7 +33,16 @@ const NavMain = ({
               isActive={location.pathname === item.url}
               asChild
             >
-              <button onClick={() => !item.disabled && navigate(item.url)}>
+              <button
+                onClick={() => {
+                  if (isMobile && openMobile) {
+                    toggleSidebar();
+                  }
+                  if (!item.disabled) {
+                    navigate(item.url);
+                  }
+                }}
+              >
                 <item.icon />
                 <span>{item.name}</span>
               </button>
