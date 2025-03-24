@@ -116,7 +116,7 @@ const DayCalendar: React.FC<DayCalendarProps> = ({ date = new Date() }) => {
   }, []);
 
   return (
-    <Card className="border-0 bg-sidebar/70" style={{ width: availableWidth }}>
+    <Card className="border-0" style={{ width: availableWidth }}>
       <CardContent className="p-0">
         <div className="relative">
           <div
@@ -127,12 +127,15 @@ const DayCalendar: React.FC<DayCalendarProps> = ({ date = new Date() }) => {
           >
             {intervals.map((interval, i) => {
               const isCurrentInterval = i === currentIntervalIndex;
+              const bgColor = !isCurrentInterval
+                ? i % 2 === 0
+                  ? "bg-neutral-900/50"
+                  : "bg-sidebar/70"
+                : "bg-purple-900/30";
               return (
                 <div
                   key={i}
-                  className={`flex h-32 pl-6 pt-2 text-sm ${isCurrentInterval ? "text-neutral-300" : "text-neutral-400"} hover:bg-purple-900/10 hover:text-neutral-100 ${i !== 0 ? "border-t" : ""} ${!isCurrentInterval && i % 2 === 0 ? "bg-sidebar/60" : ""} ${
-                    isCurrentInterval ? "bg-purple-900/30" : ""
-                  }`}
+                  className={`flex h-32 rounded-xl border-[0.5px] p-1 text-sm font-semibold hover:bg-purple-300/10 hover:text-neutral-100 ${isCurrentInterval ? "text-neutral-300" : "text-neutral-400"} ${bgColor}`}
                 >
                   {formatTime(interval.hour, interval.minute)}
                 </div>

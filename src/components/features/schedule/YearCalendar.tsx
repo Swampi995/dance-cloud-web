@@ -63,7 +63,7 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
       {monthsData.map(({ monthName, monthIndex, days }) => (
         <Card
           key={monthName}
-          className="cursor-pointer border-0 bg-sidebar/70 hover:bg-neutral-900"
+          className="cursor-pointer border-[0.5px] bg-sidebar/70 hover:bg-purple-300/10"
           onClick={() => {
             onDateChange(new Date(year, monthIndex, 1));
             onViewChange("Month");
