@@ -36,9 +36,6 @@ const Schedule: FC = () => {
   const { data: eventData } = useClubEvents(selectedClub?.id ?? "");
   const { data: classesData } = useClubClasses(selectedClub?.id ?? "");
 
-  console.log("classesData", classesData);
-  console.log("eventsData", eventData);
-
   // Optionally filter events and classes based on visibility toggles.
   const filteredEventsData = visibility.event ? eventData : [];
   const filteredClassesData = visibility.class ? classesData : [];
