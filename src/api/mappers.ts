@@ -140,12 +140,21 @@ const mapDocToClubClass = (
   clubClassDocSnapshot: QueryDocumentSnapshot<DocumentData>,
 ): ClubClassType => {
   // Merge the document ID with the document data
-  const rawData = {
-    id: clubClassDocSnapshot.id,
-    ...clubClassDocSnapshot.data(),
-  };
-  // Validate with Zod; parse() will throw if the data doesn't match the schema
-  return ClubClassSchema.parse(rawData);
+  const data = clubClassDocSnapshot.data();
+  const rawData = { id: clubClassDocSnapshot.id, ...data };
+
+  // First, parse the raw data to validate against the schema
+  const clubClass = ClubClassSchema.parse(rawData);
+
+  // Then, if a schedule exists, increment the day by 1 and wrap around using modulo 7
+  if (clubClass.schedule && Array.isArray(clubClass.schedule)) {
+    clubClass.schedule = clubClass.schedule.map((schedule) => ({
+      ...schedule,
+      day: (schedule.day + 1) % 7,
+    }));
+  }
+
+  return clubClass;
 };
 
 /**
