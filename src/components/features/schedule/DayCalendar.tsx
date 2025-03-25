@@ -76,7 +76,7 @@ interface VisualBlock {
   startMinutes: number;
   endMinutes: number;
   type: "event" | "class";
-  color: string; // e.g. "bg-purple-300" for events or "bg-purple-900" for classes
+  color: string; // e.g. "bg-blue-300" for events or "bg-purple-900" for classes
   borderColor: string;
   borderIntensity: string;
 }
@@ -256,8 +256,8 @@ const DayCalendar: React.FC<DayCalendarProps> = ({
       startMinutes,
       endMinutes,
       type: "event",
-      color: "bg-purple-300/20",
-      borderColor: "purple",
+      color: "bg-blue-300/20",
+      borderColor: "blue",
       borderIntensity: "300",
     });
   });
@@ -280,9 +280,9 @@ const DayCalendar: React.FC<DayCalendarProps> = ({
             startMinutes,
             endMinutes: startMinutes + durationMinutes,
             type: "class",
-            color: "bg-purple-900/30",
+            color: "bg-purple-300/30",
             borderColor: "purple",
-            borderIntensity: "900",
+            borderIntensity: "300",
           });
         }
       },

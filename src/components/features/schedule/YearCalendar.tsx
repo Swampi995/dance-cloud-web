@@ -126,20 +126,20 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
                     key={index}
                     className={`relative flex h-8 w-8 items-center justify-center text-sm min-[2000px]:h-9 min-[2000px]:w-9 min-[2000px]:text-base min-[2500px]:h-12 min-[2500px]:w-12 min-[2500px]:text-lg min-[3000px]:h-14 min-[3000px]:w-14 min-[3000px]:text-xl ${isToday ? "rounded-full bg-neutral-800" : ""}`}
                   >
-                    {/* Render event circle (purple-300) */}
+                    {/* Render event circle (blue-300) */}
                     {hasEvent && (
                       <div
                         className={`absolute ${
                           hasClass ? "inset-0" : "inset-0"
-                        } rounded-full border border-purple-300`}
+                        } rounded-full border border-blue-300`}
                       ></div>
                     )}
-                    {/* Render class circle (purple-600) – inset if event circle is also present */}
+                    {/* Render class circle (purple-300) – inset if event circle is also present */}
                     {hasClass && (
                       <div
                         className={`absolute ${
                           hasEvent ? "inset-[3px]" : "inset-0"
-                        } rounded-full border border-purple-900`}
+                        } rounded-full border border-purple-300`}
                       ></div>
                     )}
                     <div

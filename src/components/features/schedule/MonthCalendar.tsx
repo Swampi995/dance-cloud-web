@@ -62,7 +62,8 @@ const MonthDay: React.FC<MonthDayProps> = ({
   return (
     <Card
       onClick={() => onDayClick(cell)}
-      style={{ width, height }}
+      // Setting the height:height will make the cells a fixed height and their content scrollable
+      style={{ width, minHeight: height }}
       className={`flex h-full flex-col ${baseClasses} ${bgClasses} ${textColor}`}
     >
       <CardHeader className="p-1">
@@ -80,7 +81,7 @@ const MonthDay: React.FC<MonthDayProps> = ({
             events.map((event) => (
               <div
                 key={event.id}
-                className="truncate rounded bg-purple-300 px-1 py-0.5 text-xs text-neutral-800"
+                className="truncate rounded bg-blue-300 px-1 py-0.5 text-xs text-neutral-800"
               >
                 {event.name}
               </div>
@@ -89,7 +90,7 @@ const MonthDay: React.FC<MonthDayProps> = ({
             classes.map((cls) => (
               <div
                 key={cls.id}
-                className="truncate rounded bg-purple-900 px-1 py-0.5 text-xs text-neutral-200"
+                className="truncate rounded bg-purple-300 px-1 py-0.5 text-xs text-neutral-800"
               >
                 {cls.name}
               </div>
