@@ -74,7 +74,8 @@ const MonthDay: React.FC<MonthDayProps> = ({
           <div className="text-right text-sm font-semibold">{cell.day}</div>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 overflow-scroll p-1">
+      {/* overflow-scroll + fixed height will make the cells scrollable if needed */}
+      <CardContent className="flex-1 p-1">
         {/* Flex container for events and classes */}
         <div className="flex flex-wrap gap-1">
           {events &&
