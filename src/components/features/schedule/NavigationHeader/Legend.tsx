@@ -33,7 +33,7 @@ export const Legend: React.FC<LegendProps> = ({ onToggleVisibility }) => {
       >
         <div
           className={`h-3 w-3 rounded-full border-2 ${
-            showClass ? "border-purple-600" : "border-neutral-400"
+            showClass ? "border-purple-300" : "border-neutral-400"
           }`}
         ></div>
         <span className={`${!showClass ? "opacity-50" : ""}`}>Class</span>
@@ -44,7 +44,7 @@ export const Legend: React.FC<LegendProps> = ({ onToggleVisibility }) => {
       >
         <div
           className={`h-3 w-3 rounded-full border-2 ${
-            showEvent ? "border-purple-300" : "border-neutral-400"
+            showEvent ? "border-blue-300" : "border-neutral-400"
           }`}
         ></div>
         <span className={`${!showEvent ? "opacity-50" : ""}`}>Event</span>
