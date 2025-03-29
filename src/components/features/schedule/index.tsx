@@ -1,14 +1,13 @@
-import { FC, useState, lazy, Suspense, memo } from "react";
+import { FC, useState, memo } from "react";
 import { NavigationHeader } from "./NavigationHeader";
 import { Header } from "./Header";
 import { useClubEvents } from "@/hooks/use-club-events";
 import { useClubs } from "@/hooks/use-clubs";
 import { useClubClasses } from "@/hooks/use-club-classes";
 
-// Lazy-load the calendar components.
-const YearCalendar = lazy(() => import("./YearCalendar"));
-const MonthCalendar = lazy(() => import("./MonthCalendar"));
-const DayCalendar = lazy(() => import("./DayCalendar"));
+import YearCalendar from "./YearCalendar";
+import MonthCalendar from "./MonthCalendar";
+import DayCalendar from "./DayCalendar";
 
 const Schedule: FC = () => {
   // Lift state up so that Header and Calendar share the same date.
@@ -91,8 +90,7 @@ const Schedule: FC = () => {
           onViewChange={setActiveView}
           onToggleVisibility={onToggleVisibility}
         />
-        {/* Suspense to show a fallback while the calendar component loads */}
-        <Suspense>{renderCalendar()}</Suspense>
+        {renderCalendar()}
       </div>
     </div>
   );
