@@ -109,9 +109,9 @@ const ClassDetails: FC<ClassDetailsProps> = memo(
     const isClassSelected = !!clubClass;
 
     return (
-      <Card className="max-w-4xl rounded-3xl bg-sidebar/40">
-        <CardHeader>
-          <CardTitle className="text-sm font-light">Class Overview</CardTitle>
+      <Card className="max-w-4xl rounded-3xl bg-sidebar/60">
+        <CardHeader className="py-3">
+          <CardTitle className="text-sm font-normal">Class Overview</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <InfoRow label="Name" value={clubClass?.name ?? "Select a class"} />
@@ -122,7 +122,7 @@ const ClassDetails: FC<ClassDetailsProps> = memo(
           />
 
           <div className="flex place-items-center justify-between space-x-10">
-            <p className="text-sm">Schedule</p>
+            <p className="text-sm font-light">Schedule</p>
             <div className="flex flex-wrap gap-1 font-medium md:gap-2 lg:gap-4">
               {!isClassSelected ? (
                 <span>Select a class</span>
@@ -133,7 +133,7 @@ const ClassDetails: FC<ClassDetailsProps> = memo(
           </div>
 
           <div className="flex place-items-center justify-between space-x-10">
-            <p className="text-sm">Teachers</p>
+            <p className="text-sm font-light">Teachers</p>
             <div className="flex flex-wrap gap-1 font-medium md:gap-2 lg:gap-4">
               {!isClassSelected ? (
                 <span>Select a class</span>

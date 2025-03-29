@@ -19,7 +19,7 @@ interface InfoRowProps {
  */
 const InfoRow: FC<InfoRowProps> = memo(({ label, value }) => (
   <div className="flex place-items-center justify-between space-x-10">
-    <p className="text-sm">{label}</p>
+    <p className="text-sm font-light">{label}</p>
     <p className="font-medium">{value}</p>
   </div>
 ));

@@ -109,9 +109,9 @@ const data = {
   events: [
     {
       name: "Upcoming",
-      url: "#",
+      url: "/events/upcoming",
       icon: PartyPopper,
-      disabled: true,
+      disabled: false,
     },
     {
       name: "Past",
