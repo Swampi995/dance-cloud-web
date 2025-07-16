@@ -1,130 +1,68 @@
-// UpcomingEvents.tsx
 import { FC, memo, useMemo } from "react";
 import { Header } from "./Header";
 import { useClubs } from "@/hooks/use-clubs";
 import { useClubEvents } from "@/hooks/use-club-events";
-import { MoreHorizontal } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import EventCard from "./EventCard";
+import AddEventCard from "./AddEventCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format } from "date-fns";
-
-function renderTableHeader() {
-  return (
-    <TableHeader>
-      <TableRow>
-        <TableHead className="w-[30%] text-xs sm:text-base">Name</TableHead>
-        <TableHead className="w-[25%] text-center text-xs sm:text-base">
-          Address
-        </TableHead>
-        <TableHead className="w-[20%] text-center text-xs sm:text-base">
-          Start Date
-        </TableHead>
-        <TableHead className="w-[20%] text-center text-xs sm:text-base">
-          End Date
-        </TableHead>
-        <TableHead className="w-[5%] text-center text-xs sm:text-base"></TableHead>
-      </TableRow>
-    </TableHeader>
-  );
-}
 
 const UpcomingEvents: FC = () => {
   const { selectedClub } = useClubs();
   const { data: eventData, loading } = useClubEvents(selectedClub?.id ?? "");
-
-  // Filter future events using useMemo for performance
+  console.log(eventData);
   const futureEvents = useMemo(() => {
     return (
-      eventData?.filter((event) => event.startDate.toDate() > new Date()) || []
+      eventData
+        ?.filter((event) => event.startDate.toDate() > new Date())
+        .sort(
+          (a, b) =>
+            b.startDate.toDate().getTime() - a.startDate.toDate().getTime(),
+        ) || []
     );
   }, [eventData]);
 
   const handleEdit = (eventId: string) => {
-    // Implement your edit event logic here
+    // 👉 hook this up to your edit flow / router
     console.log("Edit event:", eventId);
+  };
+
+  const handleAddEvent = () => {
+    // 👉 route to “create event” page, open modal, etc.
+    console.log("Create new event");
   };
 
   return (
     <div className="flex flex-1 flex-col overflow-x-hidden px-4 sm:px-10">
       <Header />
-      <div className="flex-1 space-y-4 rounded-xl bg-sidebar/70 sm:px-2">
+
+      {/* Grid container */}
+      <div className="flex-1 p-4">
         {loading ? (
-          <Table>
-            {renderTableHeader()}
-            <TableBody>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={`skeleton-row-${i}`}>
-                  <TableCell>
-                    <Skeleton className="h-[24px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-[24px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-[24px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-[24px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="ml-auto h-[24px]" />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(18rem,1fr))]">
+            {Array.from({ length: 5 }).map((_, idx) => (
+              <Skeleton key={idx} className="h-72 w-full rounded-2xl" />
+            ))}
+          </div>
         ) : (
-          <Table>
-            {renderTableHeader()}
-            <TableBody>
-              {futureEvents.map((event) => (
-                <TableRow key={event.id} className="">
-                  <TableCell className="text-xs font-medium sm:text-base">
-                    {event.name}
-                  </TableCell>
-                  <TableCell className="text-center text-xs sm:text-base">
-                    {event.address}
-                  </TableCell>
-                  <TableCell className="text-center text-xs sm:text-base">
-                    {format(event.startDate.toDate(), "dd/MM/yyyy HH:mm")}
-                  </TableCell>
-                  <TableCell className="text-center text-xs sm:text-base">
-                    {format(event.endDate.toDate(), "dd/MM/yyyy HH:mm")}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <button className="align-middle">
-                          <span className="sr-only">Open options</span>
-                          <MoreHorizontal size={16} />
-                        </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="bg-neutral-900">
-                        <button
-                          onClick={() => handleEdit(event.id)}
-                          className="rounded-md px-2 py-1 text-center text-sm hover:bg-purple-900/30 focus:outline-none focus:ring-0 focus:ring-transparent sm:text-base"
-                        >
-                          Edit
-                        </button>
-                      </PopoverContent>
-                    </Popover>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(18rem,1fr))]">
+            <AddEventCard onAdd={handleAddEvent} />
+            {eventData.map(
+              // DEBUG: Replace with `futureEvents`
+              (event) => (
+                <EventCard
+                  key={event.id}
+                  image={
+                    event.backgroundURL ?? "" /* TODO: adjust field name */
+                  }
+                  title={event.name}
+                  location={event.address}
+                  startDate={event.startDate.toDate()}
+                  endDate={event.endDate.toDate()}
+                  onEdit={() => handleEdit(event.id)}
+                />
+              ),
+            )}
+          </div>
         )}
       </div>
     </div>

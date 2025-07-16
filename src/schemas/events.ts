@@ -9,7 +9,7 @@ export const ClubEventSchema = z.object({
   club: DocumentReferenceSchema,
   startDate: z.instanceof(Timestamp),
   endDate: z.instanceof(Timestamp),
-  address: z.string(),
+  address: z.string().optional(),
   location: z.string().optional(),
   backgroundURL: z.string(),
   blurhash: z.string(),
