@@ -54,7 +54,7 @@ const YearCalendar: React.FC<YearCalendarProps> = ({
             onViewChange("Month");
           }}
         >
-          <CardHeader>
+          <CardHeader className="py-3">
             <h3 className="text-left text-lg font-semibold text-purple-300 min-[2000px]:text-xl min-[2500px]:text-2xl min-[3000px]:text-3xl">
               {monthName}
             </h3>

@@ -150,9 +150,9 @@ const Sessions: FC = () => {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-4 px-4 pb-4 sm:px-10">
+    <div className="flex flex-1 flex-col overflow-x-hidden px-4 sm:px-10">
       {/* Header section: sidebar trigger, page title, and date range picker */}
-      <div className="mt-6 flex items-center justify-between space-x-2">
+      <div className="mb-4 mt-6 flex items-center justify-between space-x-2">
         <div className="flex items-center">
           <SidebarTrigger />
           <h1 className="pl-4 text-sm font-bold sm:text-xl md:text-2xl lg:text-4xl">
@@ -163,7 +163,7 @@ const Sessions: FC = () => {
       </div>
 
       {/* Main content area: table of sessions and pagination controls */}
-      <div className="flex-1 space-y-4 rounded-xl bg-sidebar/70 p-1 py-4 sm:px-4">
+      <div className="flex-1 space-y-4 rounded-xl bg-sidebar/70 sm:px-2">
         {loading ? (
           // Display a loading skeleton while session data is being fetched.
           <Table>
@@ -216,17 +216,17 @@ const Sessions: FC = () => {
 
                   return (
                     <TableRow key={session.id}>
-                      <TableCell className="font-medium">
+                      <TableCell className="text-xs font-medium sm:text-base">
                         {session.userData?.name ?? "Unknown User"}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center text-xs sm:text-base">
                         {format(checkInTime, "dd/MM/yyyy HH:mm")}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center text-xs sm:text-base">
                         {expiration ? expiration.toLocaleDateString() : "—"}
                       </TableCell>
                       <TableCell
-                        className={`text-center ${membershipName.includes("7Card") && "text-orange-300"}`}
+                        className={`text-center text-xs sm:text-base ${membershipName.includes("7Card") && "text-orange-300"}`}
                       >
                         {membershipName}
                       </TableCell>

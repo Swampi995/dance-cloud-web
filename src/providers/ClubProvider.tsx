@@ -75,7 +75,7 @@ function ClubProvider({ children }: { children: ReactNode }) {
     );
 
     // Cleanup the subscription when the component unmounts or when the user changes.
-    return () => unsubscribe();
+    return unsubscribe;
   }, [user]);
 
   /**

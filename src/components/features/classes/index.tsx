@@ -64,12 +64,9 @@ const Classes: FC = () => {
   }, [classesError, toast]);
 
   return (
-    <div
-      className="flex flex-1 flex-col gap-4 px-4 sm:px-10"
-      style={{ width: "calc(100% - 250px)" }}
-    >
+    <div className="flex flex-1 flex-col overflow-x-hidden px-4 sm:px-10">
       <Header />
-      <div className="flex flex-col justify-between space-y-2 rounded-xl">
+      <div className="mb-4 flex flex-col justify-between space-y-2 rounded-xl">
         <Controls
           classesData={classesData}
           onSelectClass={setSelectedClass}
