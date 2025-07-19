@@ -115,9 +115,9 @@ const data = {
     },
     {
       name: "Past",
-      url: "#",
+      url: "/events/past",
       icon: PartyPopper,
-      disabled: true,
+      disabled: false,
     },
   ],
 };

@@ -35,6 +35,7 @@ const Schedule = lazy(() => import("./components/features/schedule"));
 const UpcomingEvents = lazy(
   () => import("./components/features/events/upcoming"),
 );
+const PastEvents = lazy(() => import("./components/features/events/past"));
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
                 <Route path="/monthly_summary" element={<Classes />} />
                 <Route path="/schedule" element={<Schedule />} />
                 <Route path="/events/upcoming" element={<UpcomingEvents />} />
+                <Route path="/events/past" element={<PastEvents />} />
               </Route>
               <Route path="/launch" element={<LaunchApp />} />
               <Route path="*" element={<Navigate to="/" replace />} />

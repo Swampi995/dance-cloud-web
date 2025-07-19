@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Clock, CircleDot } from "lucide-react";
 
 /**
- * Props for the EventCard component.
+ * Props for the UpcomingEventCard component.
  *
- * @interface EventCardProps
+ * @interface UpcomingEventCardProps
  * @property {string} image - URL of the event image to display.
  * @property {string} title - Title of the event.
  * @property {string} [location] - Optional location of the event. If omitted or empty, a placeholder space is rendered.
@@ -14,7 +14,7 @@ import { Calendar, Clock, CircleDot } from "lucide-react";
  * @property {string | Date} endDate - End date/time of the event, as a Date object or an ISO string.
  * @property {() => void} [onEdit] - Optional callback invoked when the "Edit" button is clicked.
  */
-export interface EventCardProps {
+export interface UpcomingEventCardProps {
   image: string;
   title: string;
   location?: string;
@@ -24,14 +24,14 @@ export interface EventCardProps {
 }
 
 /**
- * EventCard displays an event with image, title, location, date/time information,
+ * UpcomingEventCard displays an event with image, title, location, date/time information,
  * and an optional "Live Now" badge when the event is in progress.
  *
  * @component
- * @param {EventCardProps} props - Props for the component.
+ * @param {UpcomingEventCardProps} props - Props for the component.
  * @returns {JSX.Element} The rendered event card.
  */
-const EventCard: React.FC<EventCardProps> = ({
+const UpcomingEventCard: React.FC<UpcomingEventCardProps> = ({
   image,
   title,
   location,
@@ -85,7 +85,7 @@ const EventCard: React.FC<EventCardProps> = ({
 
       {/* Event image */}
       <div className="w-full overflow-hidden">
-        <div className="relative aspect-[4/3] bg-gray-100 sm:aspect-video">
+        <div className="relative aspect-[4/3] bg-black sm:aspect-video">
           <img
             src={image}
             alt={title}
@@ -149,7 +149,7 @@ const EventCard: React.FC<EventCardProps> = ({
 };
 
 // Set a display name for React DevTools
-EventCard.displayName = "EventCard";
+UpcomingEventCard.displayName = "UpcomingEventCard";
 
 // Export a memoized version to prevent unnecessary re-renders
-export default memo(EventCard);
+export default memo(UpcomingEventCard);

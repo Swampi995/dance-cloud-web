@@ -2,7 +2,7 @@ import { FC, memo, useMemo } from "react";
 import { Header } from "./Header";
 import { useClubs } from "@/hooks/use-clubs";
 import { useClubEvents } from "@/hooks/use-club-events";
-import EventCard from "./EventCard";
+import UpcomingEventCard from "./UpcomingEventCard";
 import AddEventCard from "./AddEventCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
  * Shows a loading skeleton while events are loading.
  *
  * - Renders an AddEventCard for creating new events.
- * - Uses EventCard to display each event.
+ * - Uses UpcomingEventCard to display each event.
  * - Relies on useClubs and useClubEvents hooks for data.
  *
  * @component
@@ -73,7 +73,7 @@ const UpcomingEvents: FC = () => {
           <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(18rem,1fr))]">
             <AddEventCard onAdd={handleAddEvent} />
             {eventData.map((event) => (
-              <EventCard
+              <UpcomingEventCard
                 key={event.id}
                 image={event.backgroundURL ?? ""}
                 title={event.name}
