@@ -5,7 +5,9 @@ import {
   doc,
   FirestoreError,
   onSnapshot,
+  orderBy,
   query,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import { mapDocToClubEvent } from "./mappers";
@@ -20,6 +22,9 @@ import { mapDocToClubEvent } from "./mappers";
  * @param {string} clubId - The unique identifier of the club.
  * @param {(data: ClubEventType[]) => void} callback - A function to be called with the updated list of club events.
  * @param {(error: Error) => void} [errorCallback] - An optional function to be called if an error occurs.
+ * @param {(Date|Timestamp)=} startAfter
+ *   Optional. Only fire the callback for events whose `startDate` is on or after this value.
+ *
  * @returns {() => void} A function to unsubscribe from the real-time updates.
  *
  * @example
@@ -37,13 +42,29 @@ export const subscribeToEventsForClub = (
   clubId: string,
   callback: (data: ClubEventType[]) => void,
   errorCallback?: (error: Error) => void,
+  startAfter?: Date | Timestamp,
 ) => {
   // Build a reference to the specific club document and its "events" subcollection.
   const eventsRef = collection(db, "events");
   const clubDocRef = doc(db, "clubs", clubId);
 
   // Create a query against the "events" subcollection.
-  const eventsQuery = query(eventsRef, where("club", "==", clubDocRef));
+  let eventsQuery = query(eventsRef, where("club", "==", clubDocRef));
+
+  if (startAfter) {
+    // Firestore requires an orderBy on the same field used in range filters
+    eventsQuery = query(
+      eventsQuery,
+      orderBy("startDate", "asc"),
+      where(
+        "startDate",
+        ">=",
+        startAfter instanceof Date
+          ? Timestamp.fromDate(startAfter)
+          : startAfter,
+      ),
+    );
+  }
 
   // Start listening for real-time updates with onSnapshot.
   // onSnapshot returns an unsubscribe function to stop listening.

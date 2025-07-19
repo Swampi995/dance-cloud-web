@@ -6,62 +6,83 @@ import EventCard from "./EventCard";
 import AddEventCard from "./AddEventCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
+/**
+ * Component for displaying a grid of upcoming events for the selected club.
+ * Shows a loading skeleton while events are loading.
+ *
+ * - Renders an AddEventCard for creating new events.
+ * - Uses EventCard to display each event.
+ * - Relies on useClubs and useClubEvents hooks for data.
+ *
+ * @component
+ */
 const UpcomingEvents: FC = () => {
+  // Get the currently selected club from the context/hook
   const { selectedClub } = useClubs();
-  const { data: eventData, loading } = useClubEvents(selectedClub?.id ?? "");
-  console.log(eventData);
-  const futureEvents = useMemo(() => {
-    return (
-      eventData
-        ?.filter((event) => event.startDate.toDate() > new Date())
-        .sort(
-          (a, b) =>
-            b.startDate.toDate().getTime() - a.startDate.toDate().getTime(),
-        ) || []
-    );
-  }, [eventData]);
 
+  /**
+   * Memoized calculation of today's date at midnight (00:00:00).
+   * Used as the lower bound for fetching events starting from today.
+   */
+  const startOfToday = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  /**
+   * Fetch club events starting from today for the selected club.
+   */
+  const { data: eventData, loading } = useClubEvents(
+    selectedClub?.id ?? "",
+    startOfToday,
+  );
+
+  /**
+   * Handler for editing an event.
+   * @param {string} eventId - The ID of the event to edit.
+   */
   const handleEdit = (eventId: string) => {
-    // 👉 hook this up to your edit flow / router
-    console.log("Edit event:", eventId);
+    // Placeholder: Replace with real navigation or modal open in the future.
+    console.log(eventId);
   };
 
+  /**
+   * Handler for adding a new event.
+   */
   const handleAddEvent = () => {
-    // 👉 route to “create event” page, open modal, etc.
-    console.log("Create new event");
+    // Placeholder: Replace with real logic for event creation.
   };
 
   return (
     <div className="flex flex-1 flex-col overflow-x-hidden px-4 sm:px-10">
+      {/* Section header */}
       <Header />
 
-      {/* Grid container */}
+      {/* Grid container for event cards and skeletons */}
       <div className="flex-1 p-4">
         {loading ? (
+          // Show skeleton cards while loading
           <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(18rem,1fr))]">
             {Array.from({ length: 5 }).map((_, idx) => (
               <Skeleton key={idx} className="h-72 w-full rounded-2xl" />
             ))}
           </div>
         ) : (
+          // Show AddEventCard and list of EventCards when data is loaded
           <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(18rem,1fr))]">
             <AddEventCard onAdd={handleAddEvent} />
-            {eventData.map(
-              // DEBUG: Replace with `futureEvents`
-              (event) => (
-                <EventCard
-                  key={event.id}
-                  image={
-                    event.backgroundURL ?? "" /* TODO: adjust field name */
-                  }
-                  title={event.name}
-                  location={event.address}
-                  startDate={event.startDate.toDate()}
-                  endDate={event.endDate.toDate()}
-                  onEdit={() => handleEdit(event.id)}
-                />
-              ),
-            )}
+            {eventData.map((event) => (
+              <EventCard
+                key={event.id}
+                image={event.backgroundURL ?? ""}
+                title={event.name}
+                location={event.address}
+                startDate={event.startDate.toDate()}
+                endDate={event.endDate.toDate()}
+                onEdit={() => handleEdit(event.id)}
+              />
+            ))}
           </div>
         )}
       </div>

@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import { subscribeToEventsForClub } from "@/api/events";
 import { ClubEventType } from "@/schemas/events";
 import { useEffect, useState } from "react";
@@ -10,6 +11,8 @@ import { useEffect, useState } from "react";
  * any errors that occur during the subscription, and a loading indicator while the data is being fetched.
  *
  * @param {string} clubId - The unique identifier of the club for which to subscribe to events updates.
+ * @param {(Date|Timestamp)=} startAfter
+ *   Optional. Only include events whose `startDate` is on or after this value.
  * @returns {{
  *   data: ClubEventType[],
  *   error: Error | null,
@@ -19,7 +22,7 @@ import { useEffect, useState } from "react";
  *   - `error`: Any error encountered during the subscription (or `null` if no error occurred).
  *   - `loading`: A boolean indicating whether the data is currently being loaded.
  */
-const useClubEvents = (clubId: string) => {
+const useClubEvents = (clubId: string, startAfter?: Date | Timestamp) => {
   // State to store the club events data.
   const [data, setData] = useState<ClubEventType[]>([]);
 
@@ -49,13 +52,12 @@ const useClubEvents = (clubId: string) => {
         setError(error);
         setLoading(false);
       },
+      startAfter,
     );
 
     // Cleanup: Unsubscribe from the club events updates when the component unmounts or when the clubId changes.
-    return () => {
-      unsubscribe();
-    };
-  }, [clubId]);
+    return unsubscribe;
+  }, [clubId, startAfter]);
 
   // Return the current club event data, any subscription error, and the loading status.
   return { data, error, loading };

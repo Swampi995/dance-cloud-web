@@ -52,9 +52,7 @@ const useClubClasses = (clubId: string) => {
     );
 
     // Cleanup: Unsubscribe from the club classes updates when the component unmounts or when the clubId changes.
-    return () => {
-      unsubscribe();
-    };
+    return unsubscribe;
   }, [clubId]);
 
   // Return the current club class data, any subscription error, and the loading status.

@@ -80,9 +80,7 @@ const useClubSessions = (
     );
 
     // Cleanup: Unsubscribe from the session updates when the component unmounts or when any dependency changes.
-    return () => {
-      unsubscribe();
-    };
+    return unsubscribe;
   }, [clubId, pageSize, startAfterDoc, startDate, endDate]);
 
   // Return the current session data, any subscription error, and the loading status.
