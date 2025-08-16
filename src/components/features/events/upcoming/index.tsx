@@ -1,4 +1,5 @@
 import { FC, memo, useMemo } from "react";
+import { useNavigate } from "react-router";
 import { Header } from "./Header";
 import { useClubs } from "@/hooks/use-clubs";
 import { useClubEvents } from "@/hooks/use-club-events";
@@ -17,6 +18,8 @@ import { Skeleton } from "@/components/ui/skeleton";
  * @component
  */
 const UpcomingEvents: FC = () => {
+  const navigate = useNavigate();
+
   // Get the currently selected club from the context/hook
   const { selectedClub } = useClubs();
 
@@ -51,7 +54,7 @@ const UpcomingEvents: FC = () => {
    * Handler for adding a new event.
    */
   const handleAddEvent = () => {
-    // Placeholder: Replace with real logic for event creation.
+    navigate("/events/wizard");
   };
 
   return (
