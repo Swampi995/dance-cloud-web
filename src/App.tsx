@@ -25,13 +25,17 @@ const RootLayout = lazy(() => import("@/components/layout/RootLayout"));
 const LaunchApp = lazy(
   () => import("@/components/features/launch/LaunchAppHero"),
 );
-const LandingHero = lazy(
-  () => import("./components/features/landing/LandingHero"),
-);
+const LandingHero = lazy(() => import("./components/features/landing"));
 const PrivacyPolicy = lazy(() => import("./components/features/privacy"));
-const Login = lazy(() => import("./components/features/login/Login"));
+const Login = lazy(() => import("./components/features/login"));
 const TermsOfService = lazy(() => import("./components/features/terms"));
-const Sessions = lazy(() => import("./components/features/sessions/Sessions"));
+const Sessions = lazy(() => import("./components/features/sessions"));
+const Classes = lazy(() => import("./components/features/classes"));
+const Schedule = lazy(() => import("./components/features/schedule"));
+const UpcomingEvents = lazy(
+  () => import("./components/features/events/upcoming"),
+);
+const PastEvents = lazy(() => import("./components/features/events/past"));
 
 function App() {
   return (
@@ -54,6 +58,10 @@ function App() {
                 }
               >
                 <Route path="/sessions" element={<Sessions />} />
+                <Route path="/monthly_summary" element={<Classes />} />
+                <Route path="/schedule" element={<Schedule />} />
+                <Route path="/events/upcoming" element={<UpcomingEvents />} />
+                <Route path="/events/past" element={<PastEvents />} />
               </Route>
               <Route path="/launch" element={<LaunchApp />} />
               <Route path="*" element={<Navigate to="/" replace />} />

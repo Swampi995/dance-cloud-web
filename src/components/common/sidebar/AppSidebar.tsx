@@ -1,6 +1,7 @@
 import { ComponentProps } from "react";
 import { useNavigate } from "react-router";
 import {
+  BarChart,
   CalendarDays,
   ChevronDown,
   GraduationCap,
@@ -44,21 +45,31 @@ const data = {
       name: "Club details",
       url: "#",
       icon: House,
+      disabled: true,
     },
     {
       name: "Schedule",
-      url: "#",
+      url: "/schedule",
       icon: CalendarDays,
+      disabled: false,
     },
     {
       name: "Sessions",
       url: "/sessions",
       icon: LayoutGrid,
+      disabled: false,
+    },
+    {
+      name: "Monthly Summary",
+      url: "/monthly_summary",
+      icon: BarChart,
+      disabled: false,
     },
     {
       name: "Analytics",
       url: "#",
       icon: TrendingUp,
+      disabled: true,
     },
   ],
   navSecondary: [
@@ -66,11 +77,13 @@ const data = {
       title: "Contact",
       url: "#",
       icon: LifeBuoy,
+      disabled: true,
     },
     {
       title: "Feedback",
       url: "#",
       icon: Send,
+      disabled: true,
     },
   ],
   memberships: [
@@ -78,28 +91,33 @@ const data = {
       name: "Members",
       url: "#",
       icon: UsersRound,
+      disabled: true,
     },
     {
       name: "Classes",
       url: "#",
       icon: GraduationCap,
+      disabled: true,
     },
     {
       name: "Memberships",
       url: "#",
       icon: Tag,
+      disabled: true,
     },
   ],
   events: [
     {
       name: "Upcoming",
-      url: "#",
+      url: "/events/upcoming",
       icon: PartyPopper,
+      disabled: false,
     },
     {
       name: "Past",
-      url: "#",
+      url: "/events/past",
       icon: PartyPopper,
+      disabled: false,
     },
   ],
 };

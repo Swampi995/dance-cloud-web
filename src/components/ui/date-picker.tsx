@@ -1,6 +1,5 @@
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { DateRange } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -11,17 +10,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-interface DatePickerWithRangeProps {
+interface DatePicker {
   className?: string;
-  value: DateRange | undefined;
-  onChange: (newValue: DateRange | undefined) => void;
+  value: Date | undefined;
+  onChange: (newValue: Date | undefined) => void;
 }
 
-const DatePickerWithRange = ({
-  className,
-  value,
-  onChange,
-}: DatePickerWithRangeProps) => {
+const DatePicker = ({ className, value, onChange }: DatePicker) => {
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -35,28 +30,15 @@ const DatePickerWithRange = ({
             )}
           >
             <CalendarIcon className="sm:mr-2" />
-            {value?.from ? (
-              value.to ? (
-                <>
-                  {format(value.from, "LLL dd, y")} -{" "}
-                  {format(value.to, "LLL dd, y")}
-                </>
-              ) : (
-                format(value.from, "LLL dd, y")
-              )
-            ) : (
-              <span>Pick a date</span>
-            )}
+            {value ? format(value, "PPP") : <span>Pick a date</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             initialFocus
-            mode="range"
-            defaultMonth={value?.from}
+            mode="single"
             selected={value}
             onSelect={onChange}
-            numberOfMonths={2}
           />
         </PopoverContent>
       </Popover>
@@ -64,6 +46,6 @@ const DatePickerWithRange = ({
   );
 };
 
-DatePickerWithRange.displayName = "DatePickerWithRange";
+DatePicker.displayName = "DatePicker";
 
-export { DatePickerWithRange };
+export { DatePicker };

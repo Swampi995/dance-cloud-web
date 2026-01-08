@@ -4,9 +4,8 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
 } from "firebase/firestore";
-import { DateRange } from "react-day-picker";
-import { format, subDays } from "date-fns";
-import { DatePickerWithRange } from "@/components/ui/date-picker";
+import { format } from "date-fns";
+import { DatePicker } from "@/components/ui/date-picker";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Table,
@@ -97,17 +96,14 @@ const Sessions: FC = () => {
    * Date range state for filtering session check-ins.
    * Default is from 7 days ago to today.
    */
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: subDays(new Date(), 7),
-    to: new Date(),
-  });
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
   const { data, error, loading } = useClubSessions(
     selectedClub?.id ?? "",
     dynamicPageSize,
     startAfterDocs[currentPage],
-    dateRange?.from, // startDate
-    dateRange?.to, // endDate
+    date,
+    date,
   );
 
   // Error handling: if an error occurs during data fetching, display an error toast.
@@ -154,20 +150,20 @@ const Sessions: FC = () => {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-4 px-4 pb-4 sm:px-10">
+    <div className="flex flex-1 flex-col overflow-x-hidden px-4 sm:px-10">
       {/* Header section: sidebar trigger, page title, and date range picker */}
-      <div className="mt-6 flex items-center justify-between space-x-2">
+      <div className="mb-4 mt-6 flex items-center justify-between space-x-2">
         <div className="flex items-center">
           <SidebarTrigger />
           <h1 className="pl-4 text-sm font-bold sm:text-xl md:text-2xl lg:text-4xl">
             Session Check-ins
           </h1>
         </div>
-        <DatePickerWithRange value={dateRange} onChange={setDateRange} />
+        <DatePicker value={date} onChange={setDate} />
       </div>
 
       {/* Main content area: table of sessions and pagination controls */}
-      <div className="flex-1 space-y-4 rounded-xl bg-sidebar/70 p-1 py-4 sm:px-4">
+      <div className="flex-1 space-y-4 rounded-xl bg-sidebar/70 sm:px-2">
         {loading ? (
           // Display a loading skeleton while session data is being fetched.
           <Table>
@@ -209,25 +205,30 @@ const Sessions: FC = () => {
                       ).toDate()
                     : null;
 
+                  const membershipName =
+                    session.clubMembershipData?.name?.replace(
+                      "Abonament",
+                      "",
+                    ) ?? "—";
+
                   // Determine if the membership is active based on the expiration date.
                   const isActive = expiration ? expiration > new Date() : null;
 
                   return (
                     <TableRow key={session.id}>
-                      <TableCell className="font-medium">
+                      <TableCell className="text-xs font-medium sm:text-base">
                         {session.userData?.name ?? "Unknown User"}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center text-xs sm:text-base">
                         {format(checkInTime, "dd/MM/yyyy HH:mm")}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center text-xs sm:text-base">
                         {expiration ? expiration.toLocaleDateString() : "—"}
                       </TableCell>
-                      <TableCell className="text-center">
-                        {session.clubMembershipData?.name?.replace(
-                          "Abonament",
-                          "",
-                        ) ?? "—"}
+                      <TableCell
+                        className={`text-center text-xs sm:text-base ${membershipName.includes("7Card") && "text-orange-300"}`}
+                      >
+                        {membershipName}
                       </TableCell>
                       <TableCell className="items-center text-center">
                         {isActive === null ? (

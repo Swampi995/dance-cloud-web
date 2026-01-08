@@ -70,9 +70,9 @@ const useClubSessions = (
         setLoading(false);
       },
       // Error callback: Log the error, update the error state, and mark loading as complete.
-      (err) => {
-        console.error("Error subscribing to sessions:", err);
-        setError(err);
+      (error) => {
+        console.error("Error subscribing to sessions:", error);
+        setError(error);
         setLoading(false);
       },
       startDate,
@@ -80,9 +80,7 @@ const useClubSessions = (
     );
 
     // Cleanup: Unsubscribe from the session updates when the component unmounts or when any dependency changes.
-    return () => {
-      unsubscribe();
-    };
+    return unsubscribe;
   }, [clubId, pageSize, startAfterDoc, startDate, endDate]);
 
   // Return the current session data, any subscription error, and the loading status.
